@@ -7,12 +7,14 @@ import {
   Settings,
   RefreshCw,
   ShieldCheck,
+  Gift,
 } from 'lucide-react';
 
 const navItems = [
   { to: '/', label: 'Tableau de bord', icon: LayoutDashboard },
   { to: '/adherents', label: 'Adhérents', icon: Users },
   { to: '/rapports', label: 'Rapports BDM', icon: FileText },
+  { to: '/recompenses', label: 'Récompenses', icon: Gift },
   { to: '/config-cartes', label: 'Config Cartes', icon: Settings, gerantOnly: true },
   { to: '/cycles', label: 'Cycles', icon: RefreshCw, gerantOnly: true },
   { to: '/administration', label: 'Administration', icon: ShieldCheck, adminOnly: true },

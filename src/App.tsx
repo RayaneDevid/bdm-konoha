@@ -9,6 +9,7 @@ import Rapports from './pages/Rapports';
 import ConfigCartes from './pages/ConfigCartes';
 import Cycles from './pages/Cycles';
 import Administration from './pages/Administration';
+import Recompenses from './pages/Recompenses';
 
 export default function App() {
   const { session, loading } = useAuth();
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/adherents" element={<Adherents />} />
           <Route path="/adherents/:id" element={<AdherentProfile />} />
           <Route path="/rapports" element={<Rapports />} />
+          <Route path="/recompenses" element={<Recompenses />} />
           <Route path="/config-cartes" element={<ConfigCartes />} />
           <Route path="/cycles" element={<Cycles />} />
           <Route path="/administration" element={<Administration />} />
