@@ -131,11 +131,14 @@ export default function Rapports() {
     const full: MissionFull[] = missionsData.map((m: any) => {
       const intervenants = intervenantsByMission.get(m.id) ?? [];
       const ninjas = ninjasByMission.get(m.id) ?? [];
-      const allPeople = [
-        { is_paid: m.executor_is_paid },
-        ...intervenants.map((i) => ({ is_paid: i.is_paid })),
-        ...ninjas.map((n) => ({ is_paid: n.is_paid })),
-      ];
+      // Récolte : seuls les ninjas sont payés / gagnent des points
+      const allPeople = m.mission_type === 'recolte'
+        ? ninjas.map((n) => ({ is_paid: n.is_paid }))
+        : [
+            { is_paid: m.executor_is_paid },
+            ...intervenants.map((i) => ({ is_paid: i.is_paid })),
+            ...ninjas.map((n) => ({ is_paid: n.is_paid })),
+          ];
       return {
         ...m,
         executor_name: m.executor
@@ -606,21 +609,31 @@ export default function Rapports() {
                           >
                             Executant
                           </h4>
-                          <div className="flex items-center gap-3">
+                          {mission.mission_type === 'recolte' && (
+                            <div className="flex items-center gap-2 bg-[#5D4037]/10 border border-[#5D4037]/30 rounded px-3 py-2">
+                              <ShoppingBasket size={14} className="text-[#5D4037] shrink-0" />
+                              <p className="text-xs text-[#5D4037] font-medium">
+                                Mission récolte — pas de paie pour l'exécutant.
+                              </p>
+                            </div>
+                          )}
+                          <div className={`flex items-center gap-3 ${mission.mission_type === 'recolte' ? 'opacity-40' : ''}`}>
                             <button
                               type="button"
                               onClick={() => toggleExecutorPaid(mission.id, mission.executor_is_paid)}
-                              disabled={!canMarkPaid}
+                              disabled={!canMarkPaid || mission.mission_type === 'recolte'}
                               className={`w-4 h-4 rounded border shrink-0 flex items-center justify-center ${
                                 mission.executor_is_paid
                                   ? 'bg-[#8B0000] border-[#8B0000]'
                                   : 'bg-[#FAF3E3] border-[#5D4037]'
-                              } ${canMarkPaid ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
+                              } ${canMarkPaid && mission.mission_type !== 'recolte' ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
                             >
                               {mission.executor_is_paid && <Check size={12} className="text-white" />}
                             </button>
                             <span className="text-sm text-[#3E2723]">{mission.executor_name}</span>
-                            {mission.executor_is_paid ? (
+                            {mission.mission_type === 'recolte' ? (
+                              <span className="text-xs text-[#5D4037]">—</span>
+                            ) : mission.executor_is_paid ? (
                               <CheckCircle size={16} className="text-[#4A5D23]" />
                             ) : (
                               <XCircle size={16} className="text-[#C62828]" />
@@ -637,7 +650,7 @@ export default function Rapports() {
                             >
                               Intervenants
                             </h4>
-                            {canMarkPaid && mission.intervenants.length > 0 && (
+                            {canMarkPaid && mission.intervenants.length > 0 && mission.mission_type !== 'recolte' && (
                               <button
                                 type="button"
                                 onClick={() => markAllPaid('mission_intervenants', mission.intervenants)}
@@ -647,23 +660,33 @@ export default function Rapports() {
                               </button>
                             )}
                           </div>
+                          {mission.mission_type === 'recolte' && mission.intervenants.length > 0 && (
+                            <div className="flex items-center gap-2 bg-[#5D4037]/10 border border-[#5D4037]/30 rounded px-3 py-2">
+                              <ShoppingBasket size={14} className="text-[#5D4037] shrink-0" />
+                              <p className="text-xs text-[#5D4037] font-medium">
+                                Mission récolte — pas de paie pour les intervenants.
+                              </p>
+                            </div>
+                          )}
                           <div className="space-y-2">
                             {mission.intervenants.map((i) => (
-                              <div key={i.row_id} className="flex items-center gap-3">
+                              <div key={i.row_id} className={`flex items-center gap-3 ${mission.mission_type === 'recolte' ? 'opacity-40' : ''}`}>
                                 <button
                                   type="button"
                                   onClick={() => togglePaid('mission_intervenants', i.row_id, i.is_paid)}
-                                  disabled={!canMarkPaid}
+                                  disabled={!canMarkPaid || mission.mission_type === 'recolte'}
                                   className={`w-4 h-4 rounded border shrink-0 flex items-center justify-center ${
                                     i.is_paid
                                       ? 'bg-[#8B0000] border-[#8B0000]'
                                       : 'bg-[#FAF3E3] border-[#5D4037]'
-                                  } ${canMarkPaid ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
+                                  } ${canMarkPaid && mission.mission_type !== 'recolte' ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
                                 >
                                   {i.is_paid && <Check size={12} className="text-white" />}
                                 </button>
                                 <span className="text-sm text-[#3E2723]">{i.name}</span>
-                                {i.is_paid ? (
+                                {mission.mission_type === 'recolte' ? (
+                                  <span className="text-xs text-[#5D4037]">—</span>
+                                ) : i.is_paid ? (
                                   <CheckCircle size={16} className="text-[#4A5D23]" />
                                 ) : (
                                   <XCircle size={16} className="text-[#C62828]" />

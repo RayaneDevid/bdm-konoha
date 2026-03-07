@@ -214,23 +214,26 @@ $$ LANGUAGE plpgsql;
 -- ==================
 
 -- Points par adhérent par cycle (tous participants confondus)
+-- Règles : 
+--   Ninja missions : ninjas (si réussie), exécutant (toujours), intervenants (toujours)
+--   Récolte missions : UNIQUEMENT les ninjas (si réussie)
 CREATE OR REPLACE VIEW adherent_cycle_points AS
-  -- Points des ninjas (UNIQUEMENT missions réussies)
+  -- Points des ninjas (UNIQUEMENT missions réussies, ninja ET récolte)
   SELECT mn.adherent_id, m.cycle_id, m.id AS mission_id, m.points
   FROM mission_ninjas mn
   JOIN missions m ON m.id = mn.mission_id
   WHERE m.status = 'reussi'
 UNION ALL
-  -- Points de l'exécutant (toujours, même si échec)
+  -- Points de l'exécutant (missions ninja uniquement)
   SELECT m.executor_adherent_id AS adherent_id, m.cycle_id, m.id AS mission_id, m.points
   FROM missions m
-  WHERE m.executor_adherent_id IS NOT NULL
+  WHERE m.executor_adherent_id IS NOT NULL AND m.mission_type = 'ninja'
 UNION ALL
-  -- Points des intervenants (toujours, même si échec, sauf externes)
+  -- Points des intervenants (missions ninja uniquement, sauf externes)
   SELECT mi.adherent_id, m.cycle_id, m.id AS mission_id, m.points
   FROM mission_intervenants mi
   JOIN missions m ON m.id = mi.mission_id
-  WHERE mi.is_external = false AND mi.adherent_id IS NOT NULL;
+  WHERE mi.is_external = false AND mi.adherent_id IS NOT NULL AND m.mission_type = 'ninja';
 
 -- Résumé agrégé par adhérent par cycle
 CREATE OR REPLACE VIEW adherent_cycle_summary AS
