@@ -181,6 +181,7 @@ export default function Adherents() {
               <label className="block text-sm font-medium text-[#3E2723]">Prénom</label>
               <input
                 type="text"
+                placeholder="Saki"
                 value={formPrenom}
                 onChange={(e) => setFormPrenom(e.target.value)}
                 required
@@ -191,6 +192,7 @@ export default function Adherents() {
               <label className="block text-sm font-medium text-[#3E2723]">Nom</label>
               <input
                 type="text"
+                placeholder="Sato"
                 value={formNom}
                 onChange={(e) => setFormNom(e.target.value)}
                 required

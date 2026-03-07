@@ -85,7 +85,7 @@ export default function Login() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="email@exemple.com"
+                    placeholder="prenom@konoha.bdm"
                     required
                     className="w-full h-9 px-3 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] placeholder-[#5D4037]/50 outline-none focus:border-[#D4A017] focus:ring-1 focus:ring-[#D4A017] transition-colors"
                     style={{ fontFamily: "'Inter', sans-serif" }}
@@ -100,6 +100,7 @@ export default function Login() {
                     <input
                       type={showPassword ? 'text' : 'password'}
                       value={password}
+                      placeholder="••••••••"
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       className="w-full h-9 px-3 pr-10 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] outline-none focus:border-[#D4A017] focus:ring-1 focus:ring-[#D4A017] transition-colors"

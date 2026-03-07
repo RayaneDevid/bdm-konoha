@@ -413,7 +413,7 @@ export default function Administration() {
                     type="text"
                     value={formFirstName}
                     onChange={(e) => setFormFirstName(e.target.value)}
-                    placeholder="Hiroshi"
+                    placeholder="Saki"
                     className="w-full bg-[#FAF3E3] border border-[#5D4037] rounded px-3 py-2 text-sm text-[#3E2723] placeholder:text-[#5D4037]/50 focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
                     required
                   />
@@ -424,7 +424,7 @@ export default function Administration() {
                     type="text"
                     value={formLastName}
                     onChange={(e) => setFormLastName(e.target.value)}
-                    placeholder="Tanaka"
+                    placeholder="Sato"
                     className="w-full bg-[#FAF3E3] border border-[#5D4037] rounded px-3 py-2 text-sm text-[#3E2723] placeholder:text-[#5D4037]/50 focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
                     required
                   />
@@ -438,7 +438,7 @@ export default function Administration() {
                   type="email"
                   value={formEmail}
                   onChange={(e) => setFormEmail(e.target.value)}
-                  placeholder="email@bureaudesmissions.jp"
+                  placeholder="prenom@konoha.bdm"
                   className="w-full bg-[#FAF3E3] border border-[#5D4037] rounded px-3 py-2 text-sm text-[#3E2723] placeholder:text-[#5D4037]/50 focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
                   required
                 />
