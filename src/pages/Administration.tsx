@@ -16,12 +16,14 @@ const ROLES: Role[] = ['gerant', 'co-gerant', 'membre_bdm'];
 
 // Matrice statique des permissions
 const PERMISSIONS: { label: string; gerant: boolean; 'co-gerant': boolean; membre_bdm: boolean }[] = [
-  { label: 'Gérer les adhérents', gerant: true, 'co-gerant': true, membre_bdm: true },
+  { label: 'Gérer les adhérents', gerant: true, 'co-gerant': true, membre_bdm: false },
   { label: 'Enregistrer des missions', gerant: true, 'co-gerant': true, membre_bdm: true },
   { label: 'Valider les paiements', gerant: true, 'co-gerant': true, membre_bdm: false },
+  { label: 'Gérer les récompenses', gerant: true, 'co-gerant': true, membre_bdm: false },
   { label: 'Gérer les cycles', gerant: true, 'co-gerant': true, membre_bdm: false },
+  { label: 'Modifier les dates de cycle', gerant: true, 'co-gerant': false, membre_bdm: false },
   { label: 'Configurer les cartes', gerant: true, 'co-gerant': false, membre_bdm: false },
-  { label: 'Gérer les Gérants', gerant: true, 'co-gerant': false, membre_bdm: false },
+  { label: 'Gérer les utilisateurs', gerant: true, 'co-gerant': false, membre_bdm: false },
   { label: 'Accès Administration', gerant: true, 'co-gerant': true, membre_bdm: false },
 ];
 

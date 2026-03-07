@@ -68,7 +68,7 @@ export default function Rapports() {
     const [cyclesRes, staffRes, adherentsRes] = await Promise.all([
       supabase.from('cycles').select('*').order('start_date', { ascending: false }),
       supabase.from('staff_users').select('*').eq('is_active', true).order('last_name'),
-      supabase.from('adherents').select('*').order('last_name'),
+      supabase.from('adherents').select('*').eq('is_active', true).order('last_name'),
     ]);
 
     if (cyclesRes.data) {

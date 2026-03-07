@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter, Eye, ArrowUp, ChevronDown, X } from 'lucide-react';
+import { Search, Filter, Eye, ArrowUp, ChevronDown, X, Trash2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../hooks/useAuth';
 import { TIER_LABELS } from '../utils/constants';
 import type { Adherent, CardTier } from '../types';
 
@@ -18,10 +19,14 @@ interface AdherentWithStaff extends Adherent {
 
 export default function Adherents() {
   const navigate = useNavigate();
+  const { staffUser } = useAuth();
   const [adherents, setAdherents] = useState<AdherentWithStaff[]>([]);
   const [search, setSearch] = useState('');
   const [filterTier, setFilterTier] = useState<CardTier | 'all'>('all');
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  const canManage = staffUser && (staffUser.role === 'gerant' || staffUser.role === 'co-gerant');
 
   // Form state
   const [formNom, setFormNom] = useState('');
@@ -41,6 +46,7 @@ export default function Adherents() {
     const { data, error } = await supabase
       .from('adherents')
       .select('*, staff_users!distributed_by(first_name, last_name)')
+      .eq('is_active', true)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -72,25 +78,14 @@ export default function Adherents() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!formNom.trim() || !formPrenom.trim()) return;
+    if (!formNom.trim() || !formPrenom.trim() || !canManage) return;
     setSubmitting(true);
-
-    const { data: userData } = await supabase.auth.getUser();
-    let staffId: string | null = null;
-    if (userData.user) {
-      const { data: staff } = await supabase
-        .from('staff_users')
-        .select('id')
-        .eq('auth_user_id', userData.user.id)
-        .single();
-      staffId = staff?.id ?? null;
-    }
 
     const { error } = await supabase.from('adherents').insert({
       last_name: formNom.trim(),
       first_name: formPrenom.trim(),
       card_tier: formTier,
-      distributed_by: staffId,
+      distributed_by: staffUser?.id ?? null,
     });
 
     if (error) {
@@ -106,24 +101,13 @@ export default function Adherents() {
   }
 
   async function handleEvolution() {
-    if (!evolTarget) return;
-
-    const { data: userData } = await supabase.auth.getUser();
-    let staffId: string | null = null;
-    if (userData.user) {
-      const { data: staff } = await supabase
-        .from('staff_users')
-        .select('id')
-        .eq('auth_user_id', userData.user.id)
-        .single();
-      staffId = staff?.id ?? null;
-    }
+    if (!evolTarget || !canManage) return;
 
     await supabase.from('card_evolutions').insert({
       adherent_id: evolTarget.id,
       old_tier: evolTarget.card_tier,
       new_tier: evolNewTier,
-      evolved_by: staffId,
+      evolved_by: staffUser?.id ?? null,
     });
 
     await supabase
@@ -151,6 +135,15 @@ export default function Adherents() {
   const staffName = (a: AdherentWithStaff) =>
     a.staff_users ? `${a.staff_users.first_name} ${a.staff_users.last_name}` : '—';
 
+  async function handleDelete(id: string, name: string) {
+    if (!canManage) return;
+    if (!confirm(`Supprimer l'adhérent "${name}" ? Cette action est irréversible.`)) return;
+    setDeleting(id);
+    await supabase.from('adherents').update({ is_active: false }).eq('id', id);
+    setDeleting(null);
+    fetchAdherents();
+  }
+
   const formatDate = (d: string) =>
     new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
@@ -165,6 +158,7 @@ export default function Adherents() {
       </div>
 
       {/* Formulaire Nouvel Adherent */}
+      {canManage && (
       <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-xl overflow-hidden">
         <div className="h-2 bg-gradient-to-r from-[#D4A017] via-[#8B0000] to-[#D4A017]" />
         <div className="bg-[#E8D5B7] border-b-2 border-[#5D4037] px-6 py-5">
@@ -217,7 +211,7 @@ export default function Adherents() {
             <div className="space-y-2">
               <label className="block text-sm font-medium text-[#3E2723]">Distribué par</label>
               <div className="w-full h-9 px-3 bg-[#E8D5B7] border border-[#5D4037] rounded text-sm text-[#5D4037] flex items-center">
-                Test
+                {staffUser ? `${staffUser.first_name} ${staffUser.last_name}` : '—'}
               </div>
             </div>
           </div>
@@ -231,6 +225,7 @@ export default function Adherents() {
           </button>
         </form>
       </div>
+      )}
 
       {/* Barre de recherche + filtre */}
       <div className="bg-[#F5E6CA] border-2 border-[#5D4037] rounded-[10px] shadow-lg px-6 py-6">
@@ -326,20 +321,32 @@ export default function Adherents() {
                             >
                               <Eye size={16} className="text-[#5D4037]" />
                             </button>
-                            <button
-                              onClick={() => {
-                                if (upgrades.length > 0) {
-                                  setEvolTarget(a);
-                                  setEvolNewTier(upgrades[0]);
-                                }
-                              }}
-                              disabled={upgrades.length === 0}
-                              className={`w-[38px] h-8 bg-[#D4A017] border border-[#8B0000] rounded flex items-center justify-center transition-colors cursor-pointer ${upgrades.length === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#C49000]'
-                                }`}
-                              title="Évolution"
-                            >
-                              <ArrowUp size={16} className="text-white" />
-                            </button>
+                            {canManage && (
+                              <>
+                                <button
+                                  onClick={() => {
+                                    if (upgrades.length > 0) {
+                                      setEvolTarget(a);
+                                      setEvolNewTier(upgrades[0]);
+                                    }
+                                  }}
+                                  disabled={upgrades.length === 0}
+                                  className={`w-[38px] h-8 bg-[#D4A017] border border-[#8B0000] rounded flex items-center justify-center transition-colors cursor-pointer ${upgrades.length === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#C49000]'
+                                    }`}
+                                  title="Évolution"
+                                >
+                                  <ArrowUp size={16} className="text-white" />
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(a.id, `${a.first_name} ${a.last_name}`)}
+                                  disabled={deleting === a.id}
+                                  className="w-[38px] h-8 bg-[#C62828] border border-[#8B0000] rounded flex items-center justify-center hover:bg-[#B71C1C] transition-colors cursor-pointer disabled:opacity-50"
+                                  title="Supprimer"
+                                >
+                                  <Trash2 size={16} className="text-white" />
+                                </button>
+                              </>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -400,7 +407,7 @@ export default function Adherents() {
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-[#3E2723]">Évolution réalisée par</label>
                 <div className="w-full h-9 px-3 bg-[#E8D5B7] border border-[#5D4037] rounded text-sm text-[#5D4037] flex items-center">
-                  Test
+                  {staffUser ? `${staffUser.first_name} ${staffUser.last_name}` : '—'}
                 </div>
               </div>
 

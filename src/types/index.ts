@@ -24,6 +24,7 @@ export interface Adherent {
   last_name: string;
   card_tier: CardTier;
   distributed_by: string;
+  is_active: boolean;
   created_at: string;
 }
 

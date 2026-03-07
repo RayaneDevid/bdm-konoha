@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Plus, Calendar, X, Target, Award, Flame, Shield } from 'lucide-react';
+import { Plus, Calendar, X, Target, Award, Flame, Shield, Pencil } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import type { Cycle, CycleStatus } from '../types';
@@ -54,6 +54,12 @@ export default function Cycles() {
   const [formStart, setFormStart] = useState('');
   const [formEnd, setFormEnd] = useState('');
   const [creating, setCreating] = useState(false);
+
+  // Edit modal state
+  const [editCycle, setEditCycle] = useState<Cycle | null>(null);
+  const [editStart, setEditStart] = useState('');
+  const [editEnd, setEditEnd] = useState('');
+  const [saving, setSaving] = useState(false);
 
   const isGerant = staffUser?.role === 'gerant';
 
@@ -152,6 +158,28 @@ export default function Cycles() {
     setFormEnd('');
     setShowModal(false);
     setCreating(false);
+    fetchCycles();
+  }
+
+  /* ---- Edit cycle dates ------------------------------------------ */
+  function openEditModal(c: Cycle) {
+    setEditCycle(c);
+    setEditStart(c.start_date);
+    setEditEnd(c.end_date);
+  }
+
+  async function handleEditDates(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editCycle || !editStart || !editEnd) return;
+    setSaving(true);
+
+    await supabase
+      .from('cycles')
+      .update({ start_date: editStart, end_date: editEnd })
+      .eq('id', editCycle.id);
+
+    setEditCycle(null);
+    setSaving(false);
     fetchCycles();
   }
 
@@ -256,8 +284,8 @@ export default function Cycles() {
                   </div>
                 </div>
 
-                {/* Active indicator */}
-                {isActive && (
+                {/* Active indicator or Edit button */}
+                {isActive ? (
                   <div className="mx-5 mb-5 bg-[#D4A017] border border-[#8B0000] rounded-md py-2 flex items-center justify-center gap-2">
                     <Flame size={16} className="text-[#8B0000]" />
                     <span
@@ -266,6 +294,17 @@ export default function Cycles() {
                     >
                       Cycle en cours
                     </span>
+                  </div>
+                ) : null}
+                {isGerant && (
+                  <div className="mx-5 mb-5">
+                    <button
+                      onClick={() => openEditModal(c)}
+                      className="w-full h-8 bg-[#FAF3E3] border border-[#5D4037] rounded flex items-center justify-center gap-2 text-sm text-[#5D4037] hover:bg-[#E8D5B7] transition-colors cursor-pointer"
+                    >
+                      <Pencil size={14} />
+                      Modifier les dates
+                    </button>
                   </div>
                 )}
               </div>
@@ -348,6 +387,72 @@ export default function Cycles() {
                   className="flex-1 h-9 bg-[#8B0000] border border-[#6B0000] rounded text-sm text-[#FAF3E3] font-medium hover:bg-[#7A0000] transition-colors cursor-pointer disabled:opacity-60"
                 >
                   {creating ? 'Création...' : 'Créer le cycle'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ---- Modale Modifier Dates ---- */}
+      {editCycle && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="h-2 bg-gradient-to-r from-[#D4A017] via-[#8B0000] to-[#D4A017]" />
+
+            <div className="px-6 pt-5 flex items-start justify-between">
+              <h3
+                className="text-2xl font-medium text-[#8B0000] flex items-center gap-2"
+                style={{ fontFamily: "'Noto Serif JP', serif" }}
+              >
+                <Pencil size={22} className="text-[#8B0000]" />
+                Modifier {editCycle.name}
+              </h3>
+              <button
+                onClick={() => setEditCycle(null)}
+                className="text-[#5D4037] hover:text-[#3E2723] cursor-pointer"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleEditDates} className="px-6 pb-6 pt-4 space-y-5">
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-[#3E2723]">Date de début</label>
+                <input
+                  type="date"
+                  value={editStart}
+                  onChange={(e) => setEditStart(e.target.value)}
+                  required
+                  className="w-full h-9 px-3 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] outline-none focus:border-[#D4A017] focus:ring-1 focus:ring-[#D4A017] transition-colors"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-[#3E2723]">Date de fin</label>
+                <input
+                  type="date"
+                  value={editEnd}
+                  onChange={(e) => setEditEnd(e.target.value)}
+                  required
+                  className="w-full h-9 px-3 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] outline-none focus:border-[#D4A017] focus:ring-1 focus:ring-[#D4A017] transition-colors"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setEditCycle(null)}
+                  className="flex-1 h-9 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] hover:bg-[#E8D5B7] transition-colors cursor-pointer"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="flex-1 h-9 bg-[#8B0000] border border-[#6B0000] rounded text-sm text-[#FAF3E3] font-medium hover:bg-[#7A0000] transition-colors cursor-pointer disabled:opacity-60"
+                >
+                  {saving ? 'Enregistrement...' : 'Enregistrer'}
                 </button>
               </div>
             </form>

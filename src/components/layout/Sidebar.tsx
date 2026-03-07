@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import type { Role } from '../../types';
+import { useAuth } from '../../hooks/useAuth';
 import {
   LayoutDashboard,
   Users,
@@ -12,7 +12,7 @@ import {
 
 const navItems = [
   { to: '/', label: 'Tableau de bord', icon: LayoutDashboard },
-  { to: '/adherents', label: 'Adhérents', icon: Users },
+  { to: '/adherents', label: 'Adhérents', icon: Users, gerantOnly: true },
   { to: '/rapports', label: 'Rapports BDM', icon: FileText },
   { to: '/recompenses', label: 'Récompenses', icon: Gift },
   { to: '/config-cartes', label: 'Config Cartes', icon: Settings, gerantOnly: true },
@@ -21,7 +21,8 @@ const navItems = [
 ];
 
 export default function Sidebar() {
-  const role = 'gerant' as Role; // TODO: remplacer par le vrai role
+  const { staffUser } = useAuth();
+  const role = staffUser?.role ?? 'membre_bdm';
 
   const visibleItems = navItems.filter((item) => {
     if (item.gerantOnly && role === 'membre_bdm') return false;

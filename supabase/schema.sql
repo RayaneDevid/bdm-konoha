@@ -26,6 +26,7 @@ CREATE TABLE adherents (
   last_name TEXT NOT NULL,
   card_tier TEXT NOT NULL CHECK (card_tier IN ('bronze', 'or', 'vip')) DEFAULT 'bronze',
   distributed_by UUID REFERENCES staff_users(id),
+  is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -192,7 +193,7 @@ CREATE TRIGGER on_auth_user_created
 AFTER INSERT ON auth.users
 FOR EACH ROW EXECUTE FUNCTION handle_new_user();
 
--- Reset des cartes au nouveau cycle (Bronze pour tous sauf VIP)
+-- Reset des cartes au nouveau cycle (archive TOUS les adhérents, y compris VIP)
 CREATE OR REPLACE FUNCTION reset_cards_for_new_cycle()
 RETURNS void AS $$
 BEGIN
@@ -200,12 +201,12 @@ BEGIN
   INSERT INTO card_evolutions (adherent_id, old_tier, new_tier, evolved_by)
   SELECT id, card_tier, 'bronze', NULL
   FROM adherents
-  WHERE card_tier = 'or';
+  WHERE card_tier IN ('or', 'vip') AND is_active = true;
 
-  -- Rétrograde les Or en Bronze
+  -- Archive tous les adhérents actifs
   UPDATE adherents
-  SET card_tier = 'bronze'
-  WHERE card_tier = 'or';
+  SET is_active = false, card_tier = 'bronze'
+  WHERE is_active = true;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -215,25 +216,26 @@ $$ LANGUAGE plpgsql;
 
 -- Points par adhérent par cycle (tous participants confondus)
 -- Règles : 
---   Ninja missions : ninjas (si réussie), exécutant (toujours), intervenants (toujours)
---   Récolte missions : UNIQUEMENT les ninjas (si réussie)
+--   Points attribués uniquement quand is_paid = true
+--   Ninja missions : ninjas (si réussie + payé), exécutant (payé), intervenants (payé)
+--   Récolte missions : UNIQUEMENT les ninjas (si réussie + payé)
 CREATE OR REPLACE VIEW adherent_cycle_points AS
-  -- Points des ninjas (UNIQUEMENT missions réussies, ninja ET récolte)
+  -- Points des ninjas (missions réussies ET payé)
   SELECT mn.adherent_id, m.cycle_id, m.id AS mission_id, m.points
   FROM mission_ninjas mn
   JOIN missions m ON m.id = mn.mission_id
-  WHERE m.status = 'reussi'
+  WHERE m.status = 'reussi' AND mn.is_paid = true
 UNION ALL
-  -- Points de l'exécutant (missions ninja uniquement)
+  -- Points de l'exécutant (missions ninja uniquement, payé)
   SELECT m.executor_adherent_id AS adherent_id, m.cycle_id, m.id AS mission_id, m.points
   FROM missions m
-  WHERE m.executor_adherent_id IS NOT NULL AND m.mission_type = 'ninja'
+  WHERE m.executor_adherent_id IS NOT NULL AND m.mission_type = 'ninja' AND m.executor_is_paid = true
 UNION ALL
-  -- Points des intervenants (missions ninja uniquement, sauf externes)
+  -- Points des intervenants (missions ninja uniquement, sauf externes, payé)
   SELECT mi.adherent_id, m.cycle_id, m.id AS mission_id, m.points
   FROM mission_intervenants mi
   JOIN missions m ON m.id = mi.mission_id
-  WHERE mi.is_external = false AND mi.adherent_id IS NOT NULL AND m.mission_type = 'ninja';
+  WHERE mi.is_external = false AND mi.adherent_id IS NOT NULL AND m.mission_type = 'ninja' AND mi.is_paid = true;
 
 -- Résumé agrégé par adhérent par cycle
 CREATE OR REPLACE VIEW adherent_cycle_summary AS
