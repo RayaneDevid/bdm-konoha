@@ -25,6 +25,7 @@ export default function Sidebar() {
   const role = staffUser?.role ?? 'membre_bdm';
 
   const visibleItems = navItems.filter((item) => {
+    if (role === 'superviseur') return true;
     if (item.gerantOnly && role === 'membre_bdm') return false;
     if (item.adminOnly && role === 'membre_bdm') return false;
     return true;

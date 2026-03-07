@@ -12,19 +12,19 @@ import { useAuth } from '../hooks/useAuth';
 import { ROLE_COLORS, ROLE_LABELS } from '../utils/constants';
 import type { StaffUser, Role } from '../types';
 
-const ROLES: Role[] = ['gerant', 'co-gerant', 'membre_bdm'];
+const ROLES: Role[] = ['superviseur', 'gerant', 'co-gerant', 'membre_bdm'];
 
 // Matrice statique des permissions
-const PERMISSIONS: { label: string; gerant: boolean; 'co-gerant': boolean; membre_bdm: boolean }[] = [
-  { label: 'Gérer les adhérents', gerant: true, 'co-gerant': true, membre_bdm: false },
-  { label: 'Enregistrer des missions', gerant: true, 'co-gerant': true, membre_bdm: true },
-  { label: 'Valider les paiements', gerant: true, 'co-gerant': true, membre_bdm: false },
-  { label: 'Gérer les récompenses', gerant: true, 'co-gerant': true, membre_bdm: false },
-  { label: 'Gérer les cycles', gerant: true, 'co-gerant': true, membre_bdm: false },
-  { label: 'Modifier les dates de cycle', gerant: true, 'co-gerant': false, membre_bdm: false },
-  { label: 'Configurer les cartes', gerant: true, 'co-gerant': false, membre_bdm: false },
-  { label: 'Gérer les utilisateurs', gerant: true, 'co-gerant': false, membre_bdm: false },
-  { label: 'Accès Administration', gerant: true, 'co-gerant': true, membre_bdm: false },
+const PERMISSIONS: { label: string; superviseur: boolean; gerant: boolean; 'co-gerant': boolean; membre_bdm: boolean }[] = [
+  { label: 'Gérer les adhérents', superviseur: true, gerant: true, 'co-gerant': true, membre_bdm: false },
+  { label: 'Enregistrer des missions', superviseur: true, gerant: true, 'co-gerant': true, membre_bdm: true },
+  { label: 'Valider les paiements', superviseur: true, gerant: true, 'co-gerant': true, membre_bdm: false },
+  { label: 'Gérer les récompenses', superviseur: true, gerant: true, 'co-gerant': true, membre_bdm: false },
+  { label: 'Gérer les cycles', superviseur: true, gerant: true, 'co-gerant': true, membre_bdm: false },
+  { label: 'Modifier les dates de cycle', superviseur: true, gerant: true, 'co-gerant': false, membre_bdm: false },
+  { label: 'Configurer les cartes', superviseur: true, gerant: true, 'co-gerant': false, membre_bdm: false },
+  { label: 'Gérer les utilisateurs', superviseur: true, gerant: true, 'co-gerant': false, membre_bdm: false },
+  { label: 'Accès Administration', superviseur: true, gerant: true, 'co-gerant': true, membre_bdm: false },
 ];
 
 function generatePassword(length = 12) {
@@ -34,7 +34,7 @@ function generatePassword(length = 12) {
 
 export default function Administration() {
   const { staffUser } = useAuth();
-  const isGerant = staffUser?.role === 'gerant';
+  const isGerant = staffUser?.role === 'superviseur' || staffUser?.role === 'gerant';
 
   const [users, setUsers] = useState<StaffUser[]>([]);
   const [loading, setLoading] = useState(true);

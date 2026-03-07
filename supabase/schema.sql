@@ -13,7 +13,7 @@ CREATE TABLE staff_users (
   email TEXT UNIQUE NOT NULL,
   first_name TEXT NOT NULL,
   last_name TEXT NOT NULL,
-  role TEXT NOT NULL CHECK (role IN ('gerant', 'co-gerant', 'membre_bdm')),
+  role TEXT NOT NULL CHECK (role IN ('superviseur', 'gerant', 'co-gerant', 'membre_bdm')),
   is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT now(),
   auth_user_id UUID UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE
@@ -285,10 +285,10 @@ CREATE POLICY "staff_users_select" ON staff_users FOR SELECT
   USING (auth.uid() IS NOT NULL);
 
 CREATE POLICY "staff_users_insert" ON staff_users FOR INSERT
-  WITH CHECK (get_current_role() IN ('gerant', 'co-gerant'));
+  WITH CHECK (get_current_role() IN ('superviseur', 'gerant', 'co-gerant'));
 
 CREATE POLICY "staff_users_update" ON staff_users FOR UPDATE
-  USING (get_current_role() IN ('gerant', 'co-gerant'));
+  USING (get_current_role() IN ('superviseur', 'gerant', 'co-gerant'));
 
 -- adherents : lecture/écriture par tous les authentifies
 CREATE POLICY "adherents_select" ON adherents FOR SELECT
@@ -312,10 +312,10 @@ CREATE POLICY "cycles_select" ON cycles FOR SELECT
   USING (auth.uid() IS NOT NULL);
 
 CREATE POLICY "cycles_insert" ON cycles FOR INSERT
-  WITH CHECK (get_current_role() = 'gerant');
+  WITH CHECK (get_current_role() IN ('superviseur', 'gerant'));
 
 CREATE POLICY "cycles_update" ON cycles FOR UPDATE
-  USING (get_current_role() = 'gerant');
+  USING (get_current_role() IN ('superviseur', 'gerant'));
 
 -- missions : lecture/écriture par tous les authentifies, update paiement via app logic
 CREATE POLICY "missions_select" ON missions FOR SELECT
@@ -335,7 +335,7 @@ CREATE POLICY "mission_intervenants_insert" ON mission_intervenants FOR INSERT
   WITH CHECK (auth.uid() IS NOT NULL);
 
 CREATE POLICY "mission_intervenants_update" ON mission_intervenants FOR UPDATE
-  USING (get_current_role() IN ('gerant', 'co-gerant'));
+  USING (get_current_role() IN ('superviseur', 'gerant', 'co-gerant'));
 
 -- mission_ninjas : lecture/insert par tous, update paiement par gérant/co-gérant
 CREATE POLICY "mission_ninjas_select" ON mission_ninjas FOR SELECT
@@ -345,20 +345,20 @@ CREATE POLICY "mission_ninjas_insert" ON mission_ninjas FOR INSERT
   WITH CHECK (auth.uid() IS NOT NULL);
 
 CREATE POLICY "mission_ninjas_update" ON mission_ninjas FOR UPDATE
-  USING (get_current_role() IN ('gerant', 'co-gerant'));
+  USING (get_current_role() IN ('superviseur', 'gerant', 'co-gerant'));
 
 -- card_milestones : lecture par tous, écriture par gérant uniquement
 CREATE POLICY "card_milestones_select" ON card_milestones FOR SELECT
   USING (auth.uid() IS NOT NULL);
 
 CREATE POLICY "card_milestones_insert" ON card_milestones FOR INSERT
-  WITH CHECK (get_current_role() = 'gerant');
+  WITH CHECK (get_current_role() IN ('superviseur', 'gerant'));
 
 CREATE POLICY "card_milestones_update" ON card_milestones FOR UPDATE
-  USING (get_current_role() = 'gerant');
+  USING (get_current_role() IN ('superviseur', 'gerant'));
 
 CREATE POLICY "card_milestones_delete" ON card_milestones FOR DELETE
-  USING (get_current_role() = 'gerant');
+  USING (get_current_role() IN ('superviseur', 'gerant'));
 
 -- claimed_rewards : lecture/écriture par tous les authentifies
 CREATE POLICY "claimed_rewards_select" ON claimed_rewards FOR SELECT

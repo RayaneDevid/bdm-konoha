@@ -26,7 +26,7 @@ export default function Adherents() {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
 
-  const canManage = staffUser && (staffUser.role === 'gerant' || staffUser.role === 'co-gerant');
+  const canManage = staffUser && (staffUser.role === 'superviseur' || staffUser.role === 'gerant' || staffUser.role === 'co-gerant');
 
   // Form state
   const [formNom, setFormNom] = useState('');

@@ -39,12 +39,14 @@ export const TIER_LABELS: Record<CardTier, string> = {
 };
 
 export const ROLE_COLORS: Record<Role, string> = {
+  superviseur: '#6A0DAD',
   gerant: '#C41E3A',
   'co-gerant': '#E67E22',
   membre_bdm: '#1565C0',
 };
 
 export const ROLE_LABELS: Record<Role, string> = {
+  superviseur: 'Superviseur',
   gerant: 'Gérant BDM',
   'co-gerant': 'Co-gérant',
   membre_bdm: 'Membre BDM',

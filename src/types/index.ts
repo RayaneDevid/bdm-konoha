@@ -1,4 +1,4 @@
-export type Role = 'gerant' | 'co-gerant' | 'membre_bdm';
+export type Role = 'superviseur' | 'gerant' | 'co-gerant' | 'membre_bdm';
 export type CardTier = 'bronze' | 'or' | 'vip';
 export type MissionType = 'ninja' | 'recolte';
 export type MissionRank = 'D' | 'C' | 'B' | 'A' | 'S';

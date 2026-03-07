@@ -7,6 +7,7 @@ import { ROLE_LABELS } from '../../utils/constants';
 import type { Role } from '../../types';
 
 const ROLE_BADGE_STYLES: Record<Role, string> = {
+  superviseur: 'bg-[#6A0DAD] border-[#4B0082] text-white',
   gerant: 'bg-[#C62828] border-[#8B0000] text-white',
   'co-gerant': 'bg-[#E67E22] border-[#C05600] text-white',
   membre_bdm: 'bg-[#1565C0] border-[#0D47A1] text-white',

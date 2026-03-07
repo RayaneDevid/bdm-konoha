@@ -38,7 +38,7 @@ const RANKS: MissionRank[] = ['D', 'C', 'B', 'A', 'S'];
 
 export default function Rapports() {
   const { staffUser } = useAuth();
-  const canMarkPaid = staffUser?.role === 'gerant' || staffUser?.role === 'co-gerant';
+  const canMarkPaid = staffUser?.role === 'superviseur' || staffUser?.role === 'gerant' || staffUser?.role === 'co-gerant';
 
   const [cycles, setCycles] = useState<Cycle[]>([]);
   const [selectedCycleId, setSelectedCycleId] = useState('');

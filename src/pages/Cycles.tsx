@@ -61,7 +61,7 @@ export default function Cycles() {
   const [editEnd, setEditEnd] = useState('');
   const [saving, setSaving] = useState(false);
 
-  const isGerant = staffUser?.role === 'gerant';
+  const isGerant = staffUser?.role === 'superviseur' || staffUser?.role === 'gerant';
 
   /* ---- Fetch cycles ----------------------------------------------- */
   useEffect(() => {

@@ -56,7 +56,7 @@ export default function Recompenses() {
   const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'done'>('all');
   const [loading, setLoading] = useState(true);
 
-  const canManage = staffUser && (staffUser.role === 'gerant' || staffUser.role === 'co-gerant');
+  const canManage = staffUser && (staffUser.role === 'superviseur' || staffUser.role === 'gerant' || staffUser.role === 'co-gerant');
 
   /* ---- cycles ---- */
   useEffect(() => {
