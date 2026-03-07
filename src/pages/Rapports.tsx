@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
+import SearchableSelect from '../components/ui/SearchableSelect';
+import SearchableMultiSelect from '../components/ui/SearchableMultiSelect';
 import { RANK_POINTS, RANK_COLORS, MISSION_STATUS_LABELS, MISSION_STATUS_COLORS } from '../utils/constants';
 import type {
   Cycle,
@@ -255,10 +257,6 @@ export default function Rapports() {
     fetchMissions();
   }
 
-  const toggleMultiSelect = (list: string[], setList: (v: string[]) => void, id: string) => {
-    setList(list.includes(id) ? list.filter((x) => x !== id) : [...list, id]);
-  };
-
   const totalPoints = missions.reduce((sum, m) => sum + m.points, 0);
 
   const formatDate = (date: string) =>
@@ -395,109 +393,38 @@ export default function Rapports() {
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-[#3E2723]">Executant</label>
-              <select
+              <SearchableSelect
+                options={staffList.map((s) => ({ value: s.id, label: `${s.first_name} ${s.last_name}` }))}
                 value={formExecutor}
-                onChange={(e) => setFormExecutor(e.target.value)}
-                className="w-full bg-[#FAF3E3] border border-[#5D4037] rounded px-3 py-2 text-sm text-[#3E2723] focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
+                onChange={setFormExecutor}
+                placeholder="Sélectionner..."
                 required
-              >
-                <option value="">Selectionner...</option>
-                {staffList.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.first_name} {s.last_name}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-[#3E2723]">Intervenants</label>
-              <div className="relative">
-                <select
-                  value=""
-                  onChange={(e) => {
-                    if (e.target.value) toggleMultiSelect(formIntervenants, setFormIntervenants, e.target.value);
-                  }}
-                  className="w-full bg-[#FAF3E3] border border-[#5D4037] rounded px-3 py-2 text-sm text-[#5D4037] focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
-                >
-                  <option value="">Ajouter...</option>
-                  <option value="external">Externe BDM</option>
-                  {staffList
-                    .filter((s) => !formIntervenants.includes(s.id))
-                    .map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.first_name} {s.last_name}
-                      </option>
-                    ))}
-                </select>
-              </div>
-              {formIntervenants.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {formIntervenants.map((id) => {
-                    const staff = staffList.find((s) => s.id === id);
-                    const name = id === 'external' ? 'Externe BDM' : `${staff?.first_name ?? ''} ${staff?.last_name ?? ''}`;
-                    return (
-                      <span
-                        key={id}
-                        className="bg-[#5D4037] text-[#FAF3E3] text-xs font-medium px-2 py-0.5 rounded flex items-center gap-1"
-                      >
-                        {name}
-                        <button
-                          type="button"
-                          onClick={() => setFormIntervenants(formIntervenants.filter((x) => x !== id))}
-                          className="hover:text-red-300 cursor-pointer"
-                        >
-                          ×
-                        </button>
-                      </span>
-                    );
-                  })}
-                </div>
-              )}
+              <SearchableMultiSelect
+                options={[
+                  { value: 'external', label: 'Externe BDM' },
+                  ...staffList.map((s) => ({ value: s.id, label: `${s.first_name} ${s.last_name}` })),
+                ]}
+                selected={formIntervenants}
+                onChange={setFormIntervenants}
+                placeholder="Ajouter..."
+                chipColor={{ bg: '#5D4037', text: '#FAF3E3' }}
+              />
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-[#3E2723]">Ninjas</label>
-              <div className="relative">
-                <select
-                  value=""
-                  onChange={(e) => {
-                    if (e.target.value) toggleMultiSelect(formNinjas, setFormNinjas, e.target.value);
-                  }}
-                  className="w-full bg-[#FAF3E3] border border-[#5D4037] rounded px-3 py-2 text-sm text-[#5D4037] focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
-                >
-                  <option value="">Ajouter...</option>
-                  {adherentList
-                    .filter((a) => !formNinjas.includes(a.id))
-                    .map((a) => (
-                      <option key={a.id} value={a.id}>
-                        {a.last_name} {a.first_name}
-                      </option>
-                    ))}
-                </select>
-              </div>
-              {formNinjas.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {formNinjas.map((id) => {
-                    const adh = adherentList.find((a) => a.id === id);
-                    return (
-                      <span
-                        key={id}
-                        className="bg-[#D4A017] text-[#3E2723] text-xs font-medium px-2 py-0.5 rounded flex items-center gap-1"
-                      >
-                        {adh?.last_name} {adh?.first_name}
-                        <button
-                          type="button"
-                          onClick={() => setFormNinjas(formNinjas.filter((x) => x !== id))}
-                          className="hover:text-red-700 cursor-pointer"
-                        >
-                          ×
-                        </button>
-                      </span>
-                    );
-                  })}
-                </div>
-              )}
+              <SearchableMultiSelect
+                options={adherentList.map((a) => ({ value: a.id, label: `${a.last_name} ${a.first_name}` }))}
+                selected={formNinjas}
+                onChange={setFormNinjas}
+                placeholder="Ajouter..."
+                chipColor={{ bg: '#D4A017', text: '#3E2723' }}
+              />
             </div>
           </div>
 
