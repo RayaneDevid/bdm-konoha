@@ -16,12 +16,6 @@ interface EvolutionRow extends CardEvolution {
   staff_name?: string;
 }
 
-interface CyclePoints {
-  cycle_id: string;
-  mission_count: number;
-  total_points: number;
-}
-
 export default function AdherentProfile() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
