@@ -300,8 +300,8 @@ export default function Rapports() {
       </div>
 
       {/* Formulaire Nouvelle Mission */}
-      <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-xl overflow-hidden">
-        <div className="h-2 bg-gradient-to-r from-[#D4A017] via-[#8B0000] to-[#D4A017]" />
+      <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-xl">
+        <div className="h-2 bg-gradient-to-r from-[#D4A017] via-[#8B0000] to-[#D4A017] rounded-t-md" />
 
         <div className="bg-[#E8D5B7] border-b-2 border-[#5D4037] px-6 py-5">
           <div className="flex items-center gap-4">
