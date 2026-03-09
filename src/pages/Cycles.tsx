@@ -560,7 +560,7 @@ export default function Cycles() {
                   disabled={deleting}
                   className="flex-1 h-9 bg-[#C62828] border border-[#B71C1C] rounded text-sm text-white font-medium hover:bg-[#B71C1C] transition-colors cursor-pointer disabled:opacity-60"
                 >
-                  {deleting ? 'Suppression...' : 'Supprimer définitivement'}
+                  {deleting ? 'Suppression...' : 'Supprimer'}
                 </button>
               </div>
             </div>
