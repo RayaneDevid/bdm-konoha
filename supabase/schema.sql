@@ -89,9 +89,10 @@ CREATE TABLE mission_ninjas (
   paid_marked_by UUID REFERENCES staff_users(id)
 );
 
--- Configuration des paliers de carte
+-- Configuration des paliers de carte (liés à un cycle)
 CREATE TABLE card_milestones (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  cycle_id UUID REFERENCES cycles(id) ON DELETE CASCADE,
   card_tier TEXT NOT NULL CHECK (card_tier IN ('bronze', 'or', 'vip')),
   pm_threshold INTEGER NOT NULL,
   reward_type TEXT NOT NULL CHECK (reward_type IN ('ryos', 'equipement', 'outfit', 'kunais', 'pieces_merite', 'autre')),
@@ -370,42 +371,6 @@ CREATE POLICY "claimed_rewards_insert" ON claimed_rewards FOR INSERT
 -- ==================
 -- 5. SEED — Paliers de cartes
 -- ==================
-
--- Bronze (Pass Mérite CADET — gratuit)
-INSERT INTO card_milestones (card_tier, pm_threshold, reward_type, reward_description, sort_order) VALUES
-  ('bronze', 100, 'autre', '5 bols de ramen royal', 1),
-  ('bronze', 200, 'ryos', '500 Ryos', 2),
-  ('bronze', 300, 'equipement', '1 équipement T1 au choix', 3),
-  ('bronze', 400, 'ryos', '1000 Ryos', 4),
-  ('bronze', 500, 'kunais', '25 kunais', 5),
-  ('bronze', 600, 'ryos', '2000 Ryos', 6),
-  ('bronze', 700, 'equipement', '3 équipements T1 au choix', 7),
-  ('bronze', 800, 'outfit', '1 tenue commune', 8),
-  ('bronze', 900, 'pieces_merite', '1 pièce mérite', 9),
-  ('bronze', 1000, 'ryos', '5000 Ryos', 10);
-
--- Or (Pass Mérite SUPRÊME — 30 000 ryos, valable 1 cycle)
-INSERT INTO card_milestones (card_tier, pm_threshold, reward_type, reward_description, sort_order) VALUES
-  ('or', 250, 'ryos', '1500 Ryos', 1),
-  ('or', 500, 'pieces_merite', '2 pièces mérite', 2),
-  ('or', 750, 'outfit', '1 tenue rare', 3),
-  ('or', 1000, 'kunais', '500 kunais', 4),
-  ('or', 1250, 'ryos', '3000 Ryos', 5),
-  ('or', 1500, 'ryos', '5000 Ryos', 6),
-  ('or', 1750, 'pieces_merite', '3 pièces mérite', 7),
-  ('or', 2000, 'equipement', '3 équipements T3', 8),
-  ('or', 2250, 'ryos', '10000 Ryos', 9),
-  ('or', 2500, 'outfit', '1 tenue exclusive BDM', 10);
-
--- VIP (Pass Mérite LÉGENDE — 120 000 ryos, permanent à vie)
-INSERT INTO card_milestones (card_tier, pm_threshold, reward_type, reward_description, sort_order) VALUES
-  ('vip', 300, 'ryos', '7500 Ryos', 1),
-  ('vip', 600, 'ryos', '10000 Ryos', 2),
-  ('vip', 900, 'outfit', '1 tenue épique', 3),
-  ('vip', 1200, 'equipement', '1 équipement T3', 4),
-  ('vip', 1500, 'pieces_merite', '5 pièces mérite', 5),
-  ('vip', 1800, 'outfit', '1 tenue exclusive BDM', 6),
-  ('vip', 2000, 'ryos', '15000 Ryos', 7),
-  ('vip', 2250, 'pieces_merite', '10 pièces mérite', 8),
-  ('vip', 2500, 'equipement', '3 équipements T4', 9),
-  ('vip', 2800, 'ryos', '50000 Ryos', 10);
+-- Les paliers sont liés à un cycle spécifique (cycle_id).
+-- Ils sont créés via l'interface Config Cartes après création du premier cycle.
+-- Pas de données seed globales : chaque cycle configure ses propres paliers.

@@ -81,6 +81,7 @@ export interface MissionNinja {
 
 export interface CardMilestone {
   id: string;
+  cycle_id: string | null;
   card_tier: CardTier;
   pm_threshold: number;
   reward_type: RewardType;
