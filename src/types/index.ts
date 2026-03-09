@@ -1,10 +1,11 @@
 export type Role = 'superviseur' | 'gerant' | 'co-gerant' | 'membre_bdm';
-export type CardTier = 'bronze' | 'or' | 'vip';
-export type MissionType = 'ninja' | 'recolte';
+export type CardTier = 'bronze' | 'argent' | 'or' | 'vip';
+export type MissionType = 'ninja' | 'recolte' | 'passation';
 export type MissionRank = 'D' | 'C' | 'B' | 'A' | 'S';
 export type CycleStatus = 'active' | 'completed' | 'upcoming';
 export type RewardType = 'ryos' | 'equipement' | 'outfit' | 'kunais' | 'pieces_merite' | 'autre';
 export type MissionStatus = 'reussi' | 'echec';
+export type PassationType = 'chunin' | 'genin_confirme';
 
 export interface StaffUser {
   id: string;
@@ -51,8 +52,10 @@ export interface Mission {
   cycle_id: string;
   mission_date: string;
   mission_type: MissionType;
+  passation_type: PassationType | null;
   rank: MissionRank;
   points: number;
+  mission_link: string;
   executor_id: string;
   executor_adherent_id: string | null;
   executor_is_paid: boolean;

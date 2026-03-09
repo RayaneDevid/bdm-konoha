@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Plus, Calendar, X, Target, Award, Flame, Shield, Pencil } from 'lucide-react';
+import { Plus, Calendar, X, Target, Award, Flame, Shield, Pencil, Trash2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import type { Cycle, CycleStatus } from '../types';
@@ -54,6 +54,7 @@ export default function Cycles() {
   const [formStart, setFormStart] = useState('');
   const [formEnd, setFormEnd] = useState('');
   const [creating, setCreating] = useState(false);
+  const [overlapError, setOverlapError] = useState('');
 
   // Edit modal state
   const [editCycle, setEditCycle] = useState<Cycle | null>(null);
@@ -61,7 +62,12 @@ export default function Cycles() {
   const [editEnd, setEditEnd] = useState('');
   const [saving, setSaving] = useState(false);
 
+  // Delete confirm modal state
+  const [deleteTarget, setDeleteTarget] = useState<Cycle | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
   const isGerant = staffUser?.role === 'superviseur' || staffUser?.role === 'gerant';
+  const canDelete = staffUser?.role === 'superviseur' || staffUser?.role === 'gerant' || staffUser?.role === 'co-gerant';
 
   /* ---- Fetch cycles ----------------------------------------------- */
   useEffect(() => {
@@ -118,6 +124,7 @@ export default function Cycles() {
   /* ---- Auto-suggest end date when start changes ------------------- */
   function handleStartChange(val: string) {
     setFormStart(val);
+    setOverlapError('');
     if (val) {
       setFormEnd(addDays(val, 21));
     }
@@ -127,26 +134,27 @@ export default function Cycles() {
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!formStart || !formEnd) return;
+
+    // Vérifier le chevauchement avec les cycles existants
+    const overlap = cycles.find((c) => formStart <= c.end_date && c.start_date <= formEnd);
+    if (overlap) {
+      setOverlapError(
+        `Ces dates chevauchent le cycle "${overlap.name}" (${formatDate(overlap.start_date)} → ${formatDate(overlap.end_date)}).`
+      );
+      return;
+    }
+    setOverlapError('');
     setCreating(true);
-
-    // Mark current active cycle as completed
-    const { error: completeErr } = await supabase
-      .from('cycles')
-      .update({ status: 'completed' })
-      .eq('status', 'active');
-
-    if (completeErr) console.error('Erreur clôture cycle actif:', completeErr);
 
     // Reset cards (Bronze for all except VIP)
     const { error: resetErr } = await supabase.rpc('reset_cards_for_new_cycle');
     if (resetErr) console.error('Erreur reset cartes:', resetErr);
 
-    // Insert new cycle
+    // Insert new cycle (le trigger sync_cycle_status calcule le status automatiquement)
     const { error: insertErr } = await supabase.from('cycles').insert({
       name: autoName,
       start_date: formStart,
       end_date: formEnd,
-      status: 'active',
     });
 
     if (insertErr) {
@@ -156,6 +164,7 @@ export default function Cycles() {
 
     setFormStart('');
     setFormEnd('');
+    setOverlapError('');
     setShowModal(false);
     setCreating(false);
     fetchCycles();
@@ -180,6 +189,27 @@ export default function Cycles() {
 
     setEditCycle(null);
     setSaving(false);
+    fetchCycles();
+  }
+
+  /* ---- Delete cycle ----------------------------------------------- */
+  function handleDelete(c: Cycle) {
+    const today = new Date().toISOString().split('T')[0];
+    const isActive = c.start_date <= today && today <= c.end_date;
+    if (isActive) return;
+    setDeleteTarget(c);
+  }
+
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    const { error } = await supabase.from('cycles').delete().eq('id', deleteTarget.id);
+    if (error) {
+      console.error('Erreur suppression cycle:', error);
+      alert(`Erreur lors de la suppression : ${error.message}`);
+    }
+    setDeleteTarget(null);
+    setDeleting(false);
     fetchCycles();
   }
 
@@ -227,14 +257,16 @@ export default function Cycles() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cycles.map((c) => {
-            const st = STATUS_CONFIG[c.status];
+            const today = new Date().toISOString().split('T')[0];
+            const isActive = c.start_date <= today && today <= c.end_date;
+            const computedStatus: CycleStatus = isActive ? 'active' : c.end_date < today ? 'completed' : 'upcoming';
+            const st = STATUS_CONFIG[computedStatus];
             const cs = stats[c.id] ?? { missions: 0, points: 0 };
-            const isActive = c.status === 'active';
 
             return (
               <div
                 key={c.id}
-                className={`bg-[#F5E6CA] border-4 rounded-[10px] shadow-lg overflow-hidden flex flex-col ${CARD_BORDER[c.status]}`}
+                className={`bg-[#F5E6CA] border-4 rounded-[10px] shadow-lg overflow-hidden flex flex-col ${CARD_BORDER[computedStatus]}`}
               >
                 {/* Top accent */}
                 <div className="h-1.5 bg-gradient-to-r from-[#8B0000] via-[#D4A017] to-[#8B0000]" />
@@ -284,9 +316,9 @@ export default function Cycles() {
                   </div>
                 </div>
 
-                {/* Active indicator or Edit button */}
-                {isActive ? (
-                  <div className="mx-5 mb-5 bg-[#D4A017] border border-[#8B0000] rounded-md py-2 flex items-center justify-center gap-2">
+                {/* Active indicator */}
+                {isActive && (
+                  <div className="mx-5 mt-1 bg-[#D4A017] border border-[#8B0000] rounded-md py-2 flex items-center justify-center gap-2">
                     <Flame size={16} className="text-[#8B0000]" />
                     <span
                       className="text-sm font-medium text-[#3E2723]"
@@ -295,16 +327,32 @@ export default function Cycles() {
                       Cycle en cours
                     </span>
                   </div>
-                ) : null}
-                {isGerant && (
-                  <div className="mx-5 mb-5">
-                    <button
-                      onClick={() => openEditModal(c)}
-                      className="w-full h-8 bg-[#FAF3E3] border border-[#5D4037] rounded flex items-center justify-center gap-2 text-sm text-[#5D4037] hover:bg-[#E8D5B7] transition-colors cursor-pointer"
-                    >
-                      <Pencil size={14} />
-                      Modifier les dates
-                    </button>
+                )}
+                {(isGerant || canDelete) && (
+                  <div className={`mx-5 mb-5 flex gap-2 ${isActive ? 'mt-2' : ''}`}>
+                    {isGerant && (
+                      <button
+                        onClick={() => openEditModal(c)}
+                        className="flex-1 h-8 bg-[#FAF3E3] border border-[#5D4037] rounded flex items-center justify-center gap-2 text-sm text-[#5D4037] hover:bg-[#E8D5B7] transition-colors cursor-pointer"
+                      >
+                        <Pencil size={14} />
+                        Modifier les dates
+                      </button>
+                    )}
+                    {canDelete && (
+                      <button
+                        onClick={() => handleDelete(c)}
+                        disabled={isActive}
+                        className={`h-8 px-3 border rounded flex items-center justify-center gap-1.5 text-sm transition-colors ${
+                          isActive
+                            ? 'bg-[#FAF3E3] border-[#5D4037]/40 text-[#5D4037]/40 cursor-not-allowed'
+                            : 'bg-[#FAF3E3] border-[#C62828] text-[#C62828] hover:bg-[#C62828] hover:text-white cursor-pointer'
+                        }`}
+                        title={isActive ? 'Impossible de supprimer le cycle actif' : 'Supprimer le cycle'}
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
@@ -329,7 +377,7 @@ export default function Cycles() {
                 Nouveau Cycle
               </h3>
               <button
-                onClick={() => setShowModal(false)}
+                onClick={() => { setShowModal(false); setFormStart(''); setFormEnd(''); setOverlapError(''); }}
                 className="text-[#5D4037] hover:text-[#3E2723] cursor-pointer"
               >
                 <X size={20} />
@@ -359,7 +407,7 @@ export default function Cycles() {
                 <input
                   type="date"
                   value={formEnd}
-                  onChange={(e) => setFormEnd(e.target.value)}
+                  onChange={(e) => { setFormEnd(e.target.value); setOverlapError(''); }}
                   required
                   className="w-full h-9 px-3 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] outline-none focus:border-[#D4A017] focus:ring-1 focus:ring-[#D4A017] transition-colors"
                 />
@@ -372,11 +420,18 @@ export default function Cycles() {
                 </span>
               </div>
 
+              {/* Overlap error */}
+              {overlapError && (
+                <div className="bg-[#C62828]/10 border border-[#C62828] rounded px-3 py-2">
+                  <p className="text-xs text-[#C62828] font-medium">{overlapError}</p>
+                </div>
+              )}
+
               {/* Buttons */}
               <div className="flex gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => setShowModal(false)}
+                  onClick={() => { setShowModal(false); setFormStart(''); setFormEnd(''); setOverlapError(''); }}
                   className="flex-1 h-9 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] hover:bg-[#E8D5B7] transition-colors cursor-pointer"
                 >
                   Annuler
@@ -456,6 +511,59 @@ export default function Cycles() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ---- Modale Confirmation Suppression ---- */}
+      {deleteTarget && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-[#F5E6CA] border-4 border-[#C62828] rounded-[10px] shadow-2xl w-full max-w-sm overflow-hidden">
+            <div className="h-2 bg-gradient-to-r from-[#C62828] via-[#8B0000] to-[#C62828]" />
+
+            <div className="px-6 pt-5 flex items-start justify-between">
+              <h3
+                className="text-xl font-medium text-[#8B0000] flex items-center gap-2"
+                style={{ fontFamily: "'Noto Serif JP', serif" }}
+              >
+                <Trash2 size={20} className="text-[#C62828]" />
+                Supprimer {deleteTarget.name}
+              </h3>
+              <button
+                onClick={() => setDeleteTarget(null)}
+                className="text-[#5D4037] hover:text-[#3E2723] cursor-pointer"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="px-6 pt-4 pb-6 space-y-5">
+              <p className="text-sm text-[#3E2723]">
+                Cette action est <span className="font-semibold">irréversible</span>. Toutes les missions liées à ce cycle seront également supprimées.
+              </p>
+              <div className="bg-[#C62828]/10 border border-[#C62828]/40 rounded px-3 py-2">
+                <p className="text-xs text-[#C62828] font-medium">
+                  Cycle : {deleteTarget.name} ({formatDate(deleteTarget.start_date)} → {formatDate(deleteTarget.end_date)})
+                </p>
+              </div>
+              <div className="flex gap-3 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setDeleteTarget(null)}
+                  className="flex-1 h-9 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] hover:bg-[#E8D5B7] transition-colors cursor-pointer"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmDelete}
+                  disabled={deleting}
+                  className="flex-1 h-9 bg-[#C62828] border border-[#B71C1C] rounded text-sm text-white font-medium hover:bg-[#B71C1C] transition-colors cursor-pointer disabled:opacity-60"
+                >
+                  {deleting ? 'Suppression...' : 'Supprimer définitivement'}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

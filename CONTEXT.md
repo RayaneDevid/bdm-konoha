@@ -27,20 +27,22 @@ Application web de gestion du **Bureau des Missions (BDM)** pour un serveur role
 
 ## Système de rôles et permissions
 
-3 rôles staff (utilisateurs du site) :
+4 rôles staff (utilisateurs du site) :
 
-| Permission | Gérant BDM | Co-gérant | Membre BDM |
-|---|:---:|:---:|:---:|
-| Voir Dashboard | ✅ | ✅ | ✅ |
-| Gérer adhérents (ajouter, voir fiches) | ✅ | ✅ | ✅ |
-| Évoluer carte adhérent | ✅ | ✅ | ✅ |
-| Créer des rapports de mission | ✅ | ✅ | ✅ |
-| Cocher les cases "payé" sur les missions | ✅ | ✅ | ❌ |
-| Gérer les cycles | ✅ | ❌ | ❌ |
-| Configurer les cartes (paliers/récompenses) | ✅ | ❌ | ❌ |
-| Administration (gérer utilisateurs staff) | ✅ | ✅ | ❌ |
-| Supprimer l'accès d'un utilisateur | ✅ | ✅ | ❌ |
-| Modifier le rôle d'un Gérant | ❌ (personne) | ❌ | ❌ |
+| Permission | Superviseur | Gérant BDM | Co-gérant | Membre BDM |
+|---|:---:|:---:|:---:|:---:|
+| Voir Dashboard | ✅ | ✅ | ✅ | ✅ |
+| Gérer adhérents (ajouter, voir fiches) | ✅ | ✅ | ✅ | ✅ |
+| Évoluer carte adhérent | ✅ | ✅ | ✅ | ✅ |
+| Créer des rapports de mission | ✅ | ✅ | ✅ | ✅ |
+| Cocher les cases "payé" sur les missions | ✅ | ✅ | ✅ | ❌ |
+| Supprimer une mission | ✅ | ✅ | ✅ | ❌ |
+| Créer / modifier un cycle | ✅ | ✅ | ❌ | ❌ |
+| Supprimer un cycle | ✅ | ✅ | ✅ | ❌ |
+| Configurer les cartes (paliers/récompenses) | ✅ | ✅ | ❌ | ❌ |
+| Administration (gérer utilisateurs staff) | ✅ | ✅ | ✅ | ❌ |
+| Supprimer l'accès d'un utilisateur | ✅ | ✅ | ✅ | ❌ |
+| Modifier le rôle d'un Gérant | ❌ (personne) | ❌ | ❌ | ❌ |
 
 > **Note :** Les adhérents (ninjas/joueurs) n'ont **aucun accès** au site. Ils sont uniquement enregistrés dans la base de données par le staff.
 

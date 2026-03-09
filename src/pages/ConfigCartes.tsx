@@ -51,12 +51,14 @@ const REWARD_ICONS: Record<RewardType, React.ComponentType<{ size?: number; clas
 /* ------------------------------------------------------------------ */
 const TAB_ACTIVE_BG: Record<CardTier, string> = {
   bronze: 'bg-[#CD7F32]',
+  argent: 'bg-[#A8A9AD]',
   or: 'bg-[#D4A017]',
   vip: 'bg-[#7B1FA2]',
 };
 
 const TAB_ACTIVE_TEXT: Record<CardTier, string> = {
   bronze: 'text-white',
+  argent: 'text-[#3E2723]',
   or: 'text-[#3E2723]',
   vip: 'text-white',
 };
@@ -425,7 +427,7 @@ export default function ConfigCartes() {
   /* ================================================================ */
   /* Render                                                           */
   /* ================================================================ */
-  const tiers: CardTier[] = ['bronze', 'or', 'vip'];
+  const tiers: CardTier[] = ['bronze', 'argent', 'or', 'vip'];
   const selectedCycle = cycles.find((c) => c.id === selectedCycleId);
   // Cycles other than the selected one (for copy source)
   const otherCycles = cycles.filter((c) => c.id !== selectedCycleId);
@@ -563,7 +565,7 @@ export default function ConfigCartes() {
 
           {/* Tabs */}
           <div className="px-6 pt-6">
-            <div className="bg-[#E8D5B7] rounded-[10px] p-2 grid grid-cols-3 gap-2">
+            <div className="bg-[#E8D5B7] rounded-[10px] p-2 grid grid-cols-4 gap-2">
               {tiers.map((tier) => {
                 const isActive = activeTier === tier;
                 const count = milestones.filter((m) => m.card_tier === tier).length;

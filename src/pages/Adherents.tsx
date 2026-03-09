@@ -8,6 +8,7 @@ import type { Adherent, CardTier } from '../types';
 
 const TIER_BADGE_STYLES: Record<CardTier, string> = {
   bronze: 'bg-[#CD7F32] border-[#8B4513] text-white',
+  argent: 'bg-[#A8A9AD] border-[#808080] text-[#3E2723]',
   or: 'bg-[#D4A017] border-[#B8860B] text-[#3E2723]',
   vip: 'bg-[#7B1FA2] border-[#4A148C] text-white',
 };
@@ -120,7 +121,8 @@ export default function Adherents() {
   }
 
   const getUpgradeTiers = (current: CardTier): CardTier[] => {
-    if (current === 'bronze') return ['or', 'vip'];
+    if (current === 'bronze') return ['argent', 'or', 'vip'];
+    if (current === 'argent') return ['or', 'vip'];
     if (current === 'or') return ['vip'];
     return [];
   };
@@ -202,6 +204,7 @@ export default function Adherents() {
                   className="w-full h-9 px-3 pr-8 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] outline-none focus:border-[#D4A017] appearance-none cursor-pointer"
                 >
                   <option value="bronze">Bronze</option>
+                  <option value="argent">Argent</option>
                   <option value="or">Or</option>
                   <option value="vip">VIP</option>
                 </select>
@@ -249,6 +252,7 @@ export default function Adherents() {
             >
               <option value="all">Tous les niveaux</option>
               <option value="bronze">Bronze</option>
+              <option value="argent">Argent</option>
               <option value="or">Or</option>
               <option value="vip">VIP</option>
             </select>

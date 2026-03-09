@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Award, Target, Zap, Gift } from 'lucide-react';
+import { ArrowLeft, Award, Target, Zap, Gift, Swords, ShoppingBasket, GraduationCap } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { TIER_COLORS, TIER_LABELS, RANK_COLORS } from '../utils/constants';
 import type { Adherent, Cycle, CardEvolution, CardMilestone, CardTier, MissionRank } from '../types';
 
 interface MissionRow {
+  mission_id: string;
   mission_date: string;
   mission_type: string;
+  passation_type: string | null;
   rank: MissionRank;
   points: number;
 }
@@ -61,7 +63,8 @@ export default function AdherentProfile() {
 
     if (cyclesRes.data) {
       setCycles(cyclesRes.data);
-      const active = cyclesRes.data.find((c) => c.status === 'active');
+      const today = new Date().toISOString().split('T')[0];
+      const active = cyclesRes.data.find((c) => c.start_date <= today && today <= c.end_date);
       setActiveCycle(active ?? null);
       setSelectedCycleId(active?.id ?? cyclesRes.data[0]?.id ?? '');
     }
@@ -91,26 +94,54 @@ export default function AdherentProfile() {
   }
 
   async function fetchCycleMissions(cycleId: string) {
-    // Use the adherent_cycle_points view which includes ninja + executor + intervenant participations
-    const { data } = await supabase
+    // Missions où l'adhérent a gagné des points (ninja payé+réussi, exécutant/intervenant payé)
+    const { data: pointsData } = await supabase
       .from('adherent_cycle_points')
-      .select('mission_id, points, cycle_id')
+      .select('mission_id, points')
       .eq('adherent_id', id!)
       .eq('cycle_id', cycleId);
 
-    if (data && data.length > 0) {
-      // Deduplicate mission_ids (an adherent could appear multiple times if they're both ninja and executor)
-      const uniqueMissionIds = [...new Set(data.map((d: any) => d.mission_id))];
-      const { data: missionDetails } = await supabase
-        .from('missions')
-        .select('mission_date, mission_type, rank, points')
-        .in('id', uniqueMissionIds)
-        .order('mission_date', { ascending: false });
+    // Missions de passation où l'adhérent est ninja (pas de points mais à afficher quand même)
+    const { data: ninjaMissionsData } = await supabase
+      .from('mission_ninjas')
+      .select('mission_id')
+      .eq('adherent_id', id!);
 
-      setMissions(missionDetails ?? []);
-    } else {
+    // Map mission_id → points gagnés
+    const earnedByMissionId = new Map<string, number>();
+    (pointsData ?? []).forEach((d: any) => {
+      earnedByMissionId.set(d.mission_id, (earnedByMissionId.get(d.mission_id) ?? 0) + d.points);
+    });
+
+    // Union de tous les mission_ids connus
+    const allMissionIds = new Set([
+      ...(pointsData ?? []).map((d: any) => d.mission_id as string),
+      ...(ninjaMissionsData ?? []).map((n: any) => n.mission_id as string),
+    ]);
+
+    if (allMissionIds.size === 0) {
       setMissions([]);
+      return;
     }
+
+    // Détails des missions, filtrés par cycle_id pour ne garder que celles du bon cycle
+    const { data: missionDetails } = await supabase
+      .from('missions')
+      .select('id, mission_date, mission_type, passation_type, rank, points')
+      .in('id', [...allMissionIds])
+      .eq('cycle_id', cycleId)
+      .order('mission_date', { ascending: false });
+
+    setMissions(
+      (missionDetails ?? []).map((m: any) => ({
+        mission_id: m.id,
+        mission_date: m.mission_date,
+        mission_type: m.mission_type,
+        passation_type: m.passation_type ?? null,
+        rank: m.rank,
+        points: earnedByMissionId.get(m.id) ?? 0,
+      }))
+    );
   }
 
   async function fetchCyclePoints(cycleId: string) {
@@ -375,12 +406,36 @@ export default function AdherentProfile() {
                       <td className="text-sm text-[#3E2723] py-3 px-2">
                         {formatDate(m.mission_date)}
                       </td>
-                      <td className="text-sm text-[#3E2723] py-3 px-2 capitalize">
-                        {m.mission_type === 'ninja' ? 'Ninja' : 'Recolte'}
+                      <td className="py-3 px-2">
+                        <div className="flex items-center gap-1.5">
+                          {m.mission_type === 'ninja' ? (
+                            <Swords size={15} className="text-[#5D4037] shrink-0" />
+                          ) : m.mission_type === 'recolte' ? (
+                            <ShoppingBasket size={15} className="text-[#5D4037] shrink-0" />
+                          ) : (
+                            <GraduationCap size={15} className="text-[#5D4037] shrink-0" />
+                          )}
+                          <span className="text-sm text-[#3E2723]">
+                            {m.mission_type === 'ninja'
+                              ? 'Ninja'
+                              : m.mission_type === 'recolte'
+                              ? 'Récolte'
+                              : 'Passation'}
+                          </span>
+                          {m.mission_type === 'passation' && m.passation_type && (
+                            <span className="text-[10px] font-medium text-[#5D4037] bg-[#E8D5B7] border border-[#5D4037]/40 px-1.5 py-0.5 rounded leading-none">
+                              {m.passation_type === 'chunin' ? 'Chunin' : 'Genin conf.'}
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="text-center py-3 px-2">{rankBadge(m.rank)}</td>
-                      <td className="text-sm text-[#3E2723] py-3 px-2 text-right font-medium">
-                        +{m.points}
+                      <td className="text-sm py-3 px-2 text-right font-medium">
+                        {m.points > 0 ? (
+                          <span className="text-[#3E2723]">+{m.points}</span>
+                        ) : (
+                          <span className="text-[#5D4037] italic text-xs">—</span>
+                        )}
                       </td>
                     </tr>
                   ))}

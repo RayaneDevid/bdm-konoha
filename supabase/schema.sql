@@ -24,7 +24,7 @@ CREATE TABLE adherents (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   first_name TEXT NOT NULL,
   last_name TEXT NOT NULL,
-  card_tier TEXT NOT NULL CHECK (card_tier IN ('bronze', 'or', 'vip')) DEFAULT 'bronze',
+  card_tier TEXT NOT NULL CHECK (card_tier IN ('bronze', 'argent', 'or', 'vip')) DEFAULT 'bronze',
   distributed_by UUID REFERENCES staff_users(id),
   is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT now()
@@ -58,14 +58,16 @@ CREATE TABLE missions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   cycle_id UUID REFERENCES cycles(id) ON DELETE CASCADE,
   mission_date DATE NOT NULL,
-  mission_type TEXT NOT NULL CHECK (mission_type IN ('ninja', 'recolte')),
+  mission_type TEXT NOT NULL CHECK (mission_type IN ('ninja', 'recolte', 'passation')),
   rank TEXT NOT NULL CHECK (rank IN ('D', 'C', 'B', 'A', 'S')),
   points INTEGER NOT NULL,
+  mission_link TEXT NOT NULL,
   executor_id UUID REFERENCES staff_users(id),
   executor_adherent_id UUID REFERENCES adherents(id),
   executor_is_paid BOOLEAN DEFAULT false,
   executor_paid_marked_by UUID REFERENCES staff_users(id),
   status TEXT NOT NULL DEFAULT 'reussi' CHECK (status IN ('reussi', 'echec')),
+  passation_type TEXT NULL CHECK (passation_type IN ('chunin', 'genin_confirme')),
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -93,7 +95,7 @@ CREATE TABLE mission_ninjas (
 CREATE TABLE card_milestones (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   cycle_id UUID REFERENCES cycles(id) ON DELETE CASCADE,
-  card_tier TEXT NOT NULL CHECK (card_tier IN ('bronze', 'or', 'vip')),
+  card_tier TEXT NOT NULL CHECK (card_tier IN ('bronze', 'argent', 'or', 'vip')),
   pm_threshold INTEGER NOT NULL,
   reward_type TEXT NOT NULL CHECK (reward_type IN ('ryos', 'equipement', 'outfit', 'kunais', 'pieces_merite', 'autre')),
   reward_description TEXT NOT NULL,
@@ -202,7 +204,7 @@ BEGIN
   INSERT INTO card_evolutions (adherent_id, old_tier, new_tier, evolved_by)
   SELECT id, card_tier, 'bronze', NULL
   FROM adherents
-  WHERE card_tier IN ('or', 'vip') AND is_active = true;
+  WHERE card_tier IN ('argent', 'or', 'vip') AND is_active = true;
 
   -- Archive tous les adhérents actifs
   UPDATE adherents
@@ -216,27 +218,28 @@ $$ LANGUAGE plpgsql;
 -- ==================
 
 -- Points par adhérent par cycle (tous participants confondus)
--- Règles : 
+-- Règles :
 --   Points attribués uniquement quand is_paid = true
 --   Ninja missions : ninjas (si réussie + payé), exécutant (payé), intervenants (payé)
 --   Récolte missions : UNIQUEMENT les ninjas (si réussie + payé)
+--   Passation missions : exécutant (payé) + intervenants (payé), pas les ninjas
 CREATE OR REPLACE VIEW adherent_cycle_points AS
-  -- Points des ninjas (missions réussies ET payé)
+  -- Points des ninjas (missions ninja réussies ET payé — exclut passation et récolte)
   SELECT mn.adherent_id, m.cycle_id, m.id AS mission_id, m.points
   FROM mission_ninjas mn
   JOIN missions m ON m.id = mn.mission_id
-  WHERE m.status = 'reussi' AND mn.is_paid = true
+  WHERE m.mission_type = 'ninja' AND m.status = 'reussi' AND mn.is_paid = true
 UNION ALL
-  -- Points de l'exécutant (missions ninja uniquement, payé)
+  -- Points de l'exécutant (missions ninja + passation, payé)
   SELECT m.executor_adherent_id AS adherent_id, m.cycle_id, m.id AS mission_id, m.points
   FROM missions m
-  WHERE m.executor_adherent_id IS NOT NULL AND m.mission_type = 'ninja' AND m.executor_is_paid = true
+  WHERE m.executor_adherent_id IS NOT NULL AND m.mission_type IN ('ninja', 'passation') AND m.executor_is_paid = true
 UNION ALL
-  -- Points des intervenants (missions ninja uniquement, sauf externes, payé)
+  -- Points des intervenants (missions ninja + passation, sauf externes, payé)
   SELECT mi.adherent_id, m.cycle_id, m.id AS mission_id, m.points
   FROM mission_intervenants mi
   JOIN missions m ON m.id = mi.mission_id
-  WHERE mi.is_external = false AND mi.adherent_id IS NOT NULL AND m.mission_type = 'ninja' AND mi.is_paid = true;
+  WHERE mi.is_external = false AND mi.adherent_id IS NOT NULL AND m.mission_type IN ('ninja', 'passation') AND mi.is_paid = true;
 
 -- Résumé agrégé par adhérent par cycle
 CREATE OR REPLACE VIEW adherent_cycle_summary AS
@@ -318,6 +321,9 @@ CREATE POLICY "cycles_insert" ON cycles FOR INSERT
 CREATE POLICY "cycles_update" ON cycles FOR UPDATE
   USING (get_current_role() IN ('superviseur', 'gerant'));
 
+CREATE POLICY "cycles_delete" ON cycles FOR DELETE
+  USING (get_current_role() IN ('superviseur', 'gerant', 'co-gerant'));
+
 -- missions : lecture/écriture par tous les authentifies, update paiement via app logic
 CREATE POLICY "missions_select" ON missions FOR SELECT
   USING (auth.uid() IS NOT NULL);
@@ -327,6 +333,9 @@ CREATE POLICY "missions_insert" ON missions FOR INSERT
 
 CREATE POLICY "missions_update" ON missions FOR UPDATE
   USING (auth.uid() IS NOT NULL);
+
+CREATE POLICY "missions_delete" ON missions FOR DELETE
+  USING (get_current_role() IN ('superviseur', 'gerant', 'co-gerant'));
 
 -- mission_intervenants : lecture/insert par tous, update paiement par gérant/co-gérant
 CREATE POLICY "mission_intervenants_select" ON mission_intervenants FOR SELECT

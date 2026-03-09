@@ -16,15 +16,18 @@ const ROLES: Role[] = ['superviseur', 'gerant', 'co-gerant', 'membre_bdm'];
 
 // Matrice statique des permissions
 const PERMISSIONS: { label: string; superviseur: boolean; gerant: boolean; 'co-gerant': boolean; membre_bdm: boolean }[] = [
-  { label: 'Gérer les adhérents', superviseur: true, gerant: true, 'co-gerant': true, membre_bdm: false },
-  { label: 'Enregistrer des missions', superviseur: true, gerant: true, 'co-gerant': true, membre_bdm: true },
-  { label: 'Valider les paiements', superviseur: true, gerant: true, 'co-gerant': true, membre_bdm: false },
-  { label: 'Gérer les récompenses', superviseur: true, gerant: true, 'co-gerant': true, membre_bdm: false },
-  { label: 'Gérer les cycles', superviseur: true, gerant: true, 'co-gerant': true, membre_bdm: false },
-  { label: 'Modifier les dates de cycle', superviseur: true, gerant: true, 'co-gerant': false, membre_bdm: false },
-  { label: 'Configurer les cartes', superviseur: true, gerant: true, 'co-gerant': false, membre_bdm: false },
-  { label: 'Gérer les utilisateurs', superviseur: true, gerant: true, 'co-gerant': false, membre_bdm: false },
-  { label: 'Accès Administration', superviseur: true, gerant: true, 'co-gerant': true, membre_bdm: false },
+  { label: 'Voir le tableau de bord',          superviseur: true,  gerant: true,  'co-gerant': true,  membre_bdm: true  },
+  { label: 'Gérer les adhérents',              superviseur: true,  gerant: true,  'co-gerant': true,  membre_bdm: true  },
+  { label: "Évoluer la carte d'un adhérent",   superviseur: true,  gerant: true,  'co-gerant': true,  membre_bdm: true  },
+  { label: 'Enregistrer des missions',         superviseur: true,  gerant: true,  'co-gerant': true,  membre_bdm: true  },
+  { label: 'Valider les paiements',            superviseur: true,  gerant: true,  'co-gerant': true,  membre_bdm: false },
+  { label: 'Supprimer une mission',            superviseur: true,  gerant: true,  'co-gerant': true,  membre_bdm: false },
+  { label: 'Créer / modifier un cycle',        superviseur: true,  gerant: true,  'co-gerant': false, membre_bdm: false },
+  { label: 'Supprimer un cycle',               superviseur: true,  gerant: true,  'co-gerant': true,  membre_bdm: false },
+  { label: 'Configurer les cartes',            superviseur: true,  gerant: true,  'co-gerant': false, membre_bdm: false },
+  { label: 'Accès Administration',             superviseur: true,  gerant: true,  'co-gerant': true,  membre_bdm: false },
+  { label: 'Gérer les utilisateurs staff',     superviseur: true,  gerant: true,  'co-gerant': true,  membre_bdm: false },
+  { label: "Modifier le rôle d'un Gérant",     superviseur: false, gerant: false, 'co-gerant': false, membre_bdm: false },
 ];
 
 function generatePassword(length = 12) {
