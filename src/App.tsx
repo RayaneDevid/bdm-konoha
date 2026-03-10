@@ -10,6 +10,8 @@ import ConfigCartes from './pages/ConfigCartes';
 import Cycles from './pages/Cycles';
 import Administration from './pages/Administration';
 import Recompenses from './pages/Recompenses';
+import Annuaire from './pages/Annuaire';
+import AnnuaireAdherent from './pages/AnnuaireAdherent';
 
 export default function App() {
   const { session, loading } = useAuth();
@@ -27,6 +29,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public routes — no auth required */}
+        <Route path="/annuaire" element={<Annuaire />} />
+        <Route path="/annuaire/:id" element={<AnnuaireAdherent />} />
+
+        {/* Auth-guarded routes */}
         <Route path="/login" element={session ? <Navigate to="/" /> : <Login />} />
         <Route element={session ? <AppLayout /> : <Navigate to="/login" />}>
           <Route path="/" element={<Dashboard />} />
