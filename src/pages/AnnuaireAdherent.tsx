@@ -22,7 +22,6 @@ import {
   TIER_COLORS,
   TIER_LABELS,
   RANK_COLORS,
-  RANK_POINTS,
   MISSION_STATUS_COLORS,
   MISSION_STATUS_LABELS,
 } from '../utils/constants';
