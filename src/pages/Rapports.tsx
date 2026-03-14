@@ -109,7 +109,7 @@ export default function Rapports() {
       .from('missions')
       .select('*, executor:executor_id(first_name, last_name)')
       .eq('cycle_id', selectedCycleId)
-      .order('mission_date', { ascending: false });
+      .order('created_at', { ascending: false });
 
     if (!missionsData) return;
 

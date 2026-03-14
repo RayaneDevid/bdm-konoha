@@ -347,6 +347,9 @@ CREATE POLICY "mission_intervenants_insert" ON mission_intervenants FOR INSERT
 CREATE POLICY "mission_intervenants_update" ON mission_intervenants FOR UPDATE
   USING (get_current_role() IN ('superviseur', 'gerant', 'co-gerant'));
 
+CREATE POLICY "mission_intervenants_delete" ON mission_intervenants FOR DELETE
+  USING (auth.uid() IS NOT NULL);
+
 -- mission_ninjas : lecture/insert par tous, update paiement par gérant/co-gérant
 CREATE POLICY "mission_ninjas_select" ON mission_ninjas FOR SELECT
   USING (auth.uid() IS NOT NULL);
@@ -356,6 +359,9 @@ CREATE POLICY "mission_ninjas_insert" ON mission_ninjas FOR INSERT
 
 CREATE POLICY "mission_ninjas_update" ON mission_ninjas FOR UPDATE
   USING (get_current_role() IN ('superviseur', 'gerant', 'co-gerant'));
+
+CREATE POLICY "mission_ninjas_delete" ON mission_ninjas FOR DELETE
+  USING (auth.uid() IS NOT NULL);
 
 -- card_milestones : lecture par tous, écriture par gérant uniquement
 CREATE POLICY "card_milestones_select" ON card_milestones FOR SELECT
