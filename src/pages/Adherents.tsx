@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter, Eye, ArrowUp, ChevronDown, X, Trash2 } from 'lucide-react';
+import { Search, Filter, Eye, ArrowUp, ChevronDown, X, Trash2, Check, ExternalLink } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { TIER_LABELS } from '../utils/constants';
-import type { Adherent, CardTier } from '../types';
+import type { Adherent, CardTier, MissionType, MissionRank, MissionStatus } from '../types';
 
 const TIER_BADGE_STYLES: Record<CardTier, string> = {
   bronze: 'bg-[#CD7F32] border-[#8B4513] text-white',
@@ -18,6 +18,23 @@ interface AdherentWithStaff extends Adherent {
   cycle_points?: number;
 }
 
+interface UnpaidMissionItem {
+  row_id: string;
+  mission_id: string;
+  mission_date: string;
+  mission_type: MissionType;
+  rank: MissionRank;
+  status: MissionStatus;
+  mission_link: string;
+  cycle_name: string;
+}
+
+const MISSION_TYPE_LABELS: Record<MissionType, string> = {
+  ninja: 'Ninja',
+  recolte: 'Récolte',
+  passation: 'Passation',
+};
+
 export default function Adherents() {
   const navigate = useNavigate();
   const { staffUser } = useAuth();
@@ -26,6 +43,11 @@ export default function Adherents() {
   const [filterTier, setFilterTier] = useState<CardTier | 'all'>('all');
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [unpaidCountMap, setUnpaidCountMap] = useState<Record<string, number>>({});
+  const [unpaidTarget, setUnpaidTarget] = useState<AdherentWithStaff | null>(null);
+  const [unpaidMissions, setUnpaidMissions] = useState<UnpaidMissionItem[]>([]);
+  const [loadingUnpaid, setLoadingUnpaid] = useState(false);
+  const [markingPaidRowId, setMarkingPaidRowId] = useState<string | null>(null);
 
   const canManage = staffUser && (staffUser.role === 'superviseur' || staffUser.role === 'gerant' || staffUser.role === 'co-gerant');
 
@@ -70,11 +92,107 @@ export default function Adherents() {
         }
       }
 
-      setAdherents(
-        data.map((a) => ({ ...a, cycle_points: pointsMap[a.id] ?? 0 }))
-      );
+      const mappedAdherents = data.map((a) => ({ ...a, cycle_points: pointsMap[a.id] ?? 0 }));
+      setAdherents(mappedAdherents);
+
+      // Compte uniquement les missions ninja non payées et effectivement payables.
+      const adherentIds = mappedAdherents.map((a) => a.id);
+      let unpaidCounts: Record<string, number> = {};
+
+      if (adherentIds.length > 0) {
+        const { data: unpaidRows, error: unpaidErr } = await supabase
+          .from('mission_ninjas')
+          .select('adherent_id, mission:missions!inner(status, mission_type)')
+          .eq('is_paid', false)
+          .in('adherent_id', adherentIds);
+
+        if (unpaidErr) {
+          console.error('Erreur chargement missions non payées:', unpaidErr);
+        } else {
+          for (const row of unpaidRows ?? []) {
+            const mission = Array.isArray((row as any).mission) ? (row as any).mission[0] : (row as any).mission;
+            if (!mission) continue;
+            if (mission.status !== 'reussi' || mission.mission_type === 'passation') continue;
+            unpaidCounts[row.adherent_id] = (unpaidCounts[row.adherent_id] ?? 0) + 1;
+          }
+        }
+      }
+
+      setUnpaidCountMap(unpaidCounts);
     }
     setLoading(false);
+  }
+
+  async function openUnpaidMissions(a: AdherentWithStaff) {
+    setUnpaidTarget(a);
+    setLoadingUnpaid(true);
+    setUnpaidMissions([]);
+
+    const { data, error } = await supabase
+      .from('mission_ninjas')
+      .select('id, mission_id, mission:missions!inner(id, mission_date, mission_type, rank, status, mission_link, cycles(name))')
+      .eq('adherent_id', a.id)
+      .eq('is_paid', false);
+
+    if (error) {
+      console.error('Erreur chargement détail missions non payées:', error);
+      setLoadingUnpaid(false);
+      return;
+    }
+
+    const items: UnpaidMissionItem[] = (data ?? [])
+      .map((row: any) => {
+        const mission = Array.isArray(row.mission) ? row.mission[0] : row.mission;
+        if (!mission) return null;
+        if (mission.status !== 'reussi' || mission.mission_type === 'passation') return null;
+        const cycleRel = Array.isArray(mission.cycles) ? mission.cycles[0] : mission.cycles;
+        return {
+          row_id: row.id,
+          mission_id: mission.id,
+          mission_date: mission.mission_date,
+          mission_type: mission.mission_type,
+          rank: mission.rank,
+          status: mission.status,
+          mission_link: mission.mission_link,
+          cycle_name: cycleRel?.name ?? 'Cycle inconnu',
+        };
+      })
+      .filter((item): item is UnpaidMissionItem => Boolean(item))
+      .sort((aItem, bItem) => bItem.mission_date.localeCompare(aItem.mission_date));
+
+    setUnpaidMissions(items);
+    setLoadingUnpaid(false);
+  }
+
+  async function markNinjaMissionAsPaid(rowId: string) {
+    if (!canManage) return;
+
+    setMarkingPaidRowId(rowId);
+    const { error } = await supabase
+      .from('mission_ninjas')
+      .update({
+        is_paid: true,
+        paid_marked_by: staffUser?.id ?? null,
+      })
+      .eq('id', rowId);
+
+    if (error) {
+      console.error('Erreur marquage mission payée:', error);
+      alert(`Erreur: ${error.message}`);
+      setMarkingPaidRowId(null);
+      return;
+    }
+
+    setUnpaidMissions((prev) => prev.filter((m) => m.row_id !== rowId));
+    if (unpaidTarget) {
+      setUnpaidCountMap((prev) => ({
+        ...prev,
+        [unpaidTarget.id]: Math.max((prev[unpaidTarget.id] ?? 1) - 1, 0),
+      }));
+    }
+
+    setMarkingPaidRowId(null);
+    fetchAdherents();
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -283,21 +401,23 @@ export default function Adherents() {
                   <th className="text-left px-3 py-2.5 text-sm font-medium text-[#3E2723]">Distribué par</th>
                   <th className="text-left px-3 py-2.5 text-sm font-medium text-[#3E2723]">Date inscription</th>
                   <th className="text-left px-3 py-2.5 text-sm font-medium text-[#3E2723]">Points Missions</th>
+                  <th className="text-left px-3 py-2.5 text-sm font-medium text-[#3E2723]">Missions non payées</th>
                   <th className="text-right px-3 py-2.5 text-sm font-medium text-[#3E2723]">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-8 text-[#5D4037] text-sm">Chargement...</td>
+                    <td colSpan={7} className="text-center py-8 text-[#5D4037] text-sm">Chargement...</td>
                   </tr>
                 ) : filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-8 text-[#5D4037] text-sm">Aucun adhérent trouvé.</td>
+                    <td colSpan={7} className="text-center py-8 text-[#5D4037] text-sm">Aucun adhérent trouvé.</td>
                   </tr>
                 ) : (
                   filtered.map((a, i) => {
                     const upgrades = getUpgradeTiers(a.card_tier);
+                    const unpaidCount = unpaidCountMap[a.id] ?? 0;
                     return (
                       <tr
                         key={a.id}
@@ -315,6 +435,19 @@ export default function Adherents() {
                         <td className="px-3 py-3 text-sm text-[#5D4037]">{formatDate(a.created_at)}</td>
                         <td className="px-3 py-3 text-sm text-[#3E2723]">
                           {(a.cycle_points ?? 0).toLocaleString('fr-FR')}
+                        </td>
+                        <td className="px-3 py-3">
+                          <button
+                            onClick={() => openUnpaidMissions(a)}
+                            className={`h-8 px-3 border rounded text-xs font-medium transition-colors cursor-pointer ${
+                              unpaidCount > 0
+                                ? 'bg-[#C62828] border-[#8B0000] text-white hover:bg-[#B71C1C]'
+                                : 'bg-[#FAF3E3] border-[#5D4037] text-[#5D4037] hover:bg-[#E8D5B7]'
+                            }`}
+                            title="Voir les missions ninja non payées"
+                          >
+                            {unpaidCount > 0 ? `${unpaidCount} à payer` : 'Aucune'}
+                          </button>
                         </td>
                         <td className="px-3 py-3">
                           <div className="flex items-center justify-end gap-2">
@@ -429,6 +562,93 @@ export default function Adherents() {
                   Confirmer l'évolution
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modale missions non payées */}
+      {unpaidTarget && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-2xl w-full max-w-3xl overflow-hidden">
+            <div className="h-2 bg-gradient-to-r from-[#D4A017] via-[#8B0000] to-[#D4A017]" />
+            <div className="px-6 pt-5 flex items-start justify-between">
+              <h3 className="text-2xl font-medium text-[#8B0000]" style={{ fontFamily: "'Noto Serif JP', serif" }}>
+                Missions non payées - {unpaidTarget.first_name} {unpaidTarget.last_name}
+              </h3>
+              <button onClick={() => setUnpaidTarget(null)} className="text-[#5D4037] hover:text-[#3E2723] cursor-pointer">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="px-6 pb-6 pt-4">
+              {loadingUnpaid ? (
+                <div className="py-10 text-center text-sm text-[#5D4037]">Chargement...</div>
+              ) : unpaidMissions.length === 0 ? (
+                <div className="py-10 text-center text-sm text-[#5D4037]">
+                  Aucune mission ninja non payée.
+                </div>
+              ) : (
+                <div className="border-2 border-[#5D4037] rounded-md overflow-hidden max-h-[420px] overflow-y-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-[#E8D5B7] border-b border-[#5D4037]">
+                        <th className="text-left px-3 py-2 text-xs font-medium text-[#3E2723]">Date mission</th>
+                        <th className="text-left px-3 py-2 text-xs font-medium text-[#3E2723]">Cycle</th>
+                        <th className="text-left px-3 py-2 text-xs font-medium text-[#3E2723]">Type</th>
+                        <th className="text-left px-3 py-2 text-xs font-medium text-[#3E2723]">Rang</th>
+                        <th className="text-left px-3 py-2 text-xs font-medium text-[#3E2723]">Lien</th>
+                        <th className="text-right px-3 py-2 text-xs font-medium text-[#3E2723]">Marquer payé</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {unpaidMissions.map((m, index) => (
+                        <tr key={m.row_id} className={`border-b border-[#E8D5B7] ${index % 2 === 0 ? 'bg-[#FAF3E3]' : 'bg-[#F5E6CA]'}`}>
+                          <td className="px-3 py-2 text-sm text-[#3E2723]">{formatDate(m.mission_date)}</td>
+                          <td className="px-3 py-2 text-sm text-[#5D4037]">{m.cycle_name}</td>
+                          <td className="px-3 py-2 text-sm text-[#5D4037]">{MISSION_TYPE_LABELS[m.mission_type]}</td>
+                          <td className="px-3 py-2 text-sm text-[#3E2723] font-medium">{m.rank}</td>
+                          <td className="px-3 py-2 text-sm">
+                            {m.mission_link ? (
+                              <a
+                                href={m.mission_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-[#8B0000] hover:text-[#C41E3A] underline"
+                              >
+                                Voir
+                                <ExternalLink size={13} />
+                              </a>
+                            ) : (
+                              <span className="text-[#5D4037]">-</span>
+                            )}
+                          </td>
+                          <td className="px-3 py-2 text-right">
+                            <button
+                              type="button"
+                              onClick={() => markNinjaMissionAsPaid(m.row_id)}
+                              disabled={!canManage || markingPaidRowId === m.row_id}
+                              className={`h-8 px-3 rounded border text-xs font-medium transition-colors ${
+                                canManage
+                                  ? 'bg-[#4A5D23] border-[#3E2723] text-white hover:bg-[#3F501D] cursor-pointer'
+                                  : 'bg-[#FAF3E3] border-[#5D4037]/40 text-[#5D4037]/40 cursor-not-allowed'
+                              }`}
+                              title={canManage ? 'Marquer la mission comme payée' : 'Action réservée aux gérants'}
+                            >
+                              {markingPaidRowId === m.row_id ? '...' : (
+                                <span className="inline-flex items-center gap-1">
+                                  <Check size={14} />
+                                  Payé
+                                </span>
+                              )}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -15,6 +15,8 @@ import {
   Trash2,
   Pencil,
   X,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
@@ -53,6 +55,9 @@ export default function Rapports() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [staffList, setStaffList] = useState<StaffUser[]>([]);
   const [adherentList, setAdherentList] = useState<Adherent[]>([]);
+  const [page, setPage] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+  const PAGE_SIZE = 15;
 
   // Form state
   const [formDate, setFormDate] = useState('');
@@ -84,8 +89,15 @@ export default function Rapports() {
   }, []);
 
   useEffect(() => {
-    if (selectedCycleId) fetchMissions();
+    if (selectedCycleId) {
+      setPage(0);
+      setExpandedId(null);
+    }
   }, [selectedCycleId]);
+
+  useEffect(() => {
+    if (selectedCycleId) fetchMissions();
+  }, [selectedCycleId, page]);
 
   async function fetchInitial() {
     const [cyclesRes, staffRes, adherentsRes] = await Promise.all([
@@ -105,13 +117,19 @@ export default function Rapports() {
   }
 
   async function fetchMissions() {
-    const { data: missionsData } = await supabase
+    const from = page * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+
+    const { data: missionsData, count } = await supabase
       .from('missions')
-      .select('*, executor:executor_id(first_name, last_name)')
+      .select('*, executor:executor_id(first_name, last_name)', { count: 'exact' })
       .eq('cycle_id', selectedCycleId)
-      .order('created_at', { ascending: false });
+      .order('mission_date', { ascending: false })
+      .order('created_at', { ascending: false })
+      .range(from, to);
 
     if (!missionsData) return;
+    setTotalCount(count ?? 0);
 
     const missionIds = missionsData.map((m) => m.id);
 
@@ -261,7 +279,11 @@ export default function Rapports() {
     setFormNinjas([]);
     setFormDateError('');
     setSubmitting(false);
-    fetchMissions();
+    if (page === 0) {
+      fetchMissions();
+    } else {
+      setPage(0);
+    }
   }
 
   async function togglePaid(table: string, rowId: string, currentValue: boolean) {
@@ -1019,9 +1041,54 @@ export default function Rapports() {
             })
           )}
         </div>
-      </div>
 
-      {/* Edit mission modal */}
+        {/* Pagination */}
+        {totalCount > PAGE_SIZE && (
+          <div className="border-t-2 border-[#5D4037] px-6 py-4 flex items-center justify-between bg-[#E8D5B7]">
+            <span className="text-sm text-[#5D4037]">
+              {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, totalCount)} sur {totalCount} missions
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => { setPage(p => p - 1); setExpandedId(null); }}
+                disabled={page === 0}
+                className="flex items-center gap-1 px-3 py-1.5 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] hover:bg-[#F5E6CA] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
+              >
+                <ChevronLeft size={16} />
+                Précédent
+              </button>
+
+              <div className="flex items-center gap-1">
+                {Array.from({ length: Math.ceil(totalCount / PAGE_SIZE) }, (_, i) => i).map((i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => { setPage(i); setExpandedId(null); }}
+                    className={`w-8 h-8 rounded text-sm font-medium transition-colors cursor-pointer ${
+                      i === page
+                        ? 'bg-[#8B0000] text-[#FAF3E3]'
+                        : 'bg-[#FAF3E3] border border-[#5D4037] text-[#3E2723] hover:bg-[#F5E6CA]'
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => { setPage(p => p + 1); setExpandedId(null); }}
+                disabled={(page + 1) * PAGE_SIZE >= totalCount}
+                className="flex items-center gap-1 px-3 py-1.5 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] hover:bg-[#F5E6CA] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
+              >
+                Suivant
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
       {editTarget && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-2xl w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col">
