@@ -1,5 +1,5 @@
 export type Role = 'superviseur' | 'gerant' | 'co-gerant' | 'membre_bdm';
-export type CardTier = 'bronze' | 'argent' | 'or' | 'vip';
+export type CardTier = 'aucun' | 'bronze' | 'argent' | 'or' | 'vip';
 export type MissionType = 'ninja' | 'recolte' | 'passation';
 export type MissionRank = 'D' | 'C' | 'B' | 'A' | 'S';
 export type CycleStatus = 'active' | 'completed' | 'upcoming';

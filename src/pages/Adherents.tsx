@@ -7,6 +7,7 @@ import { TIER_LABELS } from '../utils/constants';
 import type { Adherent, CardTier, MissionType, MissionRank, MissionStatus } from '../types';
 
 const TIER_BADGE_STYLES: Record<CardTier, string> = {
+  aucun: 'bg-[#9E9E9E] border-[#757575] text-white',
   bronze: 'bg-[#CD7F32] border-[#8B4513] text-white',
   argent: 'bg-[#A8A9AD] border-[#808080] text-[#3E2723]',
   or: 'bg-[#D4A017] border-[#B8860B] text-[#3E2723]',
@@ -321,6 +322,7 @@ export default function Adherents() {
                   onChange={(e) => setFormTier(e.target.value as CardTier)}
                   className="w-full h-9 px-3 pr-8 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] outline-none focus:border-[#D4A017] appearance-none cursor-pointer"
                 >
+                  <option value="aucun">Aucun</option>
                   <option value="bronze">Bronze</option>
                   <option value="argent">Argent</option>
                   <option value="or">Or</option>

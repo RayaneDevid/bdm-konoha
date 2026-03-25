@@ -27,6 +27,7 @@ export const RANK_COLORS: Record<MissionRank, string> = {
 };
 
 export const TIER_COLORS: Record<CardTier, string> = {
+  aucun: '#9E9E9E',
   bronze: '#CD7F32',
   argent: '#A8A9AD',
   or: '#D4A017',
@@ -34,6 +35,7 @@ export const TIER_COLORS: Record<CardTier, string> = {
 };
 
 export const TIER_LABELS: Record<CardTier, string> = {
+  aucun: 'Aucun',
   bronze: 'Bronze',
   argent: 'Argent',
   or: 'Or',
