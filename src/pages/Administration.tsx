@@ -65,6 +65,8 @@ export default function Administration() {
     fetchAdherents();
   }, []);
 
+  const ROLE_ORDER: Role[] = ['superviseur', 'gerant', 'co-gerant', 'membre_bdm'];
+
   async function fetchUsers() {
     setLoading(true);
     const { data } = await supabase
@@ -72,7 +74,9 @@ export default function Administration() {
       .select('*')
       .eq('is_active', true)
       .order('created_at', { ascending: false });
-    if (data) setUsers(data);
+    if (data) {
+      setUsers([...data].sort((a, b) => ROLE_ORDER.indexOf(a.role) - ROLE_ORDER.indexOf(b.role)));
+    }
     setLoading(false);
   }
 
