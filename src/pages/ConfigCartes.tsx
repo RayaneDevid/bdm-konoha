@@ -50,6 +50,7 @@ const REWARD_ICONS: Record<RewardType, React.ComponentType<{ size?: number; clas
 /* Tab colours (active background)                                    */
 /* ------------------------------------------------------------------ */
 const TAB_ACTIVE_BG: Record<CardTier, string> = {
+  aucun: 'bg-[#9E9E9E]',
   bronze: 'bg-[#CD7F32]',
   argent: 'bg-[#A8A9AD]',
   or: 'bg-[#D4A017]',
@@ -57,6 +58,7 @@ const TAB_ACTIVE_BG: Record<CardTier, string> = {
 };
 
 const TAB_ACTIVE_TEXT: Record<CardTier, string> = {
+  aucun: 'text-white',
   bronze: 'text-white',
   argent: 'text-[#3E2723]',
   or: 'text-[#3E2723]',

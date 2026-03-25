@@ -19,6 +19,8 @@ interface AdherentWithStaff extends Adherent {
   cycle_points?: number;
 }
 
+type UnpaidRole = 'ninja' | 'executant' | 'intervenant';
+
 interface UnpaidMissionItem {
   row_id: string;
   mission_id: string;
@@ -28,6 +30,7 @@ interface UnpaidMissionItem {
   status: MissionStatus;
   mission_link: string;
   cycle_name: string;
+  role: UnpaidRole;
 }
 
 const MISSION_TYPE_LABELS: Record<MissionType, string> = {
@@ -96,26 +99,48 @@ export default function Adherents() {
       const mappedAdherents = data.map((a) => ({ ...a, cycle_points: pointsMap[a.id] ?? 0 }));
       setAdherents(mappedAdherents);
 
-      // Compte uniquement les missions ninja non payées et effectivement payables.
+      // Compte les missions non payées pour tous les rôles (ninja, exécutant, intervenant).
       const adherentIds = mappedAdherents.map((a) => a.id);
       let unpaidCounts: Record<string, number> = {};
 
       if (adherentIds.length > 0) {
-        const { data: unpaidRows, error: unpaidErr } = await supabase
-          .from('mission_ninjas')
-          .select('adherent_id, mission:missions!inner(status, mission_type)')
-          .eq('is_paid', false)
-          .in('adherent_id', adherentIds);
+        const [ninjaRes, executorRes, intervenantRes] = await Promise.all([
+          supabase
+            .from('mission_ninjas')
+            .select('adherent_id, mission:missions!inner(status, mission_type)')
+            .eq('is_paid', false)
+            .in('adherent_id', adherentIds),
+          supabase
+            .from('missions')
+            .select('executor_adherent_id, mission_type')
+            .eq('executor_is_paid', false)
+            .in('mission_type', ['ninja', 'passation'])
+            .in('executor_adherent_id', adherentIds),
+          supabase
+            .from('mission_intervenants')
+            .select('adherent_id, mission:missions!inner(mission_type)')
+            .eq('is_paid', false)
+            .eq('is_external', false)
+            .in('adherent_id', adherentIds),
+        ]);
 
-        if (unpaidErr) {
-          console.error('Erreur chargement missions non payées:', unpaidErr);
-        } else {
-          for (const row of unpaidRows ?? []) {
-            const mission = Array.isArray((row as any).mission) ? (row as any).mission[0] : (row as any).mission;
-            if (!mission) continue;
-            if (mission.status !== 'reussi' || mission.mission_type === 'passation') continue;
-            unpaidCounts[row.adherent_id] = (unpaidCounts[row.adherent_id] ?? 0) + 1;
-          }
+        for (const row of ninjaRes.data ?? []) {
+          const mission = Array.isArray((row as any).mission) ? (row as any).mission[0] : (row as any).mission;
+          if (!mission) continue;
+          if (mission.status !== 'reussi' || mission.mission_type === 'passation') continue;
+          unpaidCounts[row.adherent_id] = (unpaidCounts[row.adherent_id] ?? 0) + 1;
+        }
+
+        for (const row of executorRes.data ?? []) {
+          if (!row.executor_adherent_id) continue;
+          unpaidCounts[row.executor_adherent_id] = (unpaidCounts[row.executor_adherent_id] ?? 0) + 1;
+        }
+
+        for (const row of intervenantRes.data ?? []) {
+          if (!row.adherent_id) continue;
+          const mission = Array.isArray((row as any).mission) ? (row as any).mission[0] : (row as any).mission;
+          if (!mission || !['ninja', 'passation'].includes(mission.mission_type)) continue;
+          unpaidCounts[row.adherent_id] = (unpaidCounts[row.adherent_id] ?? 0) + 1;
         }
       }
 
@@ -129,53 +154,109 @@ export default function Adherents() {
     setLoadingUnpaid(true);
     setUnpaidMissions([]);
 
-    const { data, error } = await supabase
-      .from('mission_ninjas')
-      .select('id, mission_id, mission:missions!inner(id, mission_date, mission_type, rank, status, mission_link, cycles(name))')
-      .eq('adherent_id', a.id)
-      .eq('is_paid', false);
+    const [ninjaRes, executorRes, intervenantRes] = await Promise.all([
+      supabase
+        .from('mission_ninjas')
+        .select('id, mission_id, mission:missions!inner(id, mission_date, mission_type, rank, status, mission_link, cycles(name))')
+        .eq('adherent_id', a.id)
+        .eq('is_paid', false),
+      supabase
+        .from('missions')
+        .select('id, mission_date, mission_type, rank, status, mission_link, cycles(name)')
+        .eq('executor_adherent_id', a.id)
+        .eq('executor_is_paid', false)
+        .in('mission_type', ['ninja', 'passation']),
+      supabase
+        .from('mission_intervenants')
+        .select('id, mission:missions!inner(id, mission_date, mission_type, rank, status, mission_link, cycles(name))')
+        .eq('adherent_id', a.id)
+        .eq('is_paid', false)
+        .eq('is_external', false),
+    ]);
 
-    if (error) {
-      console.error('Erreur chargement détail missions non payées:', error);
-      setLoadingUnpaid(false);
-      return;
+    const items: UnpaidMissionItem[] = [];
+
+    // Ninjas
+    for (const row of ninjaRes.data ?? []) {
+      const mission = Array.isArray((row as any).mission) ? (row as any).mission[0] : (row as any).mission;
+      if (!mission) continue;
+      if (mission.status !== 'reussi' || mission.mission_type === 'passation') continue;
+      const cycleRel = Array.isArray(mission.cycles) ? mission.cycles[0] : mission.cycles;
+      items.push({
+        row_id: row.id,
+        mission_id: mission.id,
+        mission_date: mission.mission_date,
+        mission_type: mission.mission_type,
+        rank: mission.rank,
+        status: mission.status,
+        mission_link: mission.mission_link,
+        cycle_name: cycleRel?.name ?? 'Cycle inconnu',
+        role: 'ninja',
+      });
     }
 
-    const items: UnpaidMissionItem[] = (data ?? [])
-      .map((row: any) => {
-        const mission = Array.isArray(row.mission) ? row.mission[0] : row.mission;
-        if (!mission) return null;
-        if (mission.status !== 'reussi' || mission.mission_type === 'passation') return null;
-        const cycleRel = Array.isArray(mission.cycles) ? mission.cycles[0] : mission.cycles;
-        return {
-          row_id: row.id,
-          mission_id: mission.id,
-          mission_date: mission.mission_date,
-          mission_type: mission.mission_type,
-          rank: mission.rank,
-          status: mission.status,
-          mission_link: mission.mission_link,
-          cycle_name: cycleRel?.name ?? 'Cycle inconnu',
-        };
-      })
-      .filter((item): item is UnpaidMissionItem => Boolean(item))
-      .sort((aItem, bItem) => bItem.mission_date.localeCompare(aItem.mission_date));
+    // Exécutants
+    for (const row of executorRes.data ?? []) {
+      const cycleRel = Array.isArray((row as any).cycles) ? (row as any).cycles[0] : (row as any).cycles;
+      items.push({
+        row_id: row.id,
+        mission_id: row.id,
+        mission_date: row.mission_date,
+        mission_type: row.mission_type as MissionType,
+        rank: row.rank as MissionRank,
+        status: row.status as MissionStatus,
+        mission_link: row.mission_link,
+        cycle_name: cycleRel?.name ?? 'Cycle inconnu',
+        role: 'executant',
+      });
+    }
 
+    // Intervenants
+    for (const row of intervenantRes.data ?? []) {
+      const mission = Array.isArray((row as any).mission) ? (row as any).mission[0] : (row as any).mission;
+      if (!mission) continue;
+      if (!['ninja', 'passation'].includes(mission.mission_type)) continue;
+      const cycleRel = Array.isArray(mission.cycles) ? mission.cycles[0] : mission.cycles;
+      items.push({
+        row_id: row.id,
+        mission_id: mission.id,
+        mission_date: mission.mission_date,
+        mission_type: mission.mission_type,
+        rank: mission.rank,
+        status: mission.status,
+        mission_link: mission.mission_link,
+        cycle_name: cycleRel?.name ?? 'Cycle inconnu',
+        role: 'intervenant',
+      });
+    }
+
+    items.sort((a, b) => b.mission_date.localeCompare(a.mission_date));
     setUnpaidMissions(items);
     setLoadingUnpaid(false);
   }
 
-  async function markNinjaMissionAsPaid(rowId: string) {
+  async function markMissionAsPaid(item: UnpaidMissionItem) {
     if (!canManage) return;
 
-    setMarkingPaidRowId(rowId);
-    const { error } = await supabase
-      .from('mission_ninjas')
-      .update({
-        is_paid: true,
-        paid_marked_by: staffUser?.id ?? null,
-      })
-      .eq('id', rowId);
+    setMarkingPaidRowId(item.row_id);
+    let error: any = null;
+
+    if (item.role === 'ninja') {
+      ({ error } = await supabase
+        .from('mission_ninjas')
+        .update({ is_paid: true, paid_marked_by: staffUser?.id ?? null })
+        .eq('id', item.row_id));
+    } else if (item.role === 'executant') {
+      ({ error } = await supabase
+        .from('missions')
+        .update({ executor_is_paid: true, executor_paid_marked_by: staffUser?.id ?? null })
+        .eq('id', item.row_id));
+    } else if (item.role === 'intervenant') {
+      ({ error } = await supabase
+        .from('mission_intervenants')
+        .update({ is_paid: true, paid_marked_by: staffUser?.id ?? null })
+        .eq('id', item.row_id));
+    }
 
     if (error) {
       console.error('Erreur marquage mission payée:', error);
@@ -184,7 +265,7 @@ export default function Adherents() {
       return;
     }
 
-    setUnpaidMissions((prev) => prev.filter((m) => m.row_id !== rowId));
+    setUnpaidMissions((prev) => prev.filter((m) => m.row_id !== item.row_id));
     if (unpaidTarget) {
       setUnpaidCountMap((prev) => ({
         ...prev,
@@ -590,7 +671,7 @@ export default function Adherents() {
                 <div className="py-10 text-center text-sm text-[#5D4037]">Chargement...</div>
               ) : unpaidMissions.length === 0 ? (
                 <div className="py-10 text-center text-sm text-[#5D4037]">
-                  Aucune mission ninja non payée.
+                  Aucune mission non payée.
                 </div>
               ) : (
                 <div className="border-2 border-[#5D4037] rounded-md overflow-hidden max-h-[420px] overflow-y-auto">
@@ -601,6 +682,7 @@ export default function Adherents() {
                         <th className="text-left px-3 py-2 text-xs font-medium text-[#3E2723]">Cycle</th>
                         <th className="text-left px-3 py-2 text-xs font-medium text-[#3E2723]">Type</th>
                         <th className="text-left px-3 py-2 text-xs font-medium text-[#3E2723]">Rang</th>
+                        <th className="text-left px-3 py-2 text-xs font-medium text-[#3E2723]">Rôle</th>
                         <th className="text-left px-3 py-2 text-xs font-medium text-[#3E2723]">Lien</th>
                         <th className="text-right px-3 py-2 text-xs font-medium text-[#3E2723]">Marquer payé</th>
                       </tr>
@@ -612,6 +694,17 @@ export default function Adherents() {
                           <td className="px-3 py-2 text-sm text-[#5D4037]">{m.cycle_name}</td>
                           <td className="px-3 py-2 text-sm text-[#5D4037]">{MISSION_TYPE_LABELS[m.mission_type]}</td>
                           <td className="px-3 py-2 text-sm text-[#3E2723] font-medium">{m.rank}</td>
+                          <td className="px-3 py-2 text-sm">
+                            <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                              m.role === 'executant'
+                                ? 'bg-[#8B0000]/10 text-[#8B0000] border border-[#8B0000]/30'
+                                : m.role === 'intervenant'
+                                ? 'bg-[#1565C0]/10 text-[#1565C0] border border-[#1565C0]/30'
+                                : 'bg-[#D4A017]/10 text-[#7A5C00] border border-[#D4A017]/40'
+                            }`}>
+                              {m.role === 'executant' ? 'Exécutant' : m.role === 'intervenant' ? 'Intervenant' : 'Ninja'}
+                            </span>
+                          </td>
                           <td className="px-3 py-2 text-sm">
                             {m.mission_link ? (
                               <a
@@ -630,7 +723,7 @@ export default function Adherents() {
                           <td className="px-3 py-2 text-right">
                             <button
                               type="button"
-                              onClick={() => markNinjaMissionAsPaid(m.row_id)}
+                              onClick={() => markMissionAsPaid(m)}
                               disabled={!canManage || markingPaidRowId === m.row_id}
                               className={`h-8 px-3 rounded border text-xs font-medium transition-colors ${
                                 canManage
