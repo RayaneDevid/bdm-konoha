@@ -306,6 +306,8 @@ export default function AnnuaireAdherent() {
                             ? '#8B6914'
                             : adherent.card_tier === 'argent'
                             ? '#5A5A5A'
+                            : adherent.card_tier === 'aucun'
+                            ? '#616161'
                             : '#8B5E1D',
                         }}
                       >

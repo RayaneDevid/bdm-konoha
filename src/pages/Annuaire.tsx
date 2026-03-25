@@ -14,9 +14,10 @@ interface AdherentPublic {
   total_points: number;
 }
 
-const TIER_ORDER: CardTier[] = ['vip', 'or', 'argent', 'bronze'];
+const TIER_ORDER: CardTier[] = ['vip', 'or', 'argent', 'bronze', 'aucun'];
 
 const TIER_BG: Record<CardTier, string> = {
+  aucun: 'bg-[#9E9E9E]/10 border-[#9E9E9E]/40',
   bronze: 'bg-[#CD7F32]/10 border-[#CD7F32]/40',
   argent: 'bg-[#A8A9AD]/10 border-[#A8A9AD]/40',
   or: 'bg-[#D4A017]/10 border-[#D4A017]/40',
@@ -92,7 +93,7 @@ export default function Annuaire() {
     return matchSearch && matchTier;
   });
 
-  const tiers: (CardTier | 'all')[] = ['all', 'vip', 'or', 'argent', 'bronze'];
+  const tiers: (CardTier | 'all')[] = ['all', 'vip', 'or', 'argent', 'bronze', 'aucun'];
 
   return (
     <div className="min-h-screen bg-[#FAF3E3]">
@@ -227,7 +228,7 @@ export default function Annuaire() {
                       style={{
                         backgroundColor: TIER_COLORS[a.card_tier] + '22',
                         borderColor: TIER_COLORS[a.card_tier],
-                        color: a.card_tier === 'vip' ? '#7B1FA2' : a.card_tier === 'or' ? '#8B6914' : a.card_tier === 'argent' ? '#5A5A5A' : '#8B5E1D',
+                        color: a.card_tier === 'vip' ? '#7B1FA2' : a.card_tier === 'or' ? '#8B6914' : a.card_tier === 'argent' ? '#5A5A5A' : a.card_tier === 'aucun' ? '#616161' : '#8B5E1D',
                       }}
                     >
                       {TIER_LABELS[a.card_tier]}

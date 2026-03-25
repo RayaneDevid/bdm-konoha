@@ -240,6 +240,7 @@ export default function Adherents() {
   }
 
   const getUpgradeTiers = (current: CardTier): CardTier[] => {
+    if (current === 'aucun') return ['bronze', 'argent', 'or', 'vip'];
     if (current === 'bronze') return ['argent', 'or', 'vip'];
     if (current === 'argent') return ['or', 'vip'];
     if (current === 'or') return ['vip'];
@@ -371,6 +372,7 @@ export default function Adherents() {
               className="h-9 px-3 pr-8 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm font-medium text-[#3E2723] outline-none focus:border-[#D4A017] appearance-none cursor-pointer"
             >
               <option value="all">Tous les niveaux</option>
+              <option value="aucun">Aucun</option>
               <option value="bronze">Bronze</option>
               <option value="argent">Argent</option>
               <option value="or">Or</option>
