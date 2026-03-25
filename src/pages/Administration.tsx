@@ -10,7 +10,8 @@ import {
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { ROLE_COLORS, ROLE_LABELS } from '../utils/constants';
-import type { StaffUser, Role } from '../types';
+import SearchableSelect from '../components/ui/SearchableSelect';
+import type { StaffUser, Role, Adherent } from '../types';
 
 const ROLES: Role[] = ['superviseur', 'gerant', 'co-gerant', 'membre_bdm'];
 
@@ -20,6 +21,7 @@ const PERMISSIONS: { label: string; superviseur: boolean; gerant: boolean; 'co-g
   { label: 'Gérer les adhérents',              superviseur: true,  gerant: true,  'co-gerant': true,  membre_bdm: true  },
   { label: "Évoluer la carte d'un adhérent",   superviseur: true,  gerant: true,  'co-gerant': true,  membre_bdm: true  },
   { label: 'Enregistrer des missions',         superviseur: true,  gerant: true,  'co-gerant': true,  membre_bdm: true  },
+  { label: 'Marquer une mission réussie/échec', superviseur: true, gerant: true,  'co-gerant': true,  membre_bdm: true  },
   { label: 'Valider les paiements',            superviseur: true,  gerant: true,  'co-gerant': true,  membre_bdm: false },
   { label: 'Supprimer une mission',            superviseur: true,  gerant: true,  'co-gerant': true,  membre_bdm: false },
   { label: 'Créer / modifier un cycle',        superviseur: true,  gerant: true,  'co-gerant': false, membre_bdm: false },
@@ -38,9 +40,11 @@ function generatePassword(length = 12) {
 export default function Administration() {
   const { staffUser } = useAuth();
   const isGerant = staffUser?.role === 'superviseur' || staffUser?.role === 'gerant';
+  const canManageUsers = isGerant || staffUser?.role === 'co-gerant';
 
   const [users, setUsers] = useState<StaffUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const [adherentList, setAdherentList] = useState<Adherent[]>([]);
 
   // Modal state
   const [showModal, setShowModal] = useState(false);
@@ -48,6 +52,7 @@ export default function Administration() {
   const [formLastName, setFormLastName] = useState('');
   const [formEmail, setFormEmail] = useState('');
   const [formRole, setFormRole] = useState<Role>('membre_bdm');
+  const [formAdherentId, setFormAdherentId] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
 
@@ -57,6 +62,7 @@ export default function Administration() {
 
   useEffect(() => {
     fetchUsers();
+    fetchAdherents();
   }, []);
 
   async function fetchUsers() {
@@ -64,9 +70,19 @@ export default function Administration() {
     const { data } = await supabase
       .from('staff_users')
       .select('*')
+      .eq('is_active', true)
       .order('created_at', { ascending: false });
     if (data) setUsers(data);
     setLoading(false);
+  }
+
+  async function fetchAdherents() {
+    const { data } = await supabase
+      .from('adherents')
+      .select('*')
+      .eq('is_active', true)
+      .order('last_name');
+    if (data) setAdherentList(data);
   }
 
   async function handleCreateUser(e: React.FormEvent) {
@@ -88,6 +104,7 @@ export default function Administration() {
           first_name: formFirstName,
           last_name: formLastName,
           role: formRole,
+          ...(formAdherentId ? { adherent_id: formAdherentId } : {}),
         },
       },
     });
@@ -112,6 +129,7 @@ export default function Administration() {
     setFormLastName('');
     setFormEmail('');
     setFormRole('membre_bdm');
+    setFormAdherentId('');
     setSubmitting(false);
     setShowModal(false);
     fetchUsers();
@@ -160,7 +178,7 @@ export default function Administration() {
           </h1>
           <div className="mt-2 w-32 h-1 bg-gradient-to-r from-[#8B0000] via-[#C41E3A] to-transparent rounded-full" />
         </div>
-        {isGerant && (
+        {canManageUsers && (
           <button
             onClick={() => setShowModal(true)}
             className="flex items-center gap-2 bg-[#3E2723] text-[#FAF3E3] px-5 h-10 rounded shadow-lg text-sm font-medium hover:bg-[#5D4037] transition-colors cursor-pointer"
@@ -302,7 +320,7 @@ export default function Administration() {
 
                       {/* Actions */}
                       <td className="px-3 py-3 text-right">
-                        {isGerant && user.id !== staffUser?.id && (
+                        {canManageUsers && user.id !== staffUser?.id && (
                           <button
                             onClick={() => handleToggleActive(user)}
                             className={`text-xs font-medium px-3 py-1.5 rounded border cursor-pointer transition-colors ${
@@ -402,7 +420,7 @@ export default function Administration() {
                 </h3>
               </div>
               <button
-                onClick={() => { setShowModal(false); setFormError(''); }}
+                onClick={() => { setShowModal(false); setFormError(''); setFormAdherentId(''); }}
                 className="text-[#5D4037] hover:text-[#3E2723] cursor-pointer"
               >
                 <X size={20} />
@@ -465,6 +483,31 @@ export default function Administration() {
                 </select>
               </div>
 
+              {/* Lier à un adhérent existant (optionnel) */}
+              <div className="space-y-1">
+                <label className="text-sm font-medium text-[#3E2723]">
+                  Lier à un profil adhérent existant{' '}
+                  <span className="text-[#5D4037] font-normal">(optionnel)</span>
+                </label>
+                <SearchableSelect
+                  options={[
+                    { value: '', label: 'Créer un nouveau profil adhérent' },
+                    ...adherentList.map((a) => ({
+                      value: a.id,
+                      label: `${a.first_name} ${a.last_name}`,
+                    })),
+                  ]}
+                  value={formAdherentId}
+                  onChange={setFormAdherentId}
+                  placeholder="Rechercher un adhérent..."
+                />
+                {formAdherentId && (
+                  <p className="text-xs text-[#4A5D23] italic">
+                    Le compte sera lié au profil adhérent sélectionné. Aucun nouveau profil ne sera créé.
+                  </p>
+                )}
+              </div>
+
               {/* Erreur */}
               {formError && (
                 <div className="bg-[#C62828]/10 border border-[#C62828] rounded px-3 py-2">
@@ -476,7 +519,7 @@ export default function Administration() {
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => { setShowModal(false); setFormError(''); }}
+                  onClick={() => { setShowModal(false); setFormError(''); setFormAdherentId(''); }}
                   className="bg-[#FAF3E3] border-2 border-[#5D4037] text-[#3E2723] px-5 py-2 rounded text-sm font-medium hover:bg-[#E8D5B7] transition-colors cursor-pointer"
                 >
                   Annuler

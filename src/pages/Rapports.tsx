@@ -48,6 +48,7 @@ export default function Rapports() {
   const { staffUser } = useAuth();
   const canMarkPaid = staffUser?.role === 'superviseur' || staffUser?.role === 'gerant' || staffUser?.role === 'co-gerant';
   const canDelete = staffUser?.role === 'superviseur' || staffUser?.role === 'gerant' || staffUser?.role === 'co-gerant';
+  const canToggleStatus = !!staffUser;
 
   const [cycles, setCycles] = useState<Cycle[]>([]);
   const [selectedCycleId, setSelectedCycleId] = useState('');
@@ -305,7 +306,7 @@ export default function Rapports() {
   }
 
   async function toggleMissionStatus(missionId: string, currentStatus: MissionStatus) {
-    if (!canMarkPaid) return;
+    if (!canToggleStatus) return;
     const newStatus: MissionStatus = currentStatus === 'reussi' ? 'echec' : 'reussi';
     await supabase
       .from('missions')
@@ -787,16 +788,16 @@ export default function Rapports() {
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); toggleMissionStatus(mission.id, mission.status); }}
-                        disabled={!canMarkPaid}
+                        disabled={!canToggleStatus}
                         className="shrink-0 flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium transition-colors"
                         style={{
                           backgroundColor: MISSION_STATUS_COLORS[mission.status].bg,
                           color: MISSION_STATUS_COLORS[mission.status].text,
                           borderWidth: '1px',
                           borderColor: MISSION_STATUS_COLORS[mission.status].border,
-                          cursor: canMarkPaid ? 'pointer' : 'default',
+                          cursor: canToggleStatus ? 'pointer' : 'default',
                         }}
-                        title={canMarkPaid ? 'Cliquer pour changer le statut' : undefined}
+                        title={canToggleStatus ? 'Cliquer pour changer le statut' : undefined}
                       >
                         {mission.status === 'reussi' ? <Trophy size={12} /> : <Ban size={12} />}
                         {MISSION_STATUS_LABELS[mission.status]}
