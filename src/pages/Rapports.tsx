@@ -60,6 +60,10 @@ export default function Rapports() {
   const [totalCount, setTotalCount] = useState(0);
   const PAGE_SIZE = 15;
 
+  // Filtres
+  const [filterExecutorId, setFilterExecutorId] = useState('');
+  const [filterIntervenantId, setFilterIntervenantId] = useState('');
+
   // Form state
   const [formDate, setFormDate] = useState('');
   const [formType, setFormType] = useState<MissionType>('ninja');
@@ -97,8 +101,15 @@ export default function Rapports() {
   }, [selectedCycleId]);
 
   useEffect(() => {
+    if (selectedCycleId) {
+      setPage(0);
+      setExpandedId(null);
+    }
+  }, [filterExecutorId, filterIntervenantId]);
+
+  useEffect(() => {
     if (selectedCycleId) fetchMissions();
-  }, [selectedCycleId, page]);
+  }, [selectedCycleId, page, filterExecutorId, filterIntervenantId]);
 
   async function fetchInitial() {
     const [cyclesRes, staffRes, adherentsRes] = await Promise.all([
@@ -121,13 +132,32 @@ export default function Rapports() {
     const from = page * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
 
-    const { data: missionsData, count } = await supabase
+    // Filtre intervenant : pré-fetch des mission IDs
+    let intervenantMissionIds: string[] | null = null;
+    if (filterIntervenantId) {
+      const { data: interRows } = await supabase
+        .from('mission_intervenants')
+        .select('mission_id')
+        .eq('staff_id', filterIntervenantId);
+      intervenantMissionIds = interRows?.map((r) => r.mission_id) ?? [];
+      if (intervenantMissionIds.length === 0) {
+        setMissions([]);
+        setTotalCount(0);
+        return;
+      }
+    }
+
+    let query = supabase
       .from('missions')
       .select('*, executor:executor_id(first_name, last_name)', { count: 'exact' })
       .eq('cycle_id', selectedCycleId)
       .order('mission_date', { ascending: false })
-      .order('created_at', { ascending: false })
-      .range(from, to);
+      .order('created_at', { ascending: false });
+
+    if (filterExecutorId) query = query.eq('executor_id', filterExecutorId);
+    if (intervenantMissionIds) query = query.in('id', intervenantMissionIds);
+
+    const { data: missionsData, count } = await query.range(from, to);
 
     if (!missionsData) return;
     setTotalCount(count ?? 0);
@@ -685,6 +715,47 @@ export default function Rapports() {
             >
               Total: {totalPoints} points
             </div>
+          </div>
+
+          {/* Filtres */}
+          <div className="mt-4 flex items-center gap-3 flex-wrap">
+            <span className="text-xs font-medium text-[#5D4037]">Filtrer :</span>
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-[#5D4037]">Exécutant</label>
+              <select
+                value={filterExecutorId}
+                onChange={(e) => setFilterExecutorId(e.target.value)}
+                className="h-8 px-2 pr-6 bg-[#FAF3E3] border border-[#5D4037] rounded text-xs text-[#3E2723] outline-none focus:border-[#D4A017] appearance-none cursor-pointer"
+              >
+                <option value="">Tous</option>
+                {staffList.map((s) => (
+                  <option key={s.id} value={s.id}>{s.first_name} {s.last_name}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-[#5D4037]">Intervenant</label>
+              <select
+                value={filterIntervenantId}
+                onChange={(e) => setFilterIntervenantId(e.target.value)}
+                className="h-8 px-2 pr-6 bg-[#FAF3E3] border border-[#5D4037] rounded text-xs text-[#3E2723] outline-none focus:border-[#D4A017] appearance-none cursor-pointer"
+              >
+                <option value="">Tous</option>
+                {staffList.map((s) => (
+                  <option key={s.id} value={s.id}>{s.first_name} {s.last_name}</option>
+                ))}
+              </select>
+            </div>
+            {(filterExecutorId || filterIntervenantId) && (
+              <button
+                type="button"
+                onClick={() => { setFilterExecutorId(''); setFilterIntervenantId(''); }}
+                className="flex items-center gap-1 h-8 px-3 bg-[#C62828]/10 border border-[#C62828]/40 text-[#C62828] text-xs rounded hover:bg-[#C62828]/20 transition-colors cursor-pointer"
+              >
+                <X size={12} />
+                Effacer filtres
+              </button>
+            )}
           </div>
         </div>
 

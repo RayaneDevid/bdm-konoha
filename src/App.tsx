@@ -10,6 +10,7 @@ import ConfigCartes from './pages/ConfigCartes';
 import Cycles from './pages/Cycles';
 import Administration from './pages/Administration';
 import Recompenses from './pages/Recompenses';
+import FicheMembre from './pages/FicheMembre';
 import Annuaire from './pages/Annuaire';
 import AnnuaireAdherent from './pages/AnnuaireAdherent';
 
@@ -46,6 +47,7 @@ export default function App() {
               <Route path="/adherents" element={<Adherents />} />
               <Route path="/adherents/:id" element={<AdherentProfile />} />
               <Route path="/rapports" element={<Rapports />} />
+              <Route path="/fiche-membre" element={<FicheMembre />} />
               <Route path="/recompenses" element={<Recompenses />} />
               <Route path="/config-cartes" element={<ConfigCartes />} />
               <Route path="/cycles" element={<Cycles />} />

@@ -8,12 +8,14 @@ import {
   RefreshCw,
   ShieldCheck,
   Gift,
+  UserSearch,
 } from 'lucide-react';
 
 const navItems = [
   { to: '/', label: 'Tableau de bord', icon: LayoutDashboard },
   { to: '/adherents', label: 'Adhérents', icon: Users, gerantOnly: true },
   { to: '/rapports', label: 'Rapports BDM', icon: FileText },
+  { to: '/fiche-membre', label: 'Fiche Membre BDM', icon: UserSearch },
   { to: '/recompenses', label: 'Récompenses', icon: Gift },
   { to: '/config-cartes', label: 'Config Cartes', icon: Settings, gerantOnly: true },
   { to: '/cycles', label: 'Cycles', icon: RefreshCw, gerantOnly: true },
