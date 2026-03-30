@@ -462,22 +462,22 @@ export default function Rapports() {
       {/* Titre */}
       <div>
         <h1
-          className="text-4xl font-medium text-[#8B0000]"
+          className="text-4xl font-medium text-[var(--v-primary)]"
           style={{ fontFamily: "'Noto Serif JP', serif" }}
         >
           Rapports BDM
         </h1>
-        <div className="mt-2 w-32 h-1 bg-gradient-to-r from-[#8B0000] via-[#C41E3A] to-transparent rounded-full" />
+        <div className="mt-2 w-32 h-1 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-secondary)] to-transparent rounded-full" />
       </div>
 
       {/* Selecteur de cycle */}
-      <div className="bg-[#F5E6CA] border-2 border-[#5D4037] rounded-[10px] shadow-lg px-6 py-6">
+      <div className="bg-[var(--v-cream)] border-2 border-[var(--v-medium)] rounded-[10px] shadow-lg px-6 py-6">
         <div className="flex items-center gap-4">
-          <label className="text-sm font-medium text-[#3E2723]">Selectionner un cycle :</label>
+          <label className="text-sm font-medium text-[var(--v-dark)]">Selectionner un cycle :</label>
           <select
             value={selectedCycleId}
             onChange={(e) => { setSelectedCycleId(e.target.value); setFormDateError(''); }}
-            className="bg-[#FAF3E3] border-2 border-[#5D4037] rounded px-4 py-2 text-sm font-medium text-[#3E2723] w-80 focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
+            className="bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] rounded px-4 py-2 text-sm font-medium text-[var(--v-dark)] w-80 focus:outline-none focus:ring-2 focus:ring-[var(--v-primary)]"
           >
             {cycles.map((c) => (
               <option key={c.id} value={c.id}>
@@ -489,14 +489,14 @@ export default function Rapports() {
       </div>
 
       {/* Formulaire Nouvelle Mission */}
-      <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-xl">
-        <div className="h-2 bg-gradient-to-r from-[#D4A017] via-[#8B0000] to-[#D4A017] rounded-t-md" />
+      <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-xl">
+        <div className="h-2 bg-gradient-to-r from-[var(--v-gold)] via-[var(--v-primary)] to-[var(--v-gold)] rounded-t-md" />
 
-        <div className="bg-[#E8D5B7] border-b-2 border-[#5D4037] px-6 py-5">
+        <div className="bg-[var(--v-light-beige)] border-b-2 border-[var(--v-medium)] px-6 py-5">
           <div className="flex items-center gap-4">
-            <div className="w-1 h-6 bg-[#C41E3A] rounded-full" />
+            <div className="w-1 h-6 bg-[var(--v-secondary)] rounded-full" />
             <h2
-              className="text-2xl font-medium text-[#3E2723]"
+              className="text-2xl font-medium text-[var(--v-dark)]"
               style={{ fontFamily: "'Noto Serif JP', serif" }}
             >
               Nouvelle Mission
@@ -508,8 +508,8 @@ export default function Rapports() {
           {/* Date + Type */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="flex items-center gap-2 text-sm font-medium text-[#3E2723]">
-                <Calendar size={16} className="text-[#5D4037]" />
+              <label className="flex items-center gap-2 text-sm font-medium text-[var(--v-dark)]">
+                <Calendar size={16} className="text-[var(--v-medium)]" />
                 Date
               </label>
               <input
@@ -518,7 +518,7 @@ export default function Rapports() {
                 onChange={(e) => { setFormDate(e.target.value); setFormDateError(''); }}
                 min={cycles.find((c) => c.id === selectedCycleId)?.start_date}
                 max={cycles.find((c) => c.id === selectedCycleId)?.end_date}
-                className={`w-full bg-[#FAF3E3] border rounded px-3 py-2 text-sm text-[#3E2723] focus:outline-none focus:ring-2 focus:ring-[#8B0000] ${formDateError ? 'border-[#C62828]' : 'border-[#5D4037]'}`}
+                className={`w-full bg-[var(--v-off-white)] border rounded px-3 py-2 text-sm text-[var(--v-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--v-primary)] ${formDateError ? 'border-[#C62828]' : 'border-[var(--v-medium)]'}`}
                 required
               />
               {formDateError && (
@@ -527,15 +527,15 @@ export default function Rapports() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-[#3E2723]">Type</label>
+              <label className="text-sm font-medium text-[var(--v-dark)]">Type</label>
               <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => setFormType('ninja')}
                   className={`flex-1 flex items-center justify-center gap-2 h-9 rounded text-sm font-medium transition-colors cursor-pointer ${
                     formType === 'ninja'
-                      ? 'bg-[#8B0000] text-[#FAF3E3]'
-                      : 'bg-[#FAF3E3] border-2 border-[#5D4037] text-[#5D4037]'
+                      ? 'bg-[var(--v-primary)] text-[var(--v-off-white)]'
+                      : 'bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] text-[var(--v-medium)]'
                   }`}
                 >
                   <Swords size={16} />
@@ -546,8 +546,8 @@ export default function Rapports() {
                   onClick={() => setFormType('recolte')}
                   className={`flex-1 flex items-center justify-center gap-2 h-9 rounded text-sm font-medium transition-colors cursor-pointer ${
                     formType === 'recolte'
-                      ? 'bg-[#8B0000] text-[#FAF3E3]'
-                      : 'bg-[#FAF3E3] border-2 border-[#5D4037] text-[#5D4037]'
+                      ? 'bg-[var(--v-primary)] text-[var(--v-off-white)]'
+                      : 'bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] text-[var(--v-medium)]'
                   }`}
                 >
                   <ShoppingBasket size={16} />
@@ -558,8 +558,8 @@ export default function Rapports() {
                   onClick={() => setFormType('passation')}
                   className={`flex-1 flex items-center justify-center gap-2 h-9 rounded text-sm font-medium transition-colors cursor-pointer ${
                     formType === 'passation'
-                      ? 'bg-[#8B0000] text-[#FAF3E3]'
-                      : 'bg-[#FAF3E3] border-2 border-[#5D4037] text-[#5D4037]'
+                      ? 'bg-[var(--v-primary)] text-[var(--v-off-white)]'
+                      : 'bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] text-[var(--v-medium)]'
                   }`}
                 >
                   <GraduationCap size={16} />
@@ -572,15 +572,15 @@ export default function Rapports() {
           {/* Type de passation (affiché uniquement pour les missions de passation) */}
           {formType === 'passation' && (
             <div className="space-y-2">
-              <label className="text-sm font-medium text-[#3E2723]">Type de passation</label>
+              <label className="text-sm font-medium text-[var(--v-dark)]">Type de passation</label>
               <div className="flex gap-2 w-1/2">
                 <button
                   type="button"
                   onClick={() => setFormPassationType('chunin')}
                   className={`flex-1 flex items-center justify-center gap-2 h-9 rounded text-sm font-medium transition-colors cursor-pointer ${
                     formPassationType === 'chunin'
-                      ? 'bg-[#8B0000] text-[#FAF3E3]'
-                      : 'bg-[#FAF3E3] border-2 border-[#5D4037] text-[#5D4037]'
+                      ? 'bg-[var(--v-primary)] text-[var(--v-off-white)]'
+                      : 'bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] text-[var(--v-medium)]'
                   }`}
                 >
                   <GraduationCap size={16} />
@@ -591,8 +591,8 @@ export default function Rapports() {
                   onClick={() => setFormPassationType('genin_confirme')}
                   className={`flex-1 flex items-center justify-center gap-2 h-9 rounded text-sm font-medium transition-colors cursor-pointer ${
                     formPassationType === 'genin_confirme'
-                      ? 'bg-[#8B0000] text-[#FAF3E3]'
-                      : 'bg-[#FAF3E3] border-2 border-[#5D4037] text-[#5D4037]'
+                      ? 'bg-[var(--v-primary)] text-[var(--v-off-white)]'
+                      : 'bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] text-[var(--v-medium)]'
                   }`}
                 >
                   <GraduationCap size={16} />
@@ -604,8 +604,8 @@ export default function Rapports() {
 
           {/* Lien de la mission */}
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm font-medium text-[#3E2723]">
-              <Link size={16} className="text-[#5D4037]" />
+            <label className="flex items-center gap-2 text-sm font-medium text-[var(--v-dark)]">
+              <Link size={16} className="text-[var(--v-medium)]" />
               Lien de la mission
             </label>
             <input
@@ -613,14 +613,14 @@ export default function Rapports() {
               value={formMissionLink}
               onChange={(e) => setFormMissionLink(e.target.value)}
               placeholder="https://..."
-              className="w-full bg-[#FAF3E3] border border-[#5D4037] rounded px-3 py-2 text-sm text-[#3E2723] focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
+              className="w-full bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded px-3 py-2 text-sm text-[var(--v-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--v-primary)]"
               required
             />
           </div>
 
           {/* Rang */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[#3E2723]">Rang</label>
+            <label className="text-sm font-medium text-[var(--v-dark)]">Rang</label>
             <div className="flex gap-2">
               {RANKS.map((r) => (
                 <button
@@ -629,12 +629,12 @@ export default function Rapports() {
                   onClick={() => setFormRank(r)}
                   className={`flex-1 flex items-center justify-center gap-3 h-9 rounded text-sm font-medium border-2 transition-all cursor-pointer ${
                     formRank === r
-                      ? 'border-[#5D4037] ring-2 ring-[#D4A017] shadow-md'
-                      : 'border-[#5D4037]'
+                      ? 'border-[var(--v-medium)] ring-2 ring-[var(--v-gold)] shadow-md'
+                      : 'border-[var(--v-medium)]'
                   }`}
                   style={{
                     backgroundColor: RANK_COLORS[r],
-                    color: r === 'S' ? '#3E2723' : 'white',
+                    color: r === 'S' ? 'var(--v-dark)' : 'white',
                   }}
                 >
                   <span className="font-bold">{r}</span>
@@ -647,7 +647,7 @@ export default function Rapports() {
           {/* Executant + Intervenants + Ninjas */}
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-[#3E2723]">Executant</label>
+              <label className="text-sm font-medium text-[var(--v-dark)]">Executant</label>
               <SearchableSelect
                 options={staffList.map((s) => ({ value: s.id, label: `${s.first_name} ${s.last_name}` }))}
                 value={formExecutor}
@@ -658,7 +658,7 @@ export default function Rapports() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-[#3E2723]">Intervenants</label>
+              <label className="text-sm font-medium text-[var(--v-dark)]">Intervenants</label>
               <SearchableMultiSelect
                 options={[
                   { value: 'external', label: 'Externe BDM' },
@@ -667,18 +667,18 @@ export default function Rapports() {
                 selected={formIntervenants}
                 onChange={setFormIntervenants}
                 placeholder="Ajouter..."
-                chipColor={{ bg: '#5D4037', text: '#FAF3E3' }}
+                chipColor={{ bg: 'var(--v-medium)', text: 'var(--v-off-white)' }}
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-[#3E2723]">Ninjas</label>
+              <label className="text-sm font-medium text-[var(--v-dark)]">Ninjas</label>
               <SearchableMultiSelect
                 options={adherentList.map((a) => ({ value: a.id, label: `${a.last_name} ${a.first_name}` }))}
                 selected={formNinjas}
                 onChange={setFormNinjas}
                 placeholder="Ajouter..."
-                chipColor={{ bg: '#D4A017', text: '#3E2723' }}
+                chipColor={{ bg: 'var(--v-gold)', text: 'var(--v-dark)' }}
               />
             </div>
           </div>
@@ -686,7 +686,7 @@ export default function Rapports() {
           <button
             type="submit"
             disabled={submitting}
-            className="bg-[#5D4037] border-2 border-[#3E2723] text-[#FAF3E3] px-6 h-9 rounded shadow-lg text-sm font-medium hover:bg-[#3E2723] transition-colors cursor-pointer disabled:opacity-50"
+            className="bg-[var(--v-medium)] border-2 border-[var(--v-dark)] text-[var(--v-off-white)] px-6 h-9 rounded shadow-lg text-sm font-medium hover:bg-[var(--v-dark)] transition-colors cursor-pointer disabled:opacity-50"
             style={{ fontFamily: "'Noto Serif JP', serif" }}
           >
             {submitting ? 'Enregistrement...' : 'Enregistrer la mission'}
@@ -695,22 +695,22 @@ export default function Rapports() {
       </div>
 
       {/* Missions du Cycle */}
-      <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-xl overflow-hidden">
-        <div className="h-2 bg-gradient-to-r from-[#8B0000] via-[#D4A017] to-[#8B0000]" />
+      <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-xl overflow-hidden">
+        <div className="h-2 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-gold)] to-[var(--v-primary)]" />
 
-        <div className="bg-[#E8D5B7] border-b-2 border-[#5D4037] px-6 py-5">
+        <div className="bg-[var(--v-light-beige)] border-b-2 border-[var(--v-medium)] px-6 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-1 h-6 bg-[#C41E3A] rounded-full" />
+              <div className="w-1 h-6 bg-[var(--v-secondary)] rounded-full" />
               <h2
-                className="text-2xl font-medium text-[#3E2723]"
+                className="text-2xl font-medium text-[var(--v-dark)]"
                 style={{ fontFamily: "'Noto Serif JP', serif" }}
               >
                 Missions du Cycle
               </h2>
             </div>
             <div
-              className="bg-[#D4A017] px-5 py-2 rounded text-[#3E2723] text-lg font-medium"
+              className="bg-[var(--v-gold)] px-5 py-2 rounded text-[var(--v-dark)] text-lg font-medium"
               style={{ fontFamily: "'Noto Serif JP', serif" }}
             >
               Total: {totalPoints} points
@@ -719,13 +719,13 @@ export default function Rapports() {
 
           {/* Filtres */}
           <div className="mt-4 flex items-center gap-3 flex-wrap">
-            <span className="text-xs font-medium text-[#5D4037]">Filtrer :</span>
+            <span className="text-xs font-medium text-[var(--v-medium)]">Filtrer :</span>
             <div className="flex items-center gap-2">
-              <label className="text-xs text-[#5D4037]">Exécutant</label>
+              <label className="text-xs text-[var(--v-medium)]">Exécutant</label>
               <select
                 value={filterExecutorId}
                 onChange={(e) => setFilterExecutorId(e.target.value)}
-                className="h-8 px-2 pr-6 bg-[#FAF3E3] border border-[#5D4037] rounded text-xs text-[#3E2723] outline-none focus:border-[#D4A017] appearance-none cursor-pointer"
+                className="h-8 px-2 pr-6 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-xs text-[var(--v-dark)] outline-none focus:border-[var(--v-gold)] appearance-none cursor-pointer"
               >
                 <option value="">Tous</option>
                 {staffList.map((s) => (
@@ -734,11 +734,11 @@ export default function Rapports() {
               </select>
             </div>
             <div className="flex items-center gap-2">
-              <label className="text-xs text-[#5D4037]">Intervenant</label>
+              <label className="text-xs text-[var(--v-medium)]">Intervenant</label>
               <select
                 value={filterIntervenantId}
                 onChange={(e) => setFilterIntervenantId(e.target.value)}
-                className="h-8 px-2 pr-6 bg-[#FAF3E3] border border-[#5D4037] rounded text-xs text-[#3E2723] outline-none focus:border-[#D4A017] appearance-none cursor-pointer"
+                className="h-8 px-2 pr-6 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-xs text-[var(--v-dark)] outline-none focus:border-[var(--v-gold)] appearance-none cursor-pointer"
               >
                 <option value="">Tous</option>
                 {staffList.map((s) => (
@@ -761,7 +761,7 @@ export default function Rapports() {
 
         <div className="p-6 space-y-2">
           {missions.length === 0 ? (
-            <p className="text-[#5D4037] text-sm text-center py-8">
+            <p className="text-[var(--v-medium)] text-sm text-center py-8">
               Aucune mission pour ce cycle.
             </p>
           ) : (
@@ -775,29 +775,29 @@ export default function Rapports() {
               return (
                 <div
                   key={mission.id}
-                  className={`border-2 border-[#5D4037] rounded-md overflow-hidden ${
-                    isExpanded ? 'bg-[#FAF3E3]' : mission.id === missions[0]?.id ? 'bg-[#FAF3E3]' : 'bg-[#F5E6CA]'
+                  className={`border-2 border-[var(--v-medium)] rounded-md overflow-hidden ${
+                    isExpanded ? 'bg-[var(--v-off-white)]' : mission.id === missions[0]?.id ? 'bg-[var(--v-off-white)]' : 'bg-[var(--v-cream)]'
                   }`}
                 >
                   {/* Mission row */}
                   <div className="px-4 py-4">
                     <div className="flex items-center gap-4">
                       {/* Date */}
-                      <span className="text-[#5D4037] text-base w-[60px] shrink-0">
+                      <span className="text-[var(--v-medium)] text-base w-[60px] shrink-0">
                         {formatDate(mission.mission_date)}
                       </span>
 
                       {/* Type icon */}
                       <div className="shrink-0 flex items-center gap-1">
                         {mission.mission_type === 'ninja' ? (
-                          <Swords size={20} className="text-[#5D4037]" />
+                          <Swords size={20} className="text-[var(--v-medium)]" />
                         ) : mission.mission_type === 'recolte' ? (
-                          <ShoppingBasket size={20} className="text-[#5D4037]" />
+                          <ShoppingBasket size={20} className="text-[var(--v-medium)]" />
                         ) : (
-                          <GraduationCap size={20} className="text-[#5D4037]" />
+                          <GraduationCap size={20} className="text-[var(--v-medium)]" />
                         )}
                         {mission.mission_type === 'passation' && mission.passation_type && (
-                          <span className="text-[10px] font-medium text-[#5D4037] bg-[#E8D5B7] border border-[#5D4037]/40 px-1.5 py-0.5 rounded leading-none">
+                          <span className="text-[10px] font-medium text-[var(--v-medium)] bg-[var(--v-light-beige)] border border-[var(--v-medium)]/40 px-1.5 py-0.5 rounded leading-none">
                             {mission.passation_type === 'chunin' ? 'Chunin' : 'Genin conf.'}
                           </span>
                         )}
@@ -812,7 +812,7 @@ export default function Rapports() {
                       </span>
 
                       {/* Executor */}
-                      <span className="text-[#3E2723] text-base w-[140px] shrink-0 truncate">
+                      <span className="text-[var(--v-dark)] text-base w-[140px] shrink-0 truncate">
                         {mission.executor_name}
                       </span>
 
@@ -821,13 +821,13 @@ export default function Rapports() {
                         {mission.intervenants.slice(0, 2).map((i) => (
                           <span
                             key={i.row_id}
-                            className="bg-[#5D4037] text-[#FAF3E3] text-xs font-medium px-2 py-0.5 rounded"
+                            className="bg-[var(--v-medium)] text-[var(--v-off-white)] text-xs font-medium px-2 py-0.5 rounded"
                           >
                             {i.name.split(' ').pop()}
                           </span>
                         ))}
                         {mission.intervenants.length > 2 && (
-                          <span className="bg-[#5D4037] text-[#FAF3E3] text-xs font-medium px-2 py-0.5 rounded">
+                          <span className="bg-[var(--v-medium)] text-[var(--v-off-white)] text-xs font-medium px-2 py-0.5 rounded">
                             +{mission.intervenants.length - 2}
                           </span>
                         )}
@@ -838,20 +838,20 @@ export default function Rapports() {
                         {mission.ninjas.slice(0, 2).map((n) => (
                           <span
                             key={n.row_id}
-                            className="bg-[#D4A017] text-[#3E2723] text-xs font-medium px-2 py-0.5 rounded"
+                            className="bg-[var(--v-gold)] text-[var(--v-dark)] text-xs font-medium px-2 py-0.5 rounded"
                           >
                             {n.name.split(' ')[0]}
                           </span>
                         ))}
                         {mission.ninjas.length > 2 && (
-                          <span className="bg-[#D4A017] text-[#3E2723] text-xs font-medium px-2 py-0.5 rounded">
+                          <span className="bg-[var(--v-gold)] text-[var(--v-dark)] text-xs font-medium px-2 py-0.5 rounded">
                             +{mission.ninjas.length - 2}
                           </span>
                         )}
                       </div>
 
                       {/* Points */}
-                      <span className="text-[#3E2723] text-base w-[65px] shrink-0">
+                      <span className="text-[var(--v-dark)] text-base w-[65px] shrink-0">
                         {mission.points}pts
                       </span>
 
@@ -876,10 +876,10 @@ export default function Rapports() {
 
                       {/* Payment progress */}
                       <div className="w-[140px] shrink-0">
-                        <span className="text-xs text-[#5D4037]">
+                        <span className="text-xs text-[var(--v-medium)]">
                           {mission.paid_count}/{mission.total_count} payes
                         </span>
-                        <div className="w-full h-2 bg-[#E8D5B7] rounded-full overflow-hidden mt-1">
+                        <div className="w-full h-2 bg-[var(--v-light-beige)] rounded-full overflow-hidden mt-1">
                           <div
                             className="h-full bg-[#4A5D23] rounded-full transition-all"
                             style={{ width: `${payPercent}%` }}
@@ -891,7 +891,7 @@ export default function Rapports() {
                     {/* Chevron toggle */}
                     <button
                       onClick={() => setExpandedId(isExpanded ? null : mission.id)}
-                      className="mt-2 text-[#5D4037] cursor-pointer"
+                      className="mt-2 text-[var(--v-medium)] cursor-pointer"
                     >
                       {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                     </button>
@@ -899,7 +899,7 @@ export default function Rapports() {
 
                   {/* Expanded accordion */}
                   {isExpanded && (
-                    <div className="bg-[#E8D5B7] border-t-2 border-[#5D4037] px-4 py-4">
+                    <div className="bg-[var(--v-light-beige)] border-t-2 border-[var(--v-medium)] px-4 py-4">
                       {/* Accordion header: link + actions */}
                       <div className="flex items-center justify-between mb-4">
                         {mission.mission_link ? (
@@ -907,19 +907,19 @@ export default function Rapports() {
                             href={mission.mission_link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-2 text-sm text-[#8B0000] underline hover:text-[#C41E3A] transition-colors"
+                            className="flex items-center gap-2 text-sm text-[var(--v-primary)] underline hover:text-[var(--v-secondary)] transition-colors"
                           >
                             <Link size={14} />
                             Voir le lien de la mission
                           </a>
                         ) : (
-                          <span className="text-xs text-[#5D4037] italic">Aucun lien</span>
+                          <span className="text-xs text-[var(--v-medium)] italic">Aucun lien</span>
                         )}
                         <div className="flex items-center gap-2">
                           <button
                             type="button"
                             onClick={() => openEditModal(mission)}
-                            className="flex items-center gap-2 px-3 py-1.5 bg-[#D4A017] border border-[#B8860B] text-[#3E2723] text-xs font-medium rounded hover:bg-[#C49515] transition-colors cursor-pointer"
+                            className="flex items-center gap-2 px-3 py-1.5 bg-[var(--v-gold)] border border-[var(--v-gold-dark)] text-[var(--v-dark)] text-xs font-medium rounded hover:bg-[#C49515] transition-colors cursor-pointer"
                           >
                             <Pencil size={14} />
                             Modifier
@@ -939,17 +939,17 @@ export default function Rapports() {
 
                       <div className="grid grid-cols-3 gap-4">
                         {/* Executant */}
-                        <div className="bg-[#FAF3E3] border-2 border-[#5D4037] rounded-md px-4 py-4 space-y-3">
+                        <div className="bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] rounded-md px-4 py-4 space-y-3">
                           <h4
-                            className="text-base font-medium text-[#8B0000]"
+                            className="text-base font-medium text-[var(--v-primary)]"
                             style={{ fontFamily: "'Noto Serif JP', serif" }}
                           >
                             Executant
                           </h4>
                           {mission.mission_type === 'recolte' && (
-                            <div className="flex items-center gap-2 bg-[#5D4037]/10 border border-[#5D4037]/30 rounded px-3 py-2">
-                              <ShoppingBasket size={14} className="text-[#5D4037] shrink-0" />
-                              <p className="text-xs text-[#5D4037] font-medium">
+                            <div className="flex items-center gap-2 bg-[var(--v-medium)]/10 border border-[var(--v-medium)]/30 rounded px-3 py-2">
+                              <ShoppingBasket size={14} className="text-[var(--v-medium)] shrink-0" />
+                              <p className="text-xs text-[var(--v-medium)] font-medium">
                                 Mission récolte — pas de paie pour l'exécutant.
                               </p>
                             </div>
@@ -961,15 +961,15 @@ export default function Rapports() {
                               disabled={!canMarkPaid || mission.mission_type === 'recolte'}
                               className={`w-4 h-4 rounded border shrink-0 flex items-center justify-center ${
                                 mission.executor_is_paid
-                                  ? 'bg-[#8B0000] border-[#8B0000]'
-                                  : 'bg-[#FAF3E3] border-[#5D4037]'
+                                  ? 'bg-[var(--v-primary)] border-[var(--v-primary)]'
+                                  : 'bg-[var(--v-off-white)] border-[var(--v-medium)]'
                               } ${canMarkPaid && mission.mission_type !== 'recolte' ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
                             >
                               {mission.executor_is_paid && <Check size={12} className="text-white" />}
                             </button>
-                            <span className="text-sm text-[#3E2723]">{mission.executor_name}</span>
+                            <span className="text-sm text-[var(--v-dark)]">{mission.executor_name}</span>
                             {mission.mission_type === 'recolte' ? (
-                              <span className="text-xs text-[#5D4037]">—</span>
+                              <span className="text-xs text-[var(--v-medium)]">—</span>
                             ) : mission.executor_is_paid ? (
                               <CheckCircle size={16} className="text-[#4A5D23]" />
                             ) : (
@@ -979,10 +979,10 @@ export default function Rapports() {
                         </div>
 
                         {/* Intervenants */}
-                        <div className="bg-[#FAF3E3] border-2 border-[#5D4037] rounded-md px-4 py-4 space-y-3">
+                        <div className="bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] rounded-md px-4 py-4 space-y-3">
                           <div className="flex items-center justify-between">
                             <h4
-                              className="text-base font-medium text-[#8B0000]"
+                              className="text-base font-medium text-[var(--v-primary)]"
                               style={{ fontFamily: "'Noto Serif JP', serif" }}
                             >
                               Intervenants
@@ -991,16 +991,16 @@ export default function Rapports() {
                               <button
                                 type="button"
                                 onClick={() => markAllPaid('mission_intervenants', mission.intervenants)}
-                                className="bg-[#D4A017] border border-[#8B0000] text-[#3E2723] text-xs font-medium px-3 py-1 rounded cursor-pointer hover:bg-[#C49515] transition-colors"
+                                className="bg-[var(--v-gold)] border border-[var(--v-primary)] text-[var(--v-dark)] text-xs font-medium px-3 py-1 rounded cursor-pointer hover:bg-[#C49515] transition-colors"
                               >
                                 Tout cocher
                               </button>
                             )}
                           </div>
                           {mission.mission_type === 'recolte' && mission.intervenants.length > 0 && (
-                            <div className="flex items-center gap-2 bg-[#5D4037]/10 border border-[#5D4037]/30 rounded px-3 py-2">
-                              <ShoppingBasket size={14} className="text-[#5D4037] shrink-0" />
-                              <p className="text-xs text-[#5D4037] font-medium">
+                            <div className="flex items-center gap-2 bg-[var(--v-medium)]/10 border border-[var(--v-medium)]/30 rounded px-3 py-2">
+                              <ShoppingBasket size={14} className="text-[var(--v-medium)] shrink-0" />
+                              <p className="text-xs text-[var(--v-medium)] font-medium">
                                 Mission récolte — pas de paie pour les intervenants.
                               </p>
                             </div>
@@ -1014,15 +1014,15 @@ export default function Rapports() {
                                   disabled={!canMarkPaid || mission.mission_type === 'recolte'}
                                   className={`w-4 h-4 rounded border shrink-0 flex items-center justify-center ${
                                     i.is_paid
-                                      ? 'bg-[#8B0000] border-[#8B0000]'
-                                      : 'bg-[#FAF3E3] border-[#5D4037]'
+                                      ? 'bg-[var(--v-primary)] border-[var(--v-primary)]'
+                                      : 'bg-[var(--v-off-white)] border-[var(--v-medium)]'
                                   } ${canMarkPaid && mission.mission_type !== 'recolte' ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
                                 >
                                   {i.is_paid && <Check size={12} className="text-white" />}
                                 </button>
-                                <span className="text-sm text-[#3E2723]">{i.name}</span>
+                                <span className="text-sm text-[var(--v-dark)]">{i.name}</span>
                                 {mission.mission_type === 'recolte' ? (
-                                  <span className="text-xs text-[#5D4037]">—</span>
+                                  <span className="text-xs text-[var(--v-medium)]">—</span>
                                 ) : i.is_paid ? (
                                   <CheckCircle size={16} className="text-[#4A5D23]" />
                                 ) : (
@@ -1031,16 +1031,16 @@ export default function Rapports() {
                               </div>
                             ))}
                             {mission.intervenants.length === 0 && (
-                              <p className="text-xs text-[#5D4037]">Aucun intervenant</p>
+                              <p className="text-xs text-[var(--v-medium)]">Aucun intervenant</p>
                             )}
                           </div>
                         </div>
 
                         {/* Ninjas */}
-                        <div className="bg-[#FAF3E3] border-2 border-[#5D4037] rounded-md px-4 py-4 space-y-3">
+                        <div className="bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] rounded-md px-4 py-4 space-y-3">
                           <div className="flex items-center justify-between">
                             <h4
-                              className="text-base font-medium text-[#8B0000]"
+                              className="text-base font-medium text-[var(--v-primary)]"
                               style={{ fontFamily: "'Noto Serif JP', serif" }}
                             >
                               Ninjas
@@ -1049,16 +1049,16 @@ export default function Rapports() {
                               <button
                                 type="button"
                                 onClick={() => markAllPaid('mission_ninjas', mission.ninjas)}
-                                className="bg-[#D4A017] border border-[#8B0000] text-[#3E2723] text-xs font-medium px-3 py-1 rounded cursor-pointer hover:bg-[#C49515] transition-colors"
+                                className="bg-[var(--v-gold)] border border-[var(--v-primary)] text-[var(--v-dark)] text-xs font-medium px-3 py-1 rounded cursor-pointer hover:bg-[#C49515] transition-colors"
                               >
                                 Tout cocher
                               </button>
                             )}
                           </div>
                           {mission.mission_type === 'passation' ? (
-                            <div className="flex items-center gap-2 bg-[#5D4037]/10 border border-[#5D4037]/30 rounded px-3 py-2">
-                              <GraduationCap size={14} className="text-[#5D4037] shrink-0" />
-                              <p className="text-xs text-[#5D4037] font-medium">
+                            <div className="flex items-center gap-2 bg-[var(--v-medium)]/10 border border-[var(--v-medium)]/30 rounded px-3 py-2">
+                              <GraduationCap size={14} className="text-[var(--v-medium)] shrink-0" />
+                              <p className="text-xs text-[var(--v-medium)] font-medium">
                                 Mission passation — les ninjas ne sont pas payés.
                               </p>
                             </div>
@@ -1084,13 +1084,13 @@ export default function Rapports() {
                                   disabled={!canMarkPaid || mission.status === 'echec' || mission.mission_type === 'passation'}
                                   className={`w-4 h-4 rounded border shrink-0 flex items-center justify-center ${
                                     n.is_paid
-                                      ? 'bg-[#8B0000] border-[#8B0000]'
-                                      : 'bg-[#FAF3E3] border-[#5D4037]'
+                                      ? 'bg-[var(--v-primary)] border-[var(--v-primary)]'
+                                      : 'bg-[var(--v-off-white)] border-[var(--v-medium)]'
                                   } ${canMarkPaid && mission.status === 'reussi' && mission.mission_type !== 'passation' ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
                                 >
                                   {n.is_paid && <Check size={12} className="text-white" />}
                                 </button>
-                                <span className="text-sm text-[#3E2723]">{n.name}</span>
+                                <span className="text-sm text-[var(--v-dark)]">{n.name}</span>
                                 {mission.status === 'echec' || mission.mission_type === 'passation' ? (
                                   <Ban size={16} className="text-[#C62828]" />
                                 ) : n.is_paid ? (
@@ -1101,7 +1101,7 @@ export default function Rapports() {
                               </div>
                             ))}
                             {mission.ninjas.length === 0 && (
-                              <p className="text-xs text-[#5D4037]">Aucun ninja</p>
+                              <p className="text-xs text-[var(--v-medium)]">Aucun ninja</p>
                             )}
                           </div>
                         </div>
@@ -1116,8 +1116,8 @@ export default function Rapports() {
 
         {/* Pagination */}
         {totalCount > PAGE_SIZE && (
-          <div className="border-t-2 border-[#5D4037] px-6 py-4 flex items-center justify-between bg-[#E8D5B7]">
-            <span className="text-sm text-[#5D4037]">
+          <div className="border-t-2 border-[var(--v-medium)] px-6 py-4 flex items-center justify-between bg-[var(--v-light-beige)]">
+            <span className="text-sm text-[var(--v-medium)]">
               {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, totalCount)} sur {totalCount} missions
             </span>
             <div className="flex items-center gap-2">
@@ -1125,7 +1125,7 @@ export default function Rapports() {
                 type="button"
                 onClick={() => { setPage(p => p - 1); setExpandedId(null); }}
                 disabled={page === 0}
-                className="flex items-center gap-1 px-3 py-1.5 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] hover:bg-[#F5E6CA] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                className="flex items-center gap-1 px-3 py-1.5 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-dark)] hover:bg-[var(--v-cream)] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
               >
                 <ChevronLeft size={16} />
                 Précédent
@@ -1139,8 +1139,8 @@ export default function Rapports() {
                     onClick={() => { setPage(i); setExpandedId(null); }}
                     className={`w-8 h-8 rounded text-sm font-medium transition-colors cursor-pointer ${
                       i === page
-                        ? 'bg-[#8B0000] text-[#FAF3E3]'
-                        : 'bg-[#FAF3E3] border border-[#5D4037] text-[#3E2723] hover:bg-[#F5E6CA]'
+                        ? 'bg-[var(--v-primary)] text-[var(--v-off-white)]'
+                        : 'bg-[var(--v-off-white)] border border-[var(--v-medium)] text-[var(--v-dark)] hover:bg-[var(--v-cream)]'
                     }`}
                   >
                     {i + 1}
@@ -1152,7 +1152,7 @@ export default function Rapports() {
                 type="button"
                 onClick={() => { setPage(p => p + 1); setExpandedId(null); }}
                 disabled={(page + 1) * PAGE_SIZE >= totalCount}
-                className="flex items-center gap-1 px-3 py-1.5 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] hover:bg-[#F5E6CA] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                className="flex items-center gap-1 px-3 py-1.5 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-dark)] hover:bg-[var(--v-cream)] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
               >
                 Suivant
                 <ChevronRight size={16} />
@@ -1163,20 +1163,20 @@ export default function Rapports() {
       </div>
       {editTarget && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-2xl w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col">
-            <div className="h-2 bg-gradient-to-r from-[#D4A017] via-[#8B0000] to-[#D4A017] shrink-0" />
+          <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-2xl w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <div className="h-2 bg-gradient-to-r from-[var(--v-gold)] via-[var(--v-primary)] to-[var(--v-gold)] shrink-0" />
 
             {/* Header */}
-            <div className="bg-[#E8D5B7] border-b-2 border-[#5D4037] px-6 py-4 flex items-center justify-between shrink-0">
+            <div className="bg-[var(--v-light-beige)] border-b-2 border-[var(--v-medium)] px-6 py-4 flex items-center justify-between shrink-0">
               <h3
-                className="text-xl font-medium text-[#8B0000]"
+                className="text-xl font-medium text-[var(--v-primary)]"
                 style={{ fontFamily: "'Noto Serif JP', serif" }}
               >
                 Modifier la mission
               </h3>
               <button
                 onClick={() => setEditTarget(null)}
-                className="text-[#5D4037] hover:text-[#3E2723] cursor-pointer"
+                className="text-[var(--v-medium)] hover:text-[var(--v-dark)] cursor-pointer"
               >
                 <X size={20} />
               </button>
@@ -1187,8 +1187,8 @@ export default function Rapports() {
               {/* Date + Type */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-sm font-medium text-[#3E2723]">
-                    <Calendar size={16} className="text-[#5D4037]" />
+                  <label className="flex items-center gap-2 text-sm font-medium text-[var(--v-dark)]">
+                    <Calendar size={16} className="text-[var(--v-medium)]" />
                     Date
                   </label>
                   <input
@@ -1197,7 +1197,7 @@ export default function Rapports() {
                     onChange={(e) => { setEditDate(e.target.value); setEditDateError(''); }}
                     min={editTarget ? cycles.find((c) => c.id === editTarget.cycle_id)?.start_date : undefined}
                     max={editTarget ? cycles.find((c) => c.id === editTarget.cycle_id)?.end_date : undefined}
-                    className={`w-full bg-[#FAF3E3] border rounded px-3 py-2 text-sm text-[#3E2723] focus:outline-none focus:ring-2 focus:ring-[#8B0000] ${editDateError ? 'border-[#C62828]' : 'border-[#5D4037]'}`}
+                    className={`w-full bg-[var(--v-off-white)] border rounded px-3 py-2 text-sm text-[var(--v-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--v-primary)] ${editDateError ? 'border-[#C62828]' : 'border-[var(--v-medium)]'}`}
                   />
                   {editDateError && (
                     <p className="text-xs text-[#C62828] font-medium">{editDateError}</p>
@@ -1205,7 +1205,7 @@ export default function Rapports() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-[#3E2723]">Type</label>
+                  <label className="text-sm font-medium text-[var(--v-dark)]">Type</label>
                   <div className="flex gap-2">
                     {(['ninja', 'recolte', 'passation'] as MissionType[]).map((t) => (
                       <button
@@ -1214,8 +1214,8 @@ export default function Rapports() {
                         onClick={() => setEditType(t)}
                         className={`flex-1 flex items-center justify-center gap-2 h-9 rounded text-sm font-medium transition-colors cursor-pointer ${
                           editType === t
-                            ? 'bg-[#8B0000] text-[#FAF3E3]'
-                            : 'bg-[#FAF3E3] border-2 border-[#5D4037] text-[#5D4037]'
+                            ? 'bg-[var(--v-primary)] text-[var(--v-off-white)]'
+                            : 'bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] text-[var(--v-medium)]'
                         }`}
                       >
                         {t === 'ninja' ? <Swords size={16} /> : t === 'recolte' ? <ShoppingBasket size={16} /> : <GraduationCap size={16} />}
@@ -1229,15 +1229,15 @@ export default function Rapports() {
               {/* Type de passation (affiché uniquement pour les missions de passation) */}
               {editType === 'passation' && (
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-[#3E2723]">Type de passation</label>
+                  <label className="text-sm font-medium text-[var(--v-dark)]">Type de passation</label>
                   <div className="flex gap-2 w-1/2">
                     <button
                       type="button"
                       onClick={() => setEditPassationType('chunin')}
                       className={`flex-1 flex items-center justify-center gap-2 h-9 rounded text-sm font-medium transition-colors cursor-pointer ${
                         editPassationType === 'chunin'
-                          ? 'bg-[#8B0000] text-[#FAF3E3]'
-                          : 'bg-[#FAF3E3] border-2 border-[#5D4037] text-[#5D4037]'
+                          ? 'bg-[var(--v-primary)] text-[var(--v-off-white)]'
+                          : 'bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] text-[var(--v-medium)]'
                       }`}
                     >
                       <GraduationCap size={16} />
@@ -1248,8 +1248,8 @@ export default function Rapports() {
                       onClick={() => setEditPassationType('genin_confirme')}
                       className={`flex-1 flex items-center justify-center gap-2 h-9 rounded text-sm font-medium transition-colors cursor-pointer ${
                         editPassationType === 'genin_confirme'
-                          ? 'bg-[#8B0000] text-[#FAF3E3]'
-                          : 'bg-[#FAF3E3] border-2 border-[#5D4037] text-[#5D4037]'
+                          ? 'bg-[var(--v-primary)] text-[var(--v-off-white)]'
+                          : 'bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] text-[var(--v-medium)]'
                       }`}
                     >
                       <GraduationCap size={16} />
@@ -1261,8 +1261,8 @@ export default function Rapports() {
 
               {/* Lien */}
               <div className="space-y-2">
-                <label className="flex items-center gap-2 text-sm font-medium text-[#3E2723]">
-                  <Link size={16} className="text-[#5D4037]" />
+                <label className="flex items-center gap-2 text-sm font-medium text-[var(--v-dark)]">
+                  <Link size={16} className="text-[var(--v-medium)]" />
                   Lien de la mission
                 </label>
                 <input
@@ -1270,13 +1270,13 @@ export default function Rapports() {
                   value={editMissionLink}
                   onChange={(e) => setEditMissionLink(e.target.value)}
                   placeholder="https://..."
-                  className="w-full bg-[#FAF3E3] border border-[#5D4037] rounded px-3 py-2 text-sm text-[#3E2723] focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
+                  className="w-full bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded px-3 py-2 text-sm text-[var(--v-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--v-primary)]"
                 />
               </div>
 
               {/* Rang */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-[#3E2723]">Rang</label>
+                <label className="text-sm font-medium text-[var(--v-dark)]">Rang</label>
                 <div className="flex gap-2">
                   {RANKS.map((r) => (
                     <button
@@ -1285,12 +1285,12 @@ export default function Rapports() {
                       onClick={() => setEditRank(r)}
                       className={`flex-1 flex items-center justify-center gap-3 h-9 rounded text-sm font-medium border-2 transition-all cursor-pointer ${
                         editRank === r
-                          ? 'border-[#5D4037] ring-2 ring-[#D4A017] shadow-md'
-                          : 'border-[#5D4037]'
+                          ? 'border-[var(--v-medium)] ring-2 ring-[var(--v-gold)] shadow-md'
+                          : 'border-[var(--v-medium)]'
                       }`}
                       style={{
                         backgroundColor: RANK_COLORS[r],
-                        color: r === 'S' ? '#3E2723' : 'white',
+                        color: r === 'S' ? 'var(--v-dark)' : 'white',
                       }}
                     >
                       <span className="font-bold">{r}</span>
@@ -1303,7 +1303,7 @@ export default function Rapports() {
               {/* Executant + Intervenants + Ninjas */}
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-[#3E2723]">Executant</label>
+                  <label className="text-sm font-medium text-[var(--v-dark)]">Executant</label>
                   <SearchableSelect
                     options={staffList.map((s) => ({ value: s.id, label: `${s.first_name} ${s.last_name}` }))}
                     value={editExecutor}
@@ -1313,7 +1313,7 @@ export default function Rapports() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-[#3E2723]">Intervenants</label>
+                  <label className="text-sm font-medium text-[var(--v-dark)]">Intervenants</label>
                   <SearchableMultiSelect
                     options={[
                       { value: 'external', label: 'Externe BDM' },
@@ -1322,29 +1322,29 @@ export default function Rapports() {
                     selected={editIntervenants}
                     onChange={setEditIntervenants}
                     placeholder="Ajouter..."
-                    chipColor={{ bg: '#5D4037', text: '#FAF3E3' }}
+                    chipColor={{ bg: 'var(--v-medium)', text: 'var(--v-off-white)' }}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-[#3E2723]">Ninjas</label>
+                  <label className="text-sm font-medium text-[var(--v-dark)]">Ninjas</label>
                   <SearchableMultiSelect
                     options={adherentList.map((a) => ({ value: a.id, label: `${a.last_name} ${a.first_name}` }))}
                     selected={editNinjas}
                     onChange={setEditNinjas}
                     placeholder="Ajouter..."
-                    chipColor={{ bg: '#D4A017', text: '#3E2723' }}
+                    chipColor={{ bg: 'var(--v-gold)', text: 'var(--v-dark)' }}
                   />
                 </div>
               </div>
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-4 border-t-2 border-[#5D4037] bg-[#E8D5B7] shrink-0 flex gap-3">
+            <div className="px-6 py-4 border-t-2 border-[var(--v-medium)] bg-[var(--v-light-beige)] shrink-0 flex gap-3">
               <button
                 type="button"
                 onClick={() => setEditTarget(null)}
-                className="flex-1 h-9 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] hover:bg-[#E8D5B7] transition-colors cursor-pointer"
+                className="flex-1 h-9 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-dark)] hover:bg-[var(--v-light-beige)] transition-colors cursor-pointer"
               >
                 Annuler
               </button>
@@ -1352,7 +1352,7 @@ export default function Rapports() {
                 type="button"
                 onClick={handleSaveEdit}
                 disabled={editSaving || !editDate || !editExecutor || !editMissionLink}
-                className="flex-1 h-9 bg-[#5D4037] border border-[#3E2723] rounded text-sm text-[#FAF3E3] font-medium hover:bg-[#3E2723] transition-colors cursor-pointer disabled:opacity-50"
+                className="flex-1 h-9 bg-[var(--v-medium)] border border-[var(--v-dark)] rounded text-sm text-[var(--v-off-white)] font-medium hover:bg-[var(--v-dark)] transition-colors cursor-pointer disabled:opacity-50"
                 style={{ fontFamily: "'Noto Serif JP', serif" }}
               >
                 {editSaving ? 'Sauvegarde...' : 'Sauvegarder les modifications'}

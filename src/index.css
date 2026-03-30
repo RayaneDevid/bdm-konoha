@@ -1,1 +1,34 @@
 @import "tailwindcss";
+
+/* ─── Village theme variables ─────────────────────────── */
+:root {
+  /* Konoha (rouge) — défaut */
+  --v-dark: #3E2723;
+  --v-medium: #5D4037;
+  --v-medium-dark: #4E342E;
+  --v-light-beige: #E8D5B7;
+  --v-cream: #F5E6CA;
+  --v-off-white: #FAF3E3;
+  --v-primary: #8B0000;
+  --v-primary-dark: #5D0000;
+  --v-secondary: #C41E3A;
+  --v-secondary-dark: #A01830;
+  --v-gold: #D4A017;
+  --v-gold-dark: #B8860B;
+}
+
+[data-village="kiri"] {
+  /* Kiri (bleu) */
+  --v-dark: #0D2137;
+  --v-medium: #1A3A5C;
+  --v-medium-dark: #0D2A45;
+  --v-light-beige: #BBDEFB;
+  --v-cream: #E3F2FD;
+  --v-off-white: #F0F7FF;
+  --v-primary: #0D47A1;
+  --v-primary-dark: #092D6B;
+  --v-secondary: #1565C0;
+  --v-secondary-dark: #0D3D8E;
+  --v-gold: #D4A017;
+  --v-gold-dark: #B8860B;
+}

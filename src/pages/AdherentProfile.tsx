@@ -191,7 +191,7 @@ export default function AdherentProfile() {
   if (!adherent) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-[#8B0000] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-[var(--v-primary)] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -204,30 +204,30 @@ export default function AdherentProfile() {
       <div className="flex items-center gap-4">
         <button
           onClick={() => navigate('/adherents')}
-          className="flex items-center gap-2 text-[#5D4037] hover:text-[#3E2723] transition-colors cursor-pointer"
+          className="flex items-center gap-2 text-[var(--v-medium)] hover:text-[var(--v-dark)] transition-colors cursor-pointer"
         >
           <ArrowLeft size={20} />
           <span className="text-sm">Retour</span>
         </button>
         <div>
           <h1
-            className="text-4xl font-medium text-[#8B0000]"
+            className="text-4xl font-medium text-[var(--v-primary)]"
             style={{ fontFamily: "'Noto Serif JP', serif" }}
           >
             Fiche Adherent
           </h1>
-          <div className="mt-2 w-32 h-1 bg-gradient-to-r from-[#8B0000] via-[#C41E3A] to-transparent rounded-full" />
+          <div className="mt-2 w-32 h-1 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-secondary)] to-transparent rounded-full" />
         </div>
       </div>
 
       {/* En-tete profil */}
-      <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-xl overflow-hidden">
-        <div className="h-2 bg-gradient-to-r from-[#8B0000] via-[#D4A017] to-[#8B0000]" />
+      <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-xl overflow-hidden">
+        <div className="h-2 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-gold)] to-[var(--v-primary)]" />
         <div className="px-6 py-6 flex items-center gap-6">
           {/* Avatar */}
-          <div className="w-20 h-20 rounded-full bg-[#3E2723] border-3 border-[#D4A017] flex items-center justify-center shrink-0">
+          <div className="w-20 h-20 rounded-full bg-[var(--v-dark)] border-3 border-[var(--v-gold)] flex items-center justify-center shrink-0">
             <span
-              className="text-[#D4A017] text-3xl"
+              className="text-[var(--v-gold)] text-3xl"
               style={{ fontFamily: "'Noto Serif JP', serif" }}
             >
               {firstInitial}
@@ -237,7 +237,7 @@ export default function AdherentProfile() {
           {/* Nom + badge */}
           <div className="flex-1">
             <h2
-              className="text-2xl font-medium text-[#3E2723]"
+              className="text-2xl font-medium text-[var(--v-dark)]"
               style={{ fontFamily: "'Noto Serif JP', serif" }}
             >
               {adherent.last_name} {adherent.first_name}
@@ -247,38 +247,38 @@ export default function AdherentProfile() {
 
           {/* 3 boites stats */}
           <div className="flex gap-4">
-            <div className="bg-[#FAF3E3] border-2 border-[#5D4037] rounded-md px-5 py-3 text-center min-w-[120px]">
-              <Target size={18} className="text-[#5D4037] mx-auto mb-1" />
-              <p className="text-2xl font-medium text-[#3E2723]">{totalMissions}</p>
-              <p className="text-xs text-[#5D4037]">Total missions</p>
+            <div className="bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] rounded-md px-5 py-3 text-center min-w-[120px]">
+              <Target size={18} className="text-[var(--v-medium)] mx-auto mb-1" />
+              <p className="text-2xl font-medium text-[var(--v-dark)]">{totalMissions}</p>
+              <p className="text-xs text-[var(--v-medium)]">Total missions</p>
             </div>
-            <div className="bg-[#FAF3E3] border-2 border-[#5D4037] rounded-md px-5 py-3 text-center min-w-[120px]">
-              <Award size={18} className="text-[#5D4037] mx-auto mb-1" />
-              <p className="text-2xl font-medium text-[#3E2723]">{totalPoints}</p>
-              <p className="text-xs text-[#5D4037]">Total points</p>
+            <div className="bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] rounded-md px-5 py-3 text-center min-w-[120px]">
+              <Award size={18} className="text-[var(--v-medium)] mx-auto mb-1" />
+              <p className="text-2xl font-medium text-[var(--v-dark)]">{totalPoints}</p>
+              <p className="text-xs text-[var(--v-medium)]">Total points</p>
             </div>
-            <div className="bg-[#FAF3E3] border-2 border-[#5D4037] rounded-md px-5 py-3 text-center min-w-[120px]">
-              <Zap size={18} className="text-[#8B0000] mx-auto mb-1" />
-              <p className="text-2xl font-medium text-[#8B0000]">{cyclePoints}</p>
-              <p className="text-xs text-[#5D4037]">Points cycle actuel</p>
+            <div className="bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] rounded-md px-5 py-3 text-center min-w-[120px]">
+              <Zap size={18} className="text-[var(--v-primary)] mx-auto mb-1" />
+              <p className="text-2xl font-medium text-[var(--v-primary)]">{cyclePoints}</p>
+              <p className="text-xs text-[var(--v-medium)]">Points cycle actuel</p>
             </div>
           </div>
         </div>
-        <div className="h-2 bg-gradient-to-r from-[#8B0000] via-[#D4A017] to-[#8B0000]" />
+        <div className="h-2 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-gold)] to-[var(--v-primary)]" />
       </div>
 
       {/* Progression des recompenses (battle pass) */}
-      <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-xl">
-        <div className="bg-[#E8D5B7] border-b-2 border-[#5D4037] px-6 py-5">
+      <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-xl">
+        <div className="bg-[var(--v-light-beige)] border-b-2 border-[var(--v-medium)] px-6 py-5">
           <div className="flex items-center gap-4">
-            <div className="w-1 h-6 bg-[#D4A017] rounded-full" />
+            <div className="w-1 h-6 bg-[var(--v-gold)] rounded-full" />
             <h2
-              className="text-2xl font-medium text-[#3E2723]"
+              className="text-2xl font-medium text-[var(--v-dark)]"
               style={{ fontFamily: "'Noto Serif JP', serif" }}
             >
               Progression des Recompenses
             </h2>
-            <span className="text-sm text-[#5D4037] ml-auto">
+            <span className="text-sm text-[var(--v-medium)] ml-auto">
               {cyclePoints} PM — {activeCycle?.name ?? 'Aucun cycle'}
             </span>
           </div>
@@ -286,7 +286,7 @@ export default function AdherentProfile() {
 
         <div className="p-6 overflow-x-auto">
           {milestones.length === 0 ? (
-            <p className="text-[#5D4037] text-sm text-center py-4">
+            <p className="text-[var(--v-medium)] text-sm text-center py-4">
               Aucun palier configure pour cette carte.
             </p>
           ) : (
@@ -304,25 +304,25 @@ export default function AdherentProfile() {
                       <div
                         className={`w-10 h-10 rounded-full border-3 flex items-center justify-center ${
                           reached
-                            ? 'bg-[#D4A017] border-[#B8860B] shadow-md'
-                            : 'bg-[#E8D5B7] border-[#5D4037]'
+                            ? 'bg-[var(--v-gold)] border-[var(--v-gold-dark)] shadow-md'
+                            : 'bg-[var(--v-light-beige)] border-[var(--v-medium)]'
                         }`}
                       >
                         <Gift
                           size={18}
-                          className={reached ? 'text-white' : 'text-[#5D4037] opacity-50'}
+                          className={reached ? 'text-white' : 'text-[var(--v-medium)] opacity-50'}
                         />
                       </div>
                       {/* Threshold label */}
                       <span
                         className={`text-xs mt-2 font-medium ${
-                          reached ? 'text-[#D4A017]' : 'text-[#5D4037]'
+                          reached ? 'text-[var(--v-gold)]' : 'text-[var(--v-medium)]'
                         }`}
                       >
                         {ms.pm_threshold} PM
                       </span>
                       {/* Reward description */}
-                      <span className="text-[10px] text-[#5D4037] text-center mt-1 leading-tight max-w-[75px]">
+                      <span className="text-[10px] text-[var(--v-medium)] text-center mt-1 leading-tight max-w-[75px]">
                         {ms.reward_description}
                       </span>
                       {/* Claimed indicator */}
@@ -338,7 +338,7 @@ export default function AdherentProfile() {
                       <div className="flex items-start pt-5">
                         <div
                           className={`h-1 w-8 rounded-full ${
-                            reached ? 'bg-[#D4A017]' : 'bg-[#E8D5B7] border border-[#5D4037]/20'
+                            reached ? 'bg-[var(--v-gold)]' : 'bg-[var(--v-light-beige)] border border-[var(--v-medium)]/20'
                           }`}
                         />
                       </div>
@@ -354,13 +354,13 @@ export default function AdherentProfile() {
       {/* Deux sections cote a cote */}
       <div className="grid grid-cols-2 gap-4">
         {/* Historique Missions */}
-        <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-xl">
-          <div className="bg-[#E8D5B7] border-b-2 border-[#5D4037] px-6 py-5">
+        <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-xl">
+          <div className="bg-[var(--v-light-beige)] border-b-2 border-[var(--v-medium)] px-6 py-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-1 h-6 bg-[#C41E3A] rounded-full" />
+                <div className="w-1 h-6 bg-[var(--v-secondary)] rounded-full" />
                 <h2
-                  className="text-xl font-medium text-[#3E2723]"
+                  className="text-xl font-medium text-[var(--v-dark)]"
                   style={{ fontFamily: "'Noto Serif JP', serif" }}
                 >
                   Historique Missions
@@ -369,7 +369,7 @@ export default function AdherentProfile() {
               <select
                 value={selectedCycleId}
                 onChange={(e) => setSelectedCycleId(e.target.value)}
-                className="bg-[#FAF3E3] border-2 border-[#5D4037] rounded px-3 py-1.5 text-sm text-[#3E2723] focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
+                className="bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] rounded px-3 py-1.5 text-sm text-[var(--v-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--v-primary)]"
               >
                 {cycles.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -382,40 +382,40 @@ export default function AdherentProfile() {
 
           <div className="p-4">
             {missions.length === 0 ? (
-              <p className="text-[#5D4037] text-sm text-center py-8">
+              <p className="text-[var(--v-medium)] text-sm text-center py-8">
                 Aucune mission pour ce cycle.
               </p>
             ) : (
               <table className="w-full">
                 <thead>
-                  <tr className="border-b-2 border-[#5D4037]">
-                    <th className="text-left text-sm text-[#5D4037] py-2 px-2">Date</th>
-                    <th className="text-left text-sm text-[#5D4037] py-2 px-2">Type</th>
-                    <th className="text-center text-sm text-[#5D4037] py-2 px-2">Rang</th>
-                    <th className="text-right text-sm text-[#5D4037] py-2 px-2">Points</th>
+                  <tr className="border-b-2 border-[var(--v-medium)]">
+                    <th className="text-left text-sm text-[var(--v-medium)] py-2 px-2">Date</th>
+                    <th className="text-left text-sm text-[var(--v-medium)] py-2 px-2">Type</th>
+                    <th className="text-center text-sm text-[var(--v-medium)] py-2 px-2">Rang</th>
+                    <th className="text-right text-sm text-[var(--v-medium)] py-2 px-2">Points</th>
                   </tr>
                 </thead>
                 <tbody>
                   {missions.map((m, idx) => (
                     <tr
                       key={idx}
-                      className={`border-b border-[#E8D5B7] ${
-                        idx % 2 === 0 ? 'bg-[#FAF3E3]' : 'bg-[#E8D5B7]'
+                      className={`border-b border-[var(--v-light-beige)] ${
+                        idx % 2 === 0 ? 'bg-[var(--v-off-white)]' : 'bg-[var(--v-light-beige)]'
                       }`}
                     >
-                      <td className="text-sm text-[#3E2723] py-3 px-2">
+                      <td className="text-sm text-[var(--v-dark)] py-3 px-2">
                         {formatDate(m.mission_date)}
                       </td>
                       <td className="py-3 px-2">
                         <div className="flex items-center gap-1.5">
                           {m.mission_type === 'ninja' ? (
-                            <Swords size={15} className="text-[#5D4037] shrink-0" />
+                            <Swords size={15} className="text-[var(--v-medium)] shrink-0" />
                           ) : m.mission_type === 'recolte' ? (
-                            <ShoppingBasket size={15} className="text-[#5D4037] shrink-0" />
+                            <ShoppingBasket size={15} className="text-[var(--v-medium)] shrink-0" />
                           ) : (
-                            <GraduationCap size={15} className="text-[#5D4037] shrink-0" />
+                            <GraduationCap size={15} className="text-[var(--v-medium)] shrink-0" />
                           )}
-                          <span className="text-sm text-[#3E2723]">
+                          <span className="text-sm text-[var(--v-dark)]">
                             {m.mission_type === 'ninja'
                               ? 'Ninja'
                               : m.mission_type === 'recolte'
@@ -423,7 +423,7 @@ export default function AdherentProfile() {
                               : 'Passation'}
                           </span>
                           {m.mission_type === 'passation' && m.passation_type && (
-                            <span className="text-[10px] font-medium text-[#5D4037] bg-[#E8D5B7] border border-[#5D4037]/40 px-1.5 py-0.5 rounded leading-none">
+                            <span className="text-[10px] font-medium text-[var(--v-medium)] bg-[var(--v-light-beige)] border border-[var(--v-medium)]/40 px-1.5 py-0.5 rounded leading-none">
                               {m.passation_type === 'chunin' ? 'Chunin' : 'Genin conf.'}
                             </span>
                           )}
@@ -432,9 +432,9 @@ export default function AdherentProfile() {
                       <td className="text-center py-3 px-2">{rankBadge(m.rank)}</td>
                       <td className="text-sm py-3 px-2 text-right font-medium">
                         {m.points > 0 ? (
-                          <span className="text-[#3E2723]">+{m.points}</span>
+                          <span className="text-[var(--v-dark)]">+{m.points}</span>
                         ) : (
-                          <span className="text-[#5D4037] italic text-xs">—</span>
+                          <span className="text-[var(--v-medium)] italic text-xs">—</span>
                         )}
                       </td>
                     </tr>
@@ -446,12 +446,12 @@ export default function AdherentProfile() {
         </div>
 
         {/* Historique Evolution Carte */}
-        <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-xl">
-          <div className="bg-[#E8D5B7] border-b-2 border-[#5D4037] px-6 py-5">
+        <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-xl">
+          <div className="bg-[var(--v-light-beige)] border-b-2 border-[var(--v-medium)] px-6 py-5">
             <div className="flex items-center gap-4">
-              <div className="w-1 h-6 bg-[#D4A017] rounded-full" />
+              <div className="w-1 h-6 bg-[var(--v-gold)] rounded-full" />
               <h2
-                className="text-xl font-medium text-[#3E2723]"
+                className="text-xl font-medium text-[var(--v-dark)]"
                 style={{ fontFamily: "'Noto Serif JP', serif" }}
               >
                 Evolution de Carte
@@ -461,34 +461,34 @@ export default function AdherentProfile() {
 
           <div className="p-6">
             {evolutions.length === 0 ? (
-              <p className="text-[#5D4037] text-sm text-center py-8">
+              <p className="text-[var(--v-medium)] text-sm text-center py-8">
                 Aucune evolution pour le moment.
               </p>
             ) : (
               <div className="relative">
                 {/* Vertical timeline line */}
-                <div className="absolute left-4 top-2 bottom-2 w-0.5 bg-[#D4A017]" />
+                <div className="absolute left-4 top-2 bottom-2 w-0.5 bg-[var(--v-gold)]" />
 
                 <div className="space-y-6">
                   {evolutions.map((evo) => (
                     <div key={evo.id} className="flex gap-4 relative">
                       {/* Timeline dot */}
-                      <div className="w-8 h-8 rounded-full bg-[#D4A017] border-2 border-[#B8860B] flex items-center justify-center shrink-0 z-10">
+                      <div className="w-8 h-8 rounded-full bg-[var(--v-gold)] border-2 border-[var(--v-gold-dark)] flex items-center justify-center shrink-0 z-10">
                         <div className="w-2.5 h-2.5 rounded-full bg-white" />
                       </div>
 
                       {/* Content */}
-                      <div className="flex-1 bg-[#FAF3E3] border-2 border-[#E8D5B7] rounded-md px-4 py-3">
-                        <p className="text-xs text-[#5D4037] mb-2">
+                      <div className="flex-1 bg-[var(--v-off-white)] border-2 border-[var(--v-light-beige)] rounded-md px-4 py-3">
+                        <p className="text-xs text-[var(--v-medium)] mb-2">
                           {formatDate(evo.created_at)}
                         </p>
                         <div className="flex items-center gap-2 mb-2">
                           {tierBadge(evo.old_tier)}
-                          <span className="text-[#5D4037]">→</span>
+                          <span className="text-[var(--v-medium)]">→</span>
                           {tierBadge(evo.new_tier)}
                         </div>
-                        <p className="text-xs text-[#5D4037]">
-                          Par <span className="font-medium text-[#3E2723]">{evo.staff_name}</span>
+                        <p className="text-xs text-[var(--v-medium)]">
+                          Par <span className="font-medium text-[var(--v-dark)]">{evo.staff_name}</span>
                         </p>
                       </div>
                     </div>

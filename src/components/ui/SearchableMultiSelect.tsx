@@ -19,7 +19,7 @@ export default function SearchableMultiSelect({
   selected,
   onChange,
   placeholder = 'Ajouter...',
-  chipColor = { bg: '#5D4037', text: '#FAF3E3' },
+  chipColor = { bg: 'var(--v-medium)', text: 'var(--v-off-white)' },
 }: SearchableMultiSelectProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -64,34 +64,34 @@ export default function SearchableMultiSelect({
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="w-full bg-[#FAF3E3] border border-[#5D4037] rounded px-3 py-2 text-sm text-left text-[#5D4037] focus:outline-none focus:ring-2 focus:ring-[#8B0000] cursor-pointer"
+        className="w-full bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded px-3 py-2 text-sm text-left text-[var(--v-medium)] focus:outline-none focus:ring-2 focus:ring-[var(--v-primary)] cursor-pointer"
       >
         {placeholder}
       </button>
 
       {open && (
-        <div className="absolute z-30 mt-1 w-full bg-[#FAF3E3] border-2 border-[#5D4037] rounded-md shadow-xl overflow-hidden">
-          <div className="flex items-center gap-2 px-3 py-2 border-b border-[#E8D5B7]">
-            <Search size={14} className="text-[#5D4037] shrink-0" />
+        <div className="absolute z-30 mt-1 w-full bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] rounded-md shadow-xl overflow-hidden">
+          <div className="flex items-center gap-2 px-3 py-2 border-b border-[var(--v-light-beige)]">
+            <Search size={14} className="text-[var(--v-medium)] shrink-0" />
             <input
               ref={inputRef}
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Rechercher..."
-              className="w-full bg-transparent text-sm text-[#3E2723] placeholder:text-[#5D4037]/50 outline-none"
+              className="w-full bg-transparent text-sm text-[var(--v-dark)] placeholder:text-[var(--v-medium)]/50 outline-none"
             />
           </div>
           <div className="max-h-48 overflow-y-auto">
             {filtered.length === 0 ? (
-              <p className="px-3 py-2 text-xs text-[#5D4037]">Aucun résultat</p>
+              <p className="px-3 py-2 text-xs text-[var(--v-medium)]">Aucun résultat</p>
             ) : (
               filtered.map((o) => (
                 <button
                   key={o.value}
                   type="button"
                   onClick={() => toggle(o.value)}
-                  className="w-full text-left px-3 py-2 text-sm text-[#3E2723] hover:bg-[#E8D5B7] cursor-pointer transition-colors"
+                  className="w-full text-left px-3 py-2 text-sm text-[var(--v-dark)] hover:bg-[var(--v-light-beige)] cursor-pointer transition-colors"
                 >
                   {o.label}
                 </button>

@@ -85,22 +85,22 @@ export default function SearchableSelect({
     <div
       ref={dropdownRef}
       style={dropdownStyle}
-      className="bg-[#FAF3E3] border-2 border-[#5D4037] rounded-md shadow-xl overflow-hidden"
+      className="bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] rounded-md shadow-xl overflow-hidden"
     >
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-[#E8D5B7]">
-        <Search size={14} className="text-[#5D4037] shrink-0" />
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-[var(--v-light-beige)]">
+        <Search size={14} className="text-[var(--v-medium)] shrink-0" />
         <input
           ref={inputRef}
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Rechercher..."
-          className="w-full bg-transparent text-sm text-[#3E2723] placeholder:text-[#5D4037]/50 outline-none"
+          className="w-full bg-transparent text-sm text-[var(--v-dark)] placeholder:text-[var(--v-medium)]/50 outline-none"
         />
       </div>
       <div className="max-h-48 overflow-y-auto">
         {filtered.length === 0 ? (
-          <p className="px-3 py-2 text-xs text-[#5D4037]">Aucun résultat</p>
+          <p className="px-3 py-2 text-xs text-[var(--v-medium)]">Aucun résultat</p>
         ) : (
           filtered.map((o) => (
             <button
@@ -114,8 +114,8 @@ export default function SearchableSelect({
               }}
               className={`w-full text-left px-3 py-2 text-sm cursor-pointer transition-colors ${
                 o.value === value
-                  ? 'bg-[#8B0000] text-[#FAF3E3]'
-                  : 'text-[#3E2723] hover:bg-[#E8D5B7]'
+                  ? 'bg-[var(--v-primary)] text-[var(--v-off-white)]'
+                  : 'text-[var(--v-dark)] hover:bg-[var(--v-light-beige)]'
               }`}
             >
               {o.label}
@@ -142,12 +142,12 @@ export default function SearchableSelect({
         ref={triggerRef}
         type="button"
         onClick={() => setOpen(!open)}
-        className="w-full bg-[#FAF3E3] border border-[#5D4037] rounded px-3 py-2 text-sm text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-[#8B0000] cursor-pointer"
+        className="w-full bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded px-3 py-2 text-sm text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-[var(--v-primary)] cursor-pointer"
       >
-        <span className={selectedLabel ? 'text-[#3E2723]' : 'text-[#5D4037]'}>
+        <span className={selectedLabel ? 'text-[var(--v-dark)]' : 'text-[var(--v-medium)]'}>
           {selectedLabel ?? placeholder}
         </span>
-        <ChevronDown size={16} className="text-[#5D4037] shrink-0" />
+        <ChevronDown size={16} className="text-[var(--v-medium)] shrink-0" />
       </button>
 
       {createPortal(dropdown, document.body)}

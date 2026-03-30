@@ -104,35 +104,35 @@ export default function Dashboard() {
       {/* Titre */}
       <div>
         <h1
-          className="text-4xl font-medium text-[#8B0000]"
+          className="text-4xl font-medium text-[var(--v-primary)]"
           style={{ fontFamily: "'Noto Serif JP', serif" }}
         >
           Tableau de bord
         </h1>
-        <div className="mt-2 w-32 h-1 bg-gradient-to-r from-[#8B0000] via-[#C41E3A] to-transparent rounded-full" />
+        <div className="mt-2 w-32 h-1 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-secondary)] to-transparent rounded-full" />
       </div>
 
       {/* Banniere cycle actif */}
-      <div className="bg-gradient-to-b from-[#F5E6CA] to-[#E8D5B7] border-4 border-[#5D4037] rounded-[10px] shadow-xl overflow-hidden">
-        <div className="h-2 bg-gradient-to-r from-[#8B0000] via-[#D4A017] to-[#8B0000]" />
+      <div className="bg-gradient-to-b from-[var(--v-cream)] to-[var(--v-light-beige)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-xl overflow-hidden">
+        <div className="h-2 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-gold)] to-[var(--v-primary)]" />
 
         <div className="px-6 py-6">
           <div className="flex items-start justify-between mb-6">
             <div>
               <h2
-                className="text-2xl font-medium text-[#3E2723]"
+                className="text-2xl font-medium text-[var(--v-dark)]"
                 style={{ fontFamily: "'Noto Serif JP', serif" }}
               >
                 Cycle Actif: {activeCycle?.name ?? 'Aucun cycle'}
               </h2>
               {activeCycle && (
-                <p className="text-sm text-[#5D4037] mt-1">
+                <p className="text-sm text-[var(--v-medium)] mt-1">
                   {formatDate(activeCycle.start_date)} - {formatDate(activeCycle.end_date)}
                 </p>
               )}
             </div>
             {activeCycle && (
-              <div className="bg-[#8B0000] text-[#FAF3E3] px-4 py-2 rounded flex items-center gap-2 text-sm font-medium">
+              <div className="bg-[var(--v-primary)] text-[var(--v-off-white)] px-4 py-2 rounded flex items-center gap-2 text-sm font-medium">
                 <Clock size={14} />
                 {daysRemaining} jours restants
               </div>
@@ -141,13 +141,13 @@ export default function Dashboard() {
 
           {activeCycle && (
             <div className="space-y-1">
-              <div className="flex justify-between text-sm text-[#5D4037]">
+              <div className="flex justify-between text-sm text-[var(--v-medium)]">
                 <span>Progression du cycle</span>
                 <span>{cycleProgress}%</span>
               </div>
-              <div className="w-full h-3 bg-[#FAF3E3] rounded-full overflow-hidden">
+              <div className="w-full h-3 bg-[var(--v-off-white)] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-[#8B0000] rounded-full transition-all duration-500"
+                  className="h-full bg-[var(--v-primary)] rounded-full transition-all duration-500"
                   style={{ width: `${cycleProgress}%` }}
                 />
               </div>
@@ -155,7 +155,7 @@ export default function Dashboard() {
           )}
         </div>
 
-        <div className="h-2 bg-gradient-to-r from-[#8B0000] via-[#D4A017] to-[#8B0000]" />
+        <div className="h-2 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-gold)] to-[var(--v-primary)]" />
       </div>
 
       {/* Cartes statistiques */}
@@ -163,28 +163,28 @@ export default function Dashboard() {
         {STAT_CARDS.map((stat) => (
           <div
             key={stat.key}
-            className="bg-[#F5E6CA] border-2 border-[#5D4037] rounded-[10px] shadow-lg px-6 py-6 flex items-start justify-between"
+            className="bg-[var(--v-cream)] border-2 border-[var(--v-medium)] rounded-[10px] shadow-lg px-6 py-6 flex items-start justify-between"
           >
             <div>
-              <p className="text-sm text-[#5D4037]">{stat.label}</p>
-              <p className="text-3xl text-[#3E2723] mt-1">
+              <p className="text-sm text-[var(--v-medium)]">{stat.label}</p>
+              <p className="text-3xl text-[var(--v-dark)] mt-1">
                 {stats[stat.key].toLocaleString('fr-FR')}
               </p>
             </div>
-            <div className="w-[52px] h-[52px] bg-[#FAF3E3] border-2 border-[#5D4037] rounded-md flex items-center justify-center">
-              <stat.icon size={24} className="text-[#5D4037]" />
+            <div className="w-[52px] h-[52px] bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] rounded-md flex items-center justify-center">
+              <stat.icon size={24} className="text-[var(--v-medium)]" />
             </div>
           </div>
         ))}
       </div>
 
       {/* Activite recente */}
-      <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-xl">
-        <div className="bg-[#E8D5B7] border-b-2 border-[#5D4037] px-6 py-5">
+      <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-xl">
+        <div className="bg-[var(--v-light-beige)] border-b-2 border-[var(--v-medium)] px-6 py-5">
           <div className="flex items-center gap-4">
-            <div className="w-1 h-6 bg-[#C41E3A] rounded-full" />
+            <div className="w-1 h-6 bg-[var(--v-secondary)] rounded-full" />
             <h2
-              className="text-2xl font-medium text-[#3E2723]"
+              className="text-2xl font-medium text-[var(--v-dark)]"
               style={{ fontFamily: "'Noto Serif JP', serif" }}
             >
               Activité Récente
@@ -194,7 +194,7 @@ export default function Dashboard() {
 
         <div className="p-6 space-y-4">
           {activities.length === 0 ? (
-            <p className="text-[#5D4037] text-sm text-center py-8">
+            <p className="text-[var(--v-medium)] text-sm text-center py-8">
               Aucune activité récente pour le moment.
             </p>
           ) : (
@@ -206,19 +206,19 @@ export default function Dashboard() {
                   key={activity.id}
                   className={`flex gap-4 px-4 py-4 rounded-md border-2 ${
                     isEven
-                      ? 'bg-[#FAF3E3] border-[#E8D5B7]'
-                      : 'bg-[#E8D5B7] border-[#FAF3E3]'
+                      ? 'bg-[var(--v-off-white)] border-[var(--v-light-beige)]'
+                      : 'bg-[var(--v-light-beige)] border-[var(--v-off-white)]'
                   }`}
                 >
-                  <div className="w-9 h-9 bg-[#5D4037] rounded-full flex items-center justify-center shrink-0">
-                    <Icon size={18} className="text-[#FAF3E3]" />
+                  <div className="w-9 h-9 bg-[var(--v-medium)] rounded-full flex items-center justify-center shrink-0">
+                    <Icon size={18} className="text-[var(--v-off-white)]" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-[#3E2723]">{activity.text}</p>
+                    <p className="text-sm text-[var(--v-dark)]">{activity.text}</p>
                     <div className="flex items-center gap-3 mt-1">
-                      <span className="text-xs text-[#5D4037]">{activity.time}</span>
+                      <span className="text-xs text-[var(--v-medium)]">{activity.time}</span>
                       {activity.points && (
-                        <span className="bg-[#4A5D23] text-[#FAF3E3] text-xs font-medium px-2 py-0.5 rounded">
+                        <span className="bg-[#4A5D23] text-[var(--v-off-white)] text-xs font-medium px-2 py-0.5 rounded">
                           +{activity.points} pts
                         </span>
                       )}

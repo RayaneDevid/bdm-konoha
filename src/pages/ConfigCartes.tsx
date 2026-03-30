@@ -53,15 +53,15 @@ const TAB_ACTIVE_BG: Record<CardTier, string> = {
   aucun: 'bg-[#9E9E9E]',
   bronze: 'bg-[#CD7F32]',
   argent: 'bg-[#A8A9AD]',
-  or: 'bg-[#D4A017]',
+  or: 'bg-[var(--v-gold)]',
   vip: 'bg-[#7B1FA2]',
 };
 
 const TAB_ACTIVE_TEXT: Record<CardTier, string> = {
   aucun: 'text-white',
   bronze: 'text-white',
-  argent: 'text-[#3E2723]',
-  or: 'text-[#3E2723]',
+  argent: 'text-[var(--v-dark)]',
+  or: 'text-[var(--v-dark)]',
   vip: 'text-white',
 };
 
@@ -114,7 +114,7 @@ function SortableMilestone({
       {/* Icon node + controls */}
       <div className="relative mb-4">
         {/* Gold circle with icon */}
-        <div className="relative z-10 w-[80px] h-[80px] rounded-full bg-gradient-to-b from-[#D4A017] to-[#B8860B] border-4 border-[#5D4037] shadow-xl flex items-center justify-center">
+        <div className="relative z-10 w-[80px] h-[80px] rounded-full bg-gradient-to-b from-[var(--v-gold)] to-[var(--v-gold-dark)] border-4 border-[var(--v-medium)] shadow-xl flex items-center justify-center">
           <Icon size={40} className="text-white" />
         </div>
 
@@ -122,10 +122,10 @@ function SortableMilestone({
         <button
           {...attributes}
           {...listeners}
-          className="absolute -top-2 -right-2 z-20 w-6 h-6 bg-[#5D4037] rounded-full flex items-center justify-center cursor-grab active:cursor-grabbing"
+          className="absolute -top-2 -right-2 z-20 w-6 h-6 bg-[var(--v-medium)] rounded-full flex items-center justify-center cursor-grab active:cursor-grabbing"
           title="Glisser pour réorganiser"
         >
-          <GripVertical size={14} className="text-[#FAF3E3]" />
+          <GripVertical size={14} className="text-[var(--v-off-white)]" />
         </button>
 
         {/* Delete button */}
@@ -140,14 +140,14 @@ function SortableMilestone({
         {/* Connector line to the LEFT */}
         {index > 0 && (
           <div
-            className="absolute top-1/2 -translate-y-1/2 h-1 bg-gradient-to-r from-[#D4A017] to-[#8B0000] rounded-full"
+            className="absolute top-1/2 -translate-y-1/2 h-1 bg-gradient-to-r from-[var(--v-gold)] to-[var(--v-primary)] rounded-full"
             style={{ right: '100%', width: connectorWidth }}
           />
         )}
         {/* Connector line to the RIGHT — grey background track */}
         {index < total - 1 && (
           <div
-            className="absolute top-1/2 -translate-y-1/2 h-1 bg-[#E8D5B7] rounded-full"
+            className="absolute top-1/2 -translate-y-1/2 h-1 bg-[var(--v-light-beige)] rounded-full"
             style={{ left: '100%', width: connectorWidth }}
           />
         )}
@@ -161,7 +161,7 @@ function SortableMilestone({
           min={0}
           value={m.pm_threshold}
           onChange={(e) => onChange(m.id, 'pm_threshold', parseInt(e.target.value) || 0)}
-          className="w-full h-9 px-3 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm font-bold text-[#5D4037] text-center outline-none focus:border-[#D4A017] focus:ring-1 focus:ring-[#D4A017] transition-colors"
+          className="w-full h-9 px-3 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm font-bold text-[var(--v-medium)] text-center outline-none focus:border-[var(--v-gold)] focus:ring-1 focus:ring-[var(--v-gold)] transition-colors"
         />
 
         {/* Reward type select */}
@@ -169,7 +169,7 @@ function SortableMilestone({
           <select
             value={m.reward_type}
             onChange={(e) => onChange(m.id, 'reward_type', e.target.value)}
-            className="w-full h-9 px-3 pr-8 bg-[#FAF3E3] border border-[#5D4037] rounded text-xs font-medium text-[#3E2723] outline-none focus:border-[#D4A017] appearance-none cursor-pointer"
+            className="w-full h-9 px-3 pr-8 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-xs font-medium text-[var(--v-dark)] outline-none focus:border-[var(--v-gold)] appearance-none cursor-pointer"
           >
             {(Object.keys(REWARD_TYPE_LABELS) as RewardType[]).map((rt) => (
               <option key={rt} value={rt}>
@@ -179,7 +179,7 @@ function SortableMilestone({
           </select>
           <ChevronDown
             size={16}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5D4037] pointer-events-none"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--v-medium)] pointer-events-none"
           />
         </div>
 
@@ -189,7 +189,7 @@ function SortableMilestone({
           onChange={(e) => onChange(m.id, 'reward_description', e.target.value)}
           placeholder="Description"
           rows={2}
-          className="w-full px-3 py-2 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] placeholder-[#5D4037] outline-none resize-none focus:border-[#D4A017] focus:ring-1 focus:ring-[#D4A017] transition-colors"
+          className="w-full px-3 py-2 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-dark)] placeholder-[var(--v-medium)] outline-none resize-none focus:border-[var(--v-gold)] focus:ring-1 focus:ring-[var(--v-gold)] transition-colors"
         />
       </div>
     </div>
@@ -440,17 +440,17 @@ export default function ConfigCartes() {
       <div className="flex items-center justify-between">
         <div>
           <h1
-            className="text-4xl font-medium text-[#8B0000]"
+            className="text-4xl font-medium text-[var(--v-primary)]"
             style={{ fontFamily: "'Noto Serif JP', serif" }}
           >
             Configuration des Cartes
           </h1>
-          <div className="mt-2 w-32 h-1 bg-gradient-to-r from-[#8B0000] via-[#C41E3A] to-transparent rounded-full" />
+          <div className="mt-2 w-32 h-1 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-secondary)] to-transparent rounded-full" />
         </div>
         <button
           onClick={handleSave}
           disabled={saving || !dirty || !selectedCycleId}
-          className="h-9 px-6 bg-[#4A5D23] border-2 border-[#3E2723] rounded text-[#FAF3E3] text-sm font-medium shadow-lg hover:bg-[#3D4F1C] transition-colors cursor-pointer disabled:opacity-60 flex items-center gap-4"
+          className="h-9 px-6 bg-[#4A5D23] border-2 border-[var(--v-dark)] rounded text-[var(--v-off-white)] text-sm font-medium shadow-lg hover:bg-[#3D4F1C] transition-colors cursor-pointer disabled:opacity-60 flex items-center gap-4"
           style={{ fontFamily: "'Noto Serif JP', serif" }}
         >
           <Save size={16} />
@@ -459,20 +459,20 @@ export default function ConfigCartes() {
       </div>
 
       {/* Cycle selector */}
-      <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-md px-6 py-4">
+      <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-md px-6 py-4">
         <div className="flex flex-wrap items-center gap-4">
           {/* Cycle dropdown */}
           <div className="flex items-center gap-3 flex-1 min-w-[260px]">
             <span
-              className="text-sm font-bold text-[#5D4037] whitespace-nowrap"
+              className="text-sm font-bold text-[var(--v-medium)] whitespace-nowrap"
               style={{ fontFamily: "'Noto Serif JP', serif" }}
             >
               Cycle :
             </span>
             {cyclesLoading ? (
-              <span className="text-sm text-[#5D4037]">Chargement...</span>
+              <span className="text-sm text-[var(--v-medium)]">Chargement...</span>
             ) : cycles.length === 0 ? (
-              <span className="text-sm text-[#8B0000] font-medium">
+              <span className="text-sm text-[var(--v-primary)] font-medium">
                 Aucun cycle créé — créez d'abord un cycle dans la page Cycles.
               </span>
             ) : (
@@ -483,7 +483,7 @@ export default function ConfigCartes() {
                     setSelectedCycleId(e.target.value || null);
                     setDirty(false);
                   }}
-                  className="w-full h-9 px-3 pr-8 bg-[#FAF3E3] border-2 border-[#5D4037] rounded text-sm font-medium text-[#3E2723] outline-none focus:border-[#D4A017] appearance-none cursor-pointer"
+                  className="w-full h-9 px-3 pr-8 bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] rounded text-sm font-medium text-[var(--v-dark)] outline-none focus:border-[var(--v-gold)] appearance-none cursor-pointer"
                   style={{ fontFamily: "'Noto Serif JP', serif" }}
                 >
                   {cycles.map((c) => (
@@ -495,13 +495,13 @@ export default function ConfigCartes() {
                 </select>
                 <ChevronDown
                   size={16}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5D4037] pointer-events-none"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--v-medium)] pointer-events-none"
                 />
               </div>
             )}
 
             {selectedCycle && (
-              <span className="text-xs text-[#5D4037] bg-[#E8D5B7] border border-[#5D4037] rounded px-2 py-1 whitespace-nowrap">
+              <span className="text-xs text-[var(--v-medium)] bg-[var(--v-light-beige)] border border-[var(--v-medium)] rounded px-2 py-1 whitespace-nowrap">
                 {new Date(selectedCycle.start_date).toLocaleDateString('fr-FR')} →{' '}
                 {new Date(selectedCycle.end_date).toLocaleDateString('fr-FR')}
               </span>
@@ -512,7 +512,7 @@ export default function ConfigCartes() {
           {otherCycles.length > 0 && selectedCycleId && (
             <div className="flex items-center gap-2">
               <span
-                className="text-xs text-[#5D4037] whitespace-nowrap"
+                className="text-xs text-[var(--v-medium)] whitespace-nowrap"
                 style={{ fontFamily: "'Noto Serif JP', serif" }}
               >
                 Copier depuis :
@@ -528,7 +528,7 @@ export default function ConfigCartes() {
                       e.target.value = '';
                     }
                   }}
-                  className="h-9 px-3 pr-8 bg-[#FAF3E3] border-2 border-[#5D4037] rounded text-xs font-medium text-[#3E2723] outline-none focus:border-[#D4A017] appearance-none cursor-pointer"
+                  className="h-9 px-3 pr-8 bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] rounded text-xs font-medium text-[var(--v-dark)] outline-none focus:border-[var(--v-gold)] appearance-none cursor-pointer"
                   style={{ fontFamily: "'Noto Serif JP', serif" }}
                 >
                   <option value="" disabled>
@@ -542,11 +542,11 @@ export default function ConfigCartes() {
                 </select>
                 <Copy
                   size={14}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5D4037] pointer-events-none"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--v-medium)] pointer-events-none"
                 />
               </div>
               {copying && (
-                <span className="text-xs text-[#5D4037] italic">Copie en cours...</span>
+                <span className="text-xs text-[var(--v-medium)] italic">Copie en cours...</span>
               )}
             </div>
           )}
@@ -555,19 +555,19 @@ export default function ConfigCartes() {
 
       {/* Main card */}
       {!selectedCycleId ? (
-        <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-xl p-12 text-center">
-          <p className="text-[#5D4037] text-base" style={{ fontFamily: "'Noto Serif JP', serif" }}>
+        <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-xl p-12 text-center">
+          <p className="text-[var(--v-medium)] text-base" style={{ fontFamily: "'Noto Serif JP', serif" }}>
             Sélectionnez un cycle pour configurer ses paliers de carte.
           </p>
         </div>
       ) : (
-        <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-xl overflow-hidden min-w-0">
+        <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-xl overflow-hidden min-w-0">
           {/* Top accent bar */}
-          <div className="h-2 bg-gradient-to-r from-[#8B0000] via-[#D4A017] to-[#8B0000]" />
+          <div className="h-2 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-gold)] to-[var(--v-primary)]" />
 
           {/* Tabs */}
           <div className="px-6 pt-6">
-            <div className="bg-[#E8D5B7] rounded-[10px] p-2 grid grid-cols-4 gap-2">
+            <div className="bg-[var(--v-light-beige)] rounded-[10px] p-2 grid grid-cols-4 gap-2">
               {tiers.map((tier) => {
                 const isActive = activeTier === tier;
                 const count = milestones.filter((m) => m.card_tier === tier).length;
@@ -575,10 +575,10 @@ export default function ConfigCartes() {
                   <button
                     key={tier}
                     onClick={() => setActiveTier(tier)}
-                    className={`h-8 rounded-[10px] border-2 border-[#5D4037] text-sm font-medium transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                    className={`h-8 rounded-[10px] border-2 border-[var(--v-medium)] text-sm font-medium transition-all cursor-pointer flex items-center justify-center gap-2 ${
                       isActive
                         ? `${TAB_ACTIVE_BG[tier]} ${TAB_ACTIVE_TEXT[tier]} shadow-md`
-                        : 'bg-[#FAF3E3] text-[#3E2723] hover:bg-[#F0E0C0]'
+                        : 'bg-[var(--v-off-white)] text-[var(--v-dark)] hover:bg-[#F0E0C0]'
                     }`}
                     style={{ fontFamily: "'Noto Serif JP', serif" }}
                   >
@@ -587,7 +587,7 @@ export default function ConfigCartes() {
                       className={`text-xs px-1.5 py-0.5 rounded-full border ${
                         isActive
                           ? 'bg-white/20 border-white/30'
-                          : 'bg-[#E8D5B7] border-[#5D4037]'
+                          : 'bg-[var(--v-light-beige)] border-[var(--v-medium)]'
                       }`}
                     >
                       {count}
@@ -601,7 +601,7 @@ export default function ConfigCartes() {
           {/* Content area */}
           <div className="p-6">
             {loading ? (
-              <div className="text-center py-16 text-[#5D4037] text-sm">
+              <div className="text-center py-16 text-[var(--v-medium)] text-sm">
                 Chargement des paliers...
               </div>
             ) : (
@@ -633,13 +633,13 @@ export default function ConfigCartes() {
                         <div className="flex flex-col items-center justify-center gap-4 w-[200px] shrink-0 pt-0 self-center">
                           <button
                             onClick={handleAdd}
-                            className="w-[80px] h-[80px] rounded-full bg-[#E8D5B7] border-4 border-[#5D4037] flex items-center justify-center hover:bg-[#DBC8A8] transition-colors cursor-pointer"
+                            className="w-[80px] h-[80px] rounded-full bg-[var(--v-light-beige)] border-4 border-[var(--v-medium)] flex items-center justify-center hover:bg-[#DBC8A8] transition-colors cursor-pointer"
                             title="Ajouter un palier"
                           >
-                            <Plus size={24} className="text-[#5D4037]" />
+                            <Plus size={24} className="text-[var(--v-medium)]" />
                           </button>
                           <p
-                            className="text-sm text-[#5D4037]"
+                            className="text-sm text-[var(--v-medium)]"
                             style={{ fontFamily: "'Noto Serif JP', serif" }}
                           >
                             Ajouter un palier
@@ -652,14 +652,14 @@ export default function ConfigCartes() {
 
                 {/* Empty state */}
                 {tierMilestones.length === 0 && (
-                  <div className="text-center py-8 text-[#5D4037] text-sm italic">
+                  <div className="text-center py-8 text-[var(--v-medium)] text-sm italic">
                     Aucun palier configuré pour ce cycle — ajoutez-en ou copiez depuis un cycle précédent.
                   </div>
                 )}
 
                 {/* Instructions box */}
-                <div className="mt-6 bg-[#FAF3E3] border-2 border-[#5D4037] rounded-md px-5 py-4">
-                  <p className="text-sm text-[#5D4037] leading-relaxed">
+                <div className="mt-6 bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] rounded-md px-5 py-4">
+                  <p className="text-sm text-[var(--v-medium)] leading-relaxed">
                     <span className="font-bold">Instructions :</span> Glissez-déposez les paliers
                     pour les réorganiser. Modifiez les seuils (PM), sélectionnez les types de
                     récompense et ajoutez des descriptions. Cliquez sur le bouton rouge pour

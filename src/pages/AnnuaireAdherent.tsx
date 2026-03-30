@@ -24,6 +24,7 @@ import {
   RANK_COLORS,
   MISSION_STATUS_COLORS,
   MISSION_STATUS_LABELS,
+  VILLAGE_NAME,
 } from '../utils/constants';
 import type { CardTier, MissionRank, MissionType, MissionStatus, RewardType, Cycle } from '../types';
 
@@ -71,9 +72,9 @@ const REWARD_ICONS: Record<RewardType, React.ComponentType<{ size?: number; clas
    Mission type icon
 ------------------------------------------------------------------ */
 function MissionTypeIcon({ type }: { type: MissionType }) {
-  if (type === 'recolte') return <ShoppingBasket size={16} className="text-[#5D4037]" />;
-  if (type === 'passation') return <GraduationCap size={16} className="text-[#5D4037]" />;
-  return <Swords size={16} className="text-[#5D4037]" />;
+  if (type === 'recolte') return <ShoppingBasket size={16} className="text-[var(--v-medium)]" />;
+  if (type === 'passation') return <GraduationCap size={16} className="text-[var(--v-medium)]" />;
+  return <Swords size={16} className="text-[var(--v-medium)]" />;
 }
 
 /* ================================================================
@@ -189,14 +190,14 @@ export default function AnnuaireAdherent() {
   /* ---- Handle not found ----------------------------------------- */
   if (!loading && !adherent) {
     return (
-      <div className="min-h-screen bg-[#FAF3E3] flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--v-off-white)] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <p className="text-[#8B0000] text-xl" style={{ fontFamily: "'Noto Serif JP', serif" }}>
+          <p className="text-[var(--v-primary)] text-xl" style={{ fontFamily: "'Noto Serif JP', serif" }}>
             Ninja introuvable
           </p>
           <button
             onClick={() => navigate('/annuaire')}
-            className="text-sm text-[#5D4037] underline cursor-pointer hover:text-[#3E2723]"
+            className="text-sm text-[var(--v-medium)] underline cursor-pointer hover:text-[var(--v-dark)]"
           >
             Retour à l'annuaire
           </button>
@@ -229,32 +230,32 @@ export default function AnnuaireAdherent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF3E3]">
+    <div className="min-h-screen bg-[var(--v-off-white)]">
       {/* Header */}
-      <div className="bg-[#3E2723] border-b-4 border-[#D4A017] shadow-xl">
+      <div className="bg-[var(--v-dark)] border-b-4 border-[var(--v-gold)] shadow-xl">
         <div className="max-w-5xl mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
             <button
               onClick={() => navigate('/annuaire')}
-              className="flex items-center gap-2 text-[#D4A017] text-sm hover:text-[#FAF3E3] transition-colors cursor-pointer"
+              className="flex items-center gap-2 text-[var(--v-gold)] text-sm hover:text-[var(--v-off-white)] transition-colors cursor-pointer"
             >
               <ArrowLeft size={16} />
               Annuaire
             </button>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-[#D4A017] rounded-full border-2 border-[#FAF3E3] flex items-center justify-center">
-                <Scroll size={16} className="text-[#3E2723]" />
+              <div className="w-8 h-8 bg-[var(--v-gold)] rounded-full border-2 border-[var(--v-off-white)] flex items-center justify-center">
+                <Scroll size={16} className="text-[var(--v-dark)]" />
               </div>
               <span
-                className="text-[#FAF3E3] text-base font-medium"
+                className="text-[var(--v-off-white)] text-base font-medium"
                 style={{ fontFamily: "'Noto Serif JP', serif" }}
               >
-                Bureau des Missions de Konoha
+                Bureau des Missions de {VILLAGE_NAME}
               </span>
             </div>
             <button
               onClick={() => navigate('/login')}
-              className="flex items-center gap-2 text-[#D4A017] text-sm hover:text-[#FAF3E3] transition-colors cursor-pointer"
+              className="flex items-center gap-2 text-[var(--v-gold)] text-sm hover:text-[var(--v-off-white)] transition-colors cursor-pointer"
             >
               <Shield size={16} />
               Accès Staff
@@ -262,26 +263,26 @@ export default function AnnuaireAdherent() {
           </div>
         </div>
       </div>
-      <div className="h-1 bg-gradient-to-r from-[#8B0000] via-[#D4A017] to-[#8B0000]" />
+      <div className="h-1 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-gold)] to-[var(--v-primary)]" />
 
       <div className="max-w-5xl mx-auto px-6 py-8 space-y-6">
         {loading ? (
-          <div className="text-center py-16 text-[#5D4037] text-sm">Chargement...</div>
+          <div className="text-center py-16 text-[var(--v-medium)] text-sm">Chargement...</div>
         ) : adherent ? (
           <>
             {/* Profile header card */}
-            <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-xl overflow-hidden">
+            <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-xl overflow-hidden">
               <div
                 className="h-2"
                 style={{
-                  background: `linear-gradient(to right, #8B0000, ${TIER_COLORS[adherent.card_tier]}, #8B0000)`,
+                  background: `linear-gradient(to right, var(--v-primary), ${TIER_COLORS[adherent.card_tier]}, var(--v-primary))`,
                 }}
               />
               <div className="px-8 py-6">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
                   {/* Avatar circle */}
                   <div
-                    className="w-20 h-20 rounded-full border-4 border-[#5D4037] flex items-center justify-center text-2xl font-bold text-white shadow-lg shrink-0"
+                    className="w-20 h-20 rounded-full border-4 border-[var(--v-medium)] flex items-center justify-center text-2xl font-bold text-white shadow-lg shrink-0"
                     style={{ backgroundColor: TIER_COLORS[adherent.card_tier] }}
                   >
                     {adherent.last_name[0]?.toUpperCase()}
@@ -290,7 +291,7 @@ export default function AnnuaireAdherent() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 flex-wrap">
                       <h2
-                        className="text-3xl font-medium text-[#3E2723]"
+                        className="text-3xl font-medium text-[var(--v-dark)]"
                         style={{ fontFamily: "'Noto Serif JP', serif" }}
                       >
                         {adherent.last_name} {adherent.first_name}
@@ -318,23 +319,23 @@ export default function AnnuaireAdherent() {
 
                   {/* Stats boxes */}
                   <div className="flex gap-4 shrink-0">
-                    <div className="bg-[#FAF3E3] border border-[#5D4037] rounded-md px-5 py-3 text-center">
-                      <p className="text-2xl font-bold text-[#3E2723]">
+                    <div className="bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded-md px-5 py-3 text-center">
+                      <p className="text-2xl font-bold text-[var(--v-dark)]">
                         {totalMissions.toLocaleString('fr-FR')}
                       </p>
-                      <p className="text-xs text-[#5D4037] mt-0.5">Missions totales</p>
+                      <p className="text-xs text-[var(--v-medium)] mt-0.5">Missions totales</p>
                     </div>
-                    <div className="bg-[#FAF3E3] border border-[#5D4037] rounded-md px-5 py-3 text-center">
-                      <p className="text-2xl font-bold text-[#D4A017]">
+                    <div className="bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded-md px-5 py-3 text-center">
+                      <p className="text-2xl font-bold text-[var(--v-gold)]">
                         {totalPoints.toLocaleString('fr-FR')}
                       </p>
-                      <p className="text-xs text-[#5D4037] mt-0.5">Points totaux</p>
+                      <p className="text-xs text-[var(--v-medium)] mt-0.5">Points totaux</p>
                     </div>
-                    <div className="bg-[#FAF3E3] border border-[#5D4037] rounded-md px-5 py-3 text-center">
-                      <p className="text-2xl font-bold text-[#8B0000]">
+                    <div className="bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded-md px-5 py-3 text-center">
+                      <p className="text-2xl font-bold text-[var(--v-primary)]">
                         {cyclePoints.toLocaleString('fr-FR')}
                       </p>
-                      <p className="text-xs text-[#5D4037] mt-0.5">PM ce cycle</p>
+                      <p className="text-xs text-[var(--v-medium)] mt-0.5">PM ce cycle</p>
                     </div>
                   </div>
                 </div>
@@ -342,22 +343,22 @@ export default function AnnuaireAdherent() {
             </div>
 
             {/* Cycle selector */}
-            <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-md px-6 py-4">
+            <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-md px-6 py-4">
               <div className="flex items-center gap-4">
                 <span
-                  className="text-sm font-bold text-[#5D4037] whitespace-nowrap"
+                  className="text-sm font-bold text-[var(--v-medium)] whitespace-nowrap"
                   style={{ fontFamily: "'Noto Serif JP', serif" }}
                 >
                   Cycle :
                 </span>
                 {cycles.length === 0 ? (
-                  <span className="text-sm text-[#5D4037]">Aucun cycle disponible</span>
+                  <span className="text-sm text-[var(--v-medium)]">Aucun cycle disponible</span>
                 ) : (
                   <div className="relative max-w-xs flex-1">
                     <select
                       value={selectedCycleId}
                       onChange={(e) => setSelectedCycleId(e.target.value)}
-                      className="w-full h-9 px-3 pr-8 bg-[#FAF3E3] border-2 border-[#5D4037] rounded text-sm font-medium text-[#3E2723] outline-none focus:border-[#D4A017] appearance-none cursor-pointer"
+                      className="w-full h-9 px-3 pr-8 bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] rounded text-sm font-medium text-[var(--v-dark)] outline-none focus:border-[var(--v-gold)] appearance-none cursor-pointer"
                       style={{ fontFamily: "'Noto Serif JP', serif" }}
                     >
                       {cycles.map((c) => (
@@ -368,7 +369,7 @@ export default function AnnuaireAdherent() {
                     </select>
                     <ChevronDown
                       size={16}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5D4037] pointer-events-none"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--v-medium)] pointer-events-none"
                     />
                   </div>
                 )}
@@ -377,11 +378,11 @@ export default function AnnuaireAdherent() {
 
             {/* Reward track */}
             {cycleMilestonesForTier.length > 0 && (
-              <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-xl overflow-hidden">
-                <div className="h-2 bg-gradient-to-r from-[#8B0000] via-[#D4A017] to-[#8B0000]" />
-                <div className="bg-[#E8D5B7] border-b-2 border-[#5D4037] px-6 py-4">
+              <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-xl overflow-hidden">
+                <div className="h-2 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-gold)] to-[var(--v-primary)]" />
+                <div className="bg-[var(--v-light-beige)] border-b-2 border-[var(--v-medium)] px-6 py-4">
                   <h3
-                    className="text-xl font-medium text-[#3E2723]"
+                    className="text-xl font-medium text-[var(--v-dark)]"
                     style={{ fontFamily: "'Noto Serif JP', serif" }}
                   >
                     Progression — Carte {TIER_LABELS[adherent.card_tier]}
@@ -401,13 +402,13 @@ export default function AnnuaireAdherent() {
                             <div
                               className={`relative z-10 w-14 h-14 rounded-full border-4 flex items-center justify-center shadow-lg transition-all ${
                                 reached
-                                  ? 'bg-gradient-to-b from-[#D4A017] to-[#B8860B] border-[#5D4037]'
-                                  : 'bg-[#E8D5B7] border-[#5D4037]/50'
+                                  ? 'bg-gradient-to-b from-[var(--v-gold)] to-[var(--v-gold-dark)] border-[var(--v-medium)]'
+                                  : 'bg-[var(--v-light-beige)] border-[var(--v-medium)]/50'
                               }`}
                             >
                               <Icon
                                 size={26}
-                                className={reached ? 'text-white' : 'text-[#5D4037]/40'}
+                                className={reached ? 'text-white' : 'text-[var(--v-medium)]/40'}
                               />
                             </div>
 
@@ -419,15 +420,15 @@ export default function AnnuaireAdherent() {
                                   right: '100%',
                                   width: connectorWidth,
                                   background: reached
-                                    ? 'linear-gradient(to right, #D4A017, #8B0000)'
-                                    : '#E8D5B7',
+                                    ? 'linear-gradient(to right, var(--v-gold), var(--v-primary))'
+                                    : 'var(--v-light-beige)',
                                 }}
                               />
                             )}
                             {/* Right connector */}
                             {i < cycleMilestonesForTier.length - 1 && (
                               <div
-                                className="absolute top-1/2 -translate-y-1/2 h-1 bg-[#E8D5B7] rounded-full"
+                                className="absolute top-1/2 -translate-y-1/2 h-1 bg-[var(--v-light-beige)] rounded-full"
                                 style={{ left: '100%', width: connectorWidth }}
                               />
                             )}
@@ -435,7 +436,7 @@ export default function AnnuaireAdherent() {
 
                           {/* Threshold */}
                           <span
-                            className={`text-sm font-bold ${reached ? 'text-[#D4A017]' : 'text-[#5D4037]/50'}`}
+                            className={`text-sm font-bold ${reached ? 'text-[var(--v-gold)]' : 'text-[var(--v-medium)]/50'}`}
                           >
                             {m.pm_threshold} PM
                           </span>
@@ -443,7 +444,7 @@ export default function AnnuaireAdherent() {
                           {/* Description */}
                           <p
                             className={`text-[11px] text-center leading-tight mt-1 ${
-                              reached ? 'text-[#3E2723]' : 'text-[#5D4037]/50'
+                              reached ? 'text-[var(--v-dark)]' : 'text-[var(--v-medium)]/50'
                             }`}
                           >
                             {m.reward_description}
@@ -464,20 +465,20 @@ export default function AnnuaireAdherent() {
             )}
 
             {/* Mission history */}
-            <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-xl overflow-hidden">
-              <div className="h-2 bg-gradient-to-r from-[#8B0000] via-[#D4A017] to-[#8B0000]" />
-              <div className="bg-[#E8D5B7] border-b-2 border-[#5D4037] px-6 py-4 flex items-center justify-between">
+            <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-xl overflow-hidden">
+              <div className="h-2 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-gold)] to-[var(--v-primary)]" />
+              <div className="bg-[var(--v-light-beige)] border-b-2 border-[var(--v-medium)] px-6 py-4 flex items-center justify-between">
                 <h3
-                  className="text-xl font-medium text-[#3E2723]"
+                  className="text-xl font-medium text-[var(--v-dark)]"
                   style={{ fontFamily: "'Noto Serif JP', serif" }}
                 >
                   Missions du cycle
                 </h3>
                 {missions.length > 0 && (
-                  <span className="text-sm font-medium text-[#5D4037]">
+                  <span className="text-sm font-medium text-[var(--v-medium)]">
                     {missions.length} mission{missions.length > 1 ? 's' : ''}
                     {' — '}
-                    <span className="text-[#D4A017] font-bold">
+                    <span className="text-[var(--v-gold)] font-bold">
                       {missions
                         .filter((m) => m.status === 'reussi')
                         .reduce((s, m) => s + m.points, 0)
@@ -490,37 +491,37 @@ export default function AnnuaireAdherent() {
 
               <div className="p-6">
                 {missionsLoading ? (
-                  <p className="text-center text-sm text-[#5D4037] py-8">Chargement...</p>
+                  <p className="text-center text-sm text-[var(--v-medium)] py-8">Chargement...</p>
                 ) : missions.length === 0 ? (
-                  <p className="text-center text-sm text-[#5D4037] italic py-8">
+                  <p className="text-center text-sm text-[var(--v-medium)] italic py-8">
                     Aucune mission enregistrée pour ce cycle.
                   </p>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="border-b-2 border-[#5D4037]">
-                          <th className="text-left text-xs font-medium text-[#5D4037] px-3 py-2 uppercase tracking-wide">
+                        <tr className="border-b-2 border-[var(--v-medium)]">
+                          <th className="text-left text-xs font-medium text-[var(--v-medium)] px-3 py-2 uppercase tracking-wide">
                             Date
                           </th>
-                          <th className="text-left text-xs font-medium text-[#5D4037] px-3 py-2 uppercase tracking-wide">
+                          <th className="text-left text-xs font-medium text-[var(--v-medium)] px-3 py-2 uppercase tracking-wide">
                             Type
                           </th>
-                          <th className="text-left text-xs font-medium text-[#5D4037] px-3 py-2 uppercase tracking-wide">
+                          <th className="text-left text-xs font-medium text-[var(--v-medium)] px-3 py-2 uppercase tracking-wide">
                             Rang
                           </th>
-                          <th className="text-left text-xs font-medium text-[#5D4037] px-3 py-2 uppercase tracking-wide">
+                          <th className="text-left text-xs font-medium text-[var(--v-medium)] px-3 py-2 uppercase tracking-wide">
                             Points
                           </th>
-                          <th className="text-left text-xs font-medium text-[#5D4037] px-3 py-2 uppercase tracking-wide">
+                          <th className="text-left text-xs font-medium text-[var(--v-medium)] px-3 py-2 uppercase tracking-wide">
                             Statut
                           </th>
                         </tr>
                       </thead>
                       <tbody>
                         {missions.map((m) => (
-                          <tr key={m.id} className="border-b border-[#E8D5B7] hover:bg-[#E8D5B7]/40 transition-colors">
-                            <td className="px-3 py-3 text-sm text-[#5D4037]">
+                          <tr key={m.id} className="border-b border-[var(--v-light-beige)] hover:bg-[var(--v-light-beige)]/40 transition-colors">
+                            <td className="px-3 py-3 text-sm text-[var(--v-medium)]">
                               {formatDate(m.mission_date)}
                             </td>
                             <td className="px-3 py-3">
@@ -534,7 +535,7 @@ export default function AnnuaireAdherent() {
                                 {m.rank}
                               </span>
                             </td>
-                            <td className="px-3 py-3 text-sm font-bold text-[#D4A017]">
+                            <td className="px-3 py-3 text-sm font-bold text-[var(--v-gold)]">
                               {m.status === 'echec' ? (
                                 <span className="text-[#C62828]/60 line-through">
                                   {m.points} pts
@@ -573,9 +574,9 @@ export default function AnnuaireAdherent() {
       </div>
 
       {/* Footer */}
-      <footer className="mt-12 border-t-2 border-[#5D4037]/30 py-6 text-center">
-        <p className="text-xs text-[#5D4037]" style={{ fontFamily: "'Noto Serif JP', serif" }}>
-          Bureau des Missions de Konoha — Annuaire public
+      <footer className="mt-12 border-t-2 border-[var(--v-medium)]/30 py-6 text-center">
+        <p className="text-xs text-[var(--v-medium)]" style={{ fontFamily: "'Noto Serif JP', serif" }}>
+          Bureau des Missions de {VILLAGE_NAME} — Annuaire public
         </p>
       </footer>
     </div>

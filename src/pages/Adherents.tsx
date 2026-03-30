@@ -9,8 +9,8 @@ import type { Adherent, CardTier, MissionType, MissionRank, MissionStatus } from
 const TIER_BADGE_STYLES: Record<CardTier, string> = {
   aucun: 'bg-[#9E9E9E] border-[#757575] text-white',
   bronze: 'bg-[#CD7F32] border-[#8B4513] text-white',
-  argent: 'bg-[#A8A9AD] border-[#808080] text-[#3E2723]',
-  or: 'bg-[#D4A017] border-[#B8860B] text-[#3E2723]',
+  argent: 'bg-[#A8A9AD] border-[#808080] text-[var(--v-dark)]',
+  or: 'bg-[var(--v-gold)] border-[var(--v-gold-dark)] text-[var(--v-dark)]',
   vip: 'bg-[#7B1FA2] border-[#4A148C] text-white',
 };
 
@@ -354,20 +354,20 @@ export default function Adherents() {
     <div className="space-y-6">
       {/* Titre */}
       <div>
-        <h1 className="text-4xl font-medium text-[#8B0000]" style={{ fontFamily: "'Noto Serif JP', serif" }}>
+        <h1 className="text-4xl font-medium text-[var(--v-primary)]" style={{ fontFamily: "'Noto Serif JP', serif" }}>
           Adhérents
         </h1>
-        <div className="mt-2 w-32 h-1 bg-gradient-to-r from-[#8B0000] via-[#C41E3A] to-transparent rounded-full" />
+        <div className="mt-2 w-32 h-1 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-secondary)] to-transparent rounded-full" />
       </div>
 
       {/* Formulaire Nouvel Adherent */}
       {canManage && (
-      <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-xl overflow-hidden">
-        <div className="h-2 bg-gradient-to-r from-[#D4A017] via-[#8B0000] to-[#D4A017]" />
-        <div className="bg-[#E8D5B7] border-b-2 border-[#5D4037] px-6 py-5">
+      <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-xl overflow-hidden">
+        <div className="h-2 bg-gradient-to-r from-[var(--v-gold)] via-[var(--v-primary)] to-[var(--v-gold)]" />
+        <div className="bg-[var(--v-light-beige)] border-b-2 border-[var(--v-medium)] px-6 py-5">
           <div className="flex items-center gap-4">
-            <div className="w-1 h-6 bg-[#C41E3A] rounded-full" />
-            <h2 className="text-2xl font-medium text-[#3E2723]" style={{ fontFamily: "'Noto Serif JP', serif" }}>
+            <div className="w-1 h-6 bg-[var(--v-secondary)] rounded-full" />
+            <h2 className="text-2xl font-medium text-[var(--v-dark)]" style={{ fontFamily: "'Noto Serif JP', serif" }}>
               Nouvel Adhérent
             </h2>
           </div>
@@ -375,34 +375,34 @@ export default function Adherents() {
         <form onSubmit={handleSubmit} className="p-6">
           <div className="grid grid-cols-4 gap-4 mb-4">
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-[#3E2723]">Prénom</label>
+              <label className="block text-sm font-medium text-[var(--v-dark)]">Prénom</label>
               <input
                 type="text"
                 placeholder="Saki"
                 value={formPrenom}
                 onChange={(e) => setFormPrenom(e.target.value)}
                 required
-                className="w-full h-9 px-3 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] outline-none focus:border-[#D4A017] focus:ring-1 focus:ring-[#D4A017] transition-colors"
+                className="w-full h-9 px-3 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-dark)] outline-none focus:border-[var(--v-gold)] focus:ring-1 focus:ring-[var(--v-gold)] transition-colors"
               />
             </div>
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-[#3E2723]">Nom</label>
+              <label className="block text-sm font-medium text-[var(--v-dark)]">Nom</label>
               <input
                 type="text"
                 placeholder="Sato"
                 value={formNom}
                 onChange={(e) => setFormNom(e.target.value)}
                 required
-                className="w-full h-9 px-3 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] outline-none focus:border-[#D4A017] focus:ring-1 focus:ring-[#D4A017] transition-colors"
+                className="w-full h-9 px-3 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-dark)] outline-none focus:border-[var(--v-gold)] focus:ring-1 focus:ring-[var(--v-gold)] transition-colors"
               />
             </div>
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-[#3E2723]">Niveau de carte</label>
+              <label className="block text-sm font-medium text-[var(--v-dark)]">Niveau de carte</label>
               <div className="relative">
                 <select
                   value={formTier}
                   onChange={(e) => setFormTier(e.target.value as CardTier)}
-                  className="w-full h-9 px-3 pr-8 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] outline-none focus:border-[#D4A017] appearance-none cursor-pointer"
+                  className="w-full h-9 px-3 pr-8 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-dark)] outline-none focus:border-[var(--v-gold)] appearance-none cursor-pointer"
                 >
                   <option value="aucun">Aucun</option>
                   <option value="bronze">Bronze</option>
@@ -410,12 +410,12 @@ export default function Adherents() {
                   <option value="or">Or</option>
                   <option value="vip">VIP</option>
                 </select>
-                <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5D4037] pointer-events-none" />
+                <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--v-medium)] pointer-events-none" />
               </div>
             </div>
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-[#3E2723]">Distribué par</label>
-              <div className="w-full h-9 px-3 bg-[#E8D5B7] border border-[#5D4037] rounded text-sm text-[#5D4037] flex items-center">
+              <label className="block text-sm font-medium text-[var(--v-dark)]">Distribué par</label>
+              <div className="w-full h-9 px-3 bg-[var(--v-light-beige)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-medium)] flex items-center">
                 {staffUser ? `${staffUser.first_name} ${staffUser.last_name}` : '—'}
               </div>
             </div>
@@ -423,7 +423,7 @@ export default function Adherents() {
           <button
             type="submit"
             disabled={submitting}
-            className="h-9 px-8 bg-[#5D4037] border-2 border-[#3E2723] rounded text-[#FAF3E3] text-sm font-medium shadow-lg hover:bg-[#4E342E] transition-colors cursor-pointer disabled:opacity-60"
+            className="h-9 px-8 bg-[var(--v-medium)] border-2 border-[var(--v-dark)] rounded text-[var(--v-off-white)] text-sm font-medium shadow-lg hover:bg-[var(--v-medium-dark)] transition-colors cursor-pointer disabled:opacity-60"
             style={{ fontFamily: "'Noto Serif JP', serif" }}
           >
             {submitting ? 'Enregistrement...' : 'Enregistrer'}
@@ -433,24 +433,24 @@ export default function Adherents() {
       )}
 
       {/* Barre de recherche + filtre */}
-      <div className="bg-[#F5E6CA] border-2 border-[#5D4037] rounded-[10px] shadow-lg px-6 py-6">
+      <div className="bg-[var(--v-cream)] border-2 border-[var(--v-medium)] rounded-[10px] shadow-lg px-6 py-6">
         <div className="flex items-center gap-3">
           <div className="relative flex-1">
-            <Search size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5D4037]" />
+            <Search size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--v-medium)]" />
             <input
               type="text"
               placeholder="Rechercher un adhérent..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full h-9 pl-10 pr-3 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] placeholder-[#5D4037] outline-none focus:border-[#D4A017] focus:ring-1 focus:ring-[#D4A017] transition-colors"
+              className="w-full h-9 pl-10 pr-3 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-dark)] placeholder-[var(--v-medium)] outline-none focus:border-[var(--v-gold)] focus:ring-1 focus:ring-[var(--v-gold)] transition-colors"
             />
           </div>
-          <Filter size={20} className="text-[#5D4037]" />
+          <Filter size={20} className="text-[var(--v-medium)]" />
           <div className="relative">
             <select
               value={filterTier}
               onChange={(e) => setFilterTier(e.target.value as CardTier | 'all')}
-              className="h-9 px-3 pr-8 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm font-medium text-[#3E2723] outline-none focus:border-[#D4A017] appearance-none cursor-pointer"
+              className="h-9 px-3 pr-8 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm font-medium text-[var(--v-dark)] outline-none focus:border-[var(--v-gold)] appearance-none cursor-pointer"
             >
               <option value="all">Tous les niveaux</option>
               <option value="aucun">Aucun</option>
@@ -459,45 +459,45 @@ export default function Adherents() {
               <option value="or">Or</option>
               <option value="vip">VIP</option>
             </select>
-            <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5D4037] pointer-events-none" />
+            <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--v-medium)] pointer-events-none" />
           </div>
         </div>
       </div>
 
       {/* Tableau des adherents */}
-      <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-xl overflow-hidden">
-        <div className="h-2 bg-gradient-to-r from-[#8B0000] via-[#D4A017] to-[#8B0000]" />
-        <div className="bg-[#E8D5B7] border-b-2 border-[#5D4037] px-6 py-5">
+      <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-xl overflow-hidden">
+        <div className="h-2 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-gold)] to-[var(--v-primary)]" />
+        <div className="bg-[var(--v-light-beige)] border-b-2 border-[var(--v-medium)] px-6 py-5">
           <div className="flex items-center gap-4">
-            <div className="w-1 h-6 bg-[#C41E3A] rounded-full" />
-            <h2 className="text-2xl font-medium text-[#3E2723]" style={{ fontFamily: "'Noto Serif JP', serif" }}>
+            <div className="w-1 h-6 bg-[var(--v-secondary)] rounded-full" />
+            <h2 className="text-2xl font-medium text-[var(--v-dark)]" style={{ fontFamily: "'Noto Serif JP', serif" }}>
               Liste des Adhérents ({filtered.length})
             </h2>
           </div>
         </div>
 
         <div className="p-6">
-          <div className="border-2 border-[#5D4037] rounded-md overflow-hidden">
+          <div className="border-2 border-[var(--v-medium)] rounded-md overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="bg-[#E8D5B7] border-b border-[#5D4037]">
-                  <th className="text-left px-3 py-2.5 text-sm font-medium text-[#3E2723]">Prénom & Nom</th>
-                  <th className="text-left px-3 py-2.5 text-sm font-medium text-[#3E2723]">Niveau de carte</th>
-                  <th className="text-left px-3 py-2.5 text-sm font-medium text-[#3E2723]">Distribué par</th>
-                  <th className="text-left px-3 py-2.5 text-sm font-medium text-[#3E2723]">Date inscription</th>
-                  <th className="text-left px-3 py-2.5 text-sm font-medium text-[#3E2723]">Points Missions</th>
-                  <th className="text-left px-3 py-2.5 text-sm font-medium text-[#3E2723]">Missions non payées</th>
-                  <th className="text-right px-3 py-2.5 text-sm font-medium text-[#3E2723]">Actions</th>
+                <tr className="bg-[var(--v-light-beige)] border-b border-[var(--v-medium)]">
+                  <th className="text-left px-3 py-2.5 text-sm font-medium text-[var(--v-dark)]">Prénom & Nom</th>
+                  <th className="text-left px-3 py-2.5 text-sm font-medium text-[var(--v-dark)]">Niveau de carte</th>
+                  <th className="text-left px-3 py-2.5 text-sm font-medium text-[var(--v-dark)]">Distribué par</th>
+                  <th className="text-left px-3 py-2.5 text-sm font-medium text-[var(--v-dark)]">Date inscription</th>
+                  <th className="text-left px-3 py-2.5 text-sm font-medium text-[var(--v-dark)]">Points Missions</th>
+                  <th className="text-left px-3 py-2.5 text-sm font-medium text-[var(--v-dark)]">Missions non payées</th>
+                  <th className="text-right px-3 py-2.5 text-sm font-medium text-[var(--v-dark)]">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={7} className="text-center py-8 text-[#5D4037] text-sm">Chargement...</td>
+                    <td colSpan={7} className="text-center py-8 text-[var(--v-medium)] text-sm">Chargement...</td>
                   </tr>
                 ) : filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="text-center py-8 text-[#5D4037] text-sm">Aucun adhérent trouvé.</td>
+                    <td colSpan={7} className="text-center py-8 text-[var(--v-medium)] text-sm">Aucun adhérent trouvé.</td>
                   </tr>
                 ) : (
                   filtered.map((a, i) => {
@@ -506,9 +506,9 @@ export default function Adherents() {
                     return (
                       <tr
                         key={a.id}
-                        className={`border-b border-[#E8D5B7] ${i % 2 === 0 ? 'bg-[#FAF3E3]' : 'bg-[#F5E6CA]'}`}
+                        className={`border-b border-[var(--v-light-beige)] ${i % 2 === 0 ? 'bg-[var(--v-off-white)]' : 'bg-[var(--v-cream)]'}`}
                       >
-                        <td className="px-3 py-3 text-sm text-[#3E2723]">
+                        <td className="px-3 py-3 text-sm text-[var(--v-dark)]">
                           {a.first_name} {a.last_name}
                         </td>
                         <td className="px-3 py-3">
@@ -516,9 +516,9 @@ export default function Adherents() {
                             {TIER_LABELS[a.card_tier]}
                           </span>
                         </td>
-                        <td className="px-3 py-3 text-sm text-[#5D4037]">{staffName(a)}</td>
-                        <td className="px-3 py-3 text-sm text-[#5D4037]">{formatDate(a.created_at)}</td>
-                        <td className="px-3 py-3 text-sm text-[#3E2723]">
+                        <td className="px-3 py-3 text-sm text-[var(--v-medium)]">{staffName(a)}</td>
+                        <td className="px-3 py-3 text-sm text-[var(--v-medium)]">{formatDate(a.created_at)}</td>
+                        <td className="px-3 py-3 text-sm text-[var(--v-dark)]">
                           {(a.cycle_points ?? 0).toLocaleString('fr-FR')}
                         </td>
                         <td className="px-3 py-3">
@@ -526,8 +526,8 @@ export default function Adherents() {
                             onClick={() => openUnpaidMissions(a)}
                             className={`h-8 px-3 border rounded text-xs font-medium transition-colors cursor-pointer ${
                               unpaidCount > 0
-                                ? 'bg-[#C62828] border-[#8B0000] text-white hover:bg-[#B71C1C]'
-                                : 'bg-[#FAF3E3] border-[#5D4037] text-[#5D4037] hover:bg-[#E8D5B7]'
+                                ? 'bg-[#C62828] border-[var(--v-primary)] text-white hover:bg-[#B71C1C]'
+                                : 'bg-[var(--v-off-white)] border-[var(--v-medium)] text-[var(--v-medium)] hover:bg-[var(--v-light-beige)]'
                             }`}
                             title="Voir les missions ninja non payées"
                           >
@@ -538,10 +538,10 @@ export default function Adherents() {
                           <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => navigate(`/adherents/${a.id}`)}
-                              className="w-[38px] h-8 bg-[#FAF3E3] border border-[#5D4037] rounded flex items-center justify-center hover:bg-[#E8D5B7] transition-colors cursor-pointer"
+                              className="w-[38px] h-8 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded flex items-center justify-center hover:bg-[var(--v-light-beige)] transition-colors cursor-pointer"
                               title="Voir fiche"
                             >
-                              <Eye size={16} className="text-[#5D4037]" />
+                              <Eye size={16} className="text-[var(--v-medium)]" />
                             </button>
                             {canManage && (
                               <>
@@ -553,7 +553,7 @@ export default function Adherents() {
                                     }
                                   }}
                                   disabled={upgrades.length === 0}
-                                  className={`w-[38px] h-8 bg-[#D4A017] border border-[#8B0000] rounded flex items-center justify-center transition-colors cursor-pointer ${upgrades.length === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#C49000]'
+                                  className={`w-[38px] h-8 bg-[var(--v-gold)] border border-[var(--v-primary)] rounded flex items-center justify-center transition-colors cursor-pointer ${upgrades.length === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#C49000]'
                                     }`}
                                   title="Évolution"
                                 >
@@ -562,7 +562,7 @@ export default function Adherents() {
                                 <button
                                   onClick={() => handleDelete(a.id, `${a.first_name} ${a.last_name}`)}
                                   disabled={deleting === a.id}
-                                  className="w-[38px] h-8 bg-[#C62828] border border-[#8B0000] rounded flex items-center justify-center hover:bg-[#B71C1C] transition-colors cursor-pointer disabled:opacity-50"
+                                  className="w-[38px] h-8 bg-[#C62828] border border-[var(--v-primary)] rounded flex items-center justify-center hover:bg-[#B71C1C] transition-colors cursor-pointer disabled:opacity-50"
                                   title="Supprimer"
                                 >
                                   <Trash2 size={16} className="text-white" />
@@ -584,51 +584,51 @@ export default function Adherents() {
       {/* Modale evolution */}
       {evolTarget && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-2xl w-full max-w-md overflow-hidden">
-            <div className="h-2 bg-gradient-to-r from-[#D4A017] via-[#8B0000] to-[#D4A017]" />
+          <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="h-2 bg-gradient-to-r from-[var(--v-gold)] via-[var(--v-primary)] to-[var(--v-gold)]" />
             <div className="px-6 pt-5 flex items-start justify-between">
-              <h3 className="text-2xl font-medium text-[#8B0000]" style={{ fontFamily: "'Noto Serif JP', serif" }}>
+              <h3 className="text-2xl font-medium text-[var(--v-primary)]" style={{ fontFamily: "'Noto Serif JP', serif" }}>
                 Évolution de Carte
               </h3>
-              <button onClick={() => setEvolTarget(null)} className="text-[#5D4037] hover:text-[#3E2723] cursor-pointer">
+              <button onClick={() => setEvolTarget(null)} className="text-[var(--v-medium)] hover:text-[var(--v-dark)] cursor-pointer">
                 <X size={20} />
               </button>
             </div>
             <div className="px-6 pb-6 pt-4 space-y-5">
               <div className="text-center">
-                <p className="text-xs text-[#5D4037]">Adhérent</p>
-                <p className="text-base font-medium text-[#3E2723]">{evolTarget.first_name} {evolTarget.last_name}</p>
+                <p className="text-xs text-[var(--v-medium)]">Adhérent</p>
+                <p className="text-base font-medium text-[var(--v-dark)]">{evolTarget.first_name} {evolTarget.last_name}</p>
               </div>
 
               {/* Niveau actuel -> Nouveau niveau */}
               <div className="flex items-center justify-center gap-6">
                 <div className="text-center space-y-2">
-                  <p className="text-xs text-[#5D4037]">Niveau actuel</p>
+                  <p className="text-xs text-[var(--v-medium)]">Niveau actuel</p>
                   <span className={`inline-flex items-center justify-center px-4 py-1.5 rounded border-2 text-sm font-medium ${TIER_BADGE_STYLES[evolTarget.card_tier]}`}>
                     {TIER_LABELS[evolTarget.card_tier]}
                   </span>
                 </div>
-                <ArrowUp size={24} className="text-[#D4A017] mt-4" />
+                <ArrowUp size={24} className="text-[var(--v-gold)] mt-4" />
                 <div className="text-center space-y-2">
-                  <p className="text-xs text-[#5D4037]">Nouveau niveau</p>
+                  <p className="text-xs text-[var(--v-medium)]">Nouveau niveau</p>
                   <div className="relative">
                     <select
                       value={evolNewTier}
                       onChange={(e) => setEvolNewTier(e.target.value as CardTier)}
-                      className="h-9 px-3 pr-8 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] outline-none appearance-none cursor-pointer"
+                      className="h-9 px-3 pr-8 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-dark)] outline-none appearance-none cursor-pointer"
                     >
                       {getUpgradeTiers(evolTarget.card_tier).map((t) => (
                         <option key={t} value={t}>{TIER_LABELS[t]}</option>
                       ))}
                     </select>
-                    <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5D4037] pointer-events-none" />
+                    <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--v-medium)] pointer-events-none" />
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-[#3E2723]">Évolution réalisée par</label>
-                <div className="w-full h-9 px-3 bg-[#E8D5B7] border border-[#5D4037] rounded text-sm text-[#5D4037] flex items-center">
+                <label className="block text-sm font-medium text-[var(--v-dark)]">Évolution réalisée par</label>
+                <div className="w-full h-9 px-3 bg-[var(--v-light-beige)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-medium)] flex items-center">
                   {staffUser ? `${staffUser.first_name} ${staffUser.last_name}` : '—'}
                 </div>
               </div>
@@ -636,13 +636,13 @@ export default function Adherents() {
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={() => setEvolTarget(null)}
-                  className="flex-1 h-9 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] hover:bg-[#E8D5B7] transition-colors cursor-pointer"
+                  className="flex-1 h-9 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-dark)] hover:bg-[var(--v-light-beige)] transition-colors cursor-pointer"
                 >
                   Annuler
                 </button>
                 <button
                   onClick={handleEvolution}
-                  className="flex-1 h-9 bg-[#8B0000] border border-[#6B0000] rounded text-sm text-[#FAF3E3] font-medium hover:bg-[#7A0000] transition-colors cursor-pointer"
+                  className="flex-1 h-9 bg-[var(--v-primary)] border border-[#6B0000] rounded text-sm text-[var(--v-off-white)] font-medium hover:bg-[#7A0000] transition-colors cursor-pointer"
                 >
                   Confirmer l'évolution
                 </button>
@@ -655,52 +655,52 @@ export default function Adherents() {
       {/* Modale missions non payées */}
       {unpaidTarget && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-2xl w-full max-w-3xl overflow-hidden">
-            <div className="h-2 bg-gradient-to-r from-[#D4A017] via-[#8B0000] to-[#D4A017]" />
+          <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-2xl w-full max-w-3xl overflow-hidden">
+            <div className="h-2 bg-gradient-to-r from-[var(--v-gold)] via-[var(--v-primary)] to-[var(--v-gold)]" />
             <div className="px-6 pt-5 flex items-start justify-between">
-              <h3 className="text-2xl font-medium text-[#8B0000]" style={{ fontFamily: "'Noto Serif JP', serif" }}>
+              <h3 className="text-2xl font-medium text-[var(--v-primary)]" style={{ fontFamily: "'Noto Serif JP', serif" }}>
                 Missions non payées - {unpaidTarget.first_name} {unpaidTarget.last_name}
               </h3>
-              <button onClick={() => setUnpaidTarget(null)} className="text-[#5D4037] hover:text-[#3E2723] cursor-pointer">
+              <button onClick={() => setUnpaidTarget(null)} className="text-[var(--v-medium)] hover:text-[var(--v-dark)] cursor-pointer">
                 <X size={20} />
               </button>
             </div>
 
             <div className="px-6 pb-6 pt-4">
               {loadingUnpaid ? (
-                <div className="py-10 text-center text-sm text-[#5D4037]">Chargement...</div>
+                <div className="py-10 text-center text-sm text-[var(--v-medium)]">Chargement...</div>
               ) : unpaidMissions.length === 0 ? (
-                <div className="py-10 text-center text-sm text-[#5D4037]">
+                <div className="py-10 text-center text-sm text-[var(--v-medium)]">
                   Aucune mission non payée.
                 </div>
               ) : (
-                <div className="border-2 border-[#5D4037] rounded-md overflow-hidden max-h-[420px] overflow-y-auto">
+                <div className="border-2 border-[var(--v-medium)] rounded-md overflow-hidden max-h-[420px] overflow-y-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="bg-[#E8D5B7] border-b border-[#5D4037]">
-                        <th className="text-left px-3 py-2 text-xs font-medium text-[#3E2723]">Date mission</th>
-                        <th className="text-left px-3 py-2 text-xs font-medium text-[#3E2723]">Cycle</th>
-                        <th className="text-left px-3 py-2 text-xs font-medium text-[#3E2723]">Type</th>
-                        <th className="text-left px-3 py-2 text-xs font-medium text-[#3E2723]">Rang</th>
-                        <th className="text-left px-3 py-2 text-xs font-medium text-[#3E2723]">Rôle</th>
-                        <th className="text-left px-3 py-2 text-xs font-medium text-[#3E2723]">Lien</th>
-                        <th className="text-right px-3 py-2 text-xs font-medium text-[#3E2723]">Marquer payé</th>
+                      <tr className="bg-[var(--v-light-beige)] border-b border-[var(--v-medium)]">
+                        <th className="text-left px-3 py-2 text-xs font-medium text-[var(--v-dark)]">Date mission</th>
+                        <th className="text-left px-3 py-2 text-xs font-medium text-[var(--v-dark)]">Cycle</th>
+                        <th className="text-left px-3 py-2 text-xs font-medium text-[var(--v-dark)]">Type</th>
+                        <th className="text-left px-3 py-2 text-xs font-medium text-[var(--v-dark)]">Rang</th>
+                        <th className="text-left px-3 py-2 text-xs font-medium text-[var(--v-dark)]">Rôle</th>
+                        <th className="text-left px-3 py-2 text-xs font-medium text-[var(--v-dark)]">Lien</th>
+                        <th className="text-right px-3 py-2 text-xs font-medium text-[var(--v-dark)]">Marquer payé</th>
                       </tr>
                     </thead>
                     <tbody>
                       {unpaidMissions.map((m, index) => (
-                        <tr key={m.row_id} className={`border-b border-[#E8D5B7] ${index % 2 === 0 ? 'bg-[#FAF3E3]' : 'bg-[#F5E6CA]'}`}>
-                          <td className="px-3 py-2 text-sm text-[#3E2723]">{formatDate(m.mission_date)}</td>
-                          <td className="px-3 py-2 text-sm text-[#5D4037]">{m.cycle_name}</td>
-                          <td className="px-3 py-2 text-sm text-[#5D4037]">{MISSION_TYPE_LABELS[m.mission_type]}</td>
-                          <td className="px-3 py-2 text-sm text-[#3E2723] font-medium">{m.rank}</td>
+                        <tr key={m.row_id} className={`border-b border-[var(--v-light-beige)] ${index % 2 === 0 ? 'bg-[var(--v-off-white)]' : 'bg-[var(--v-cream)]'}`}>
+                          <td className="px-3 py-2 text-sm text-[var(--v-dark)]">{formatDate(m.mission_date)}</td>
+                          <td className="px-3 py-2 text-sm text-[var(--v-medium)]">{m.cycle_name}</td>
+                          <td className="px-3 py-2 text-sm text-[var(--v-medium)]">{MISSION_TYPE_LABELS[m.mission_type]}</td>
+                          <td className="px-3 py-2 text-sm text-[var(--v-dark)] font-medium">{m.rank}</td>
                           <td className="px-3 py-2 text-sm">
                             <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
                               m.role === 'executant'
-                                ? 'bg-[#8B0000]/10 text-[#8B0000] border border-[#8B0000]/30'
+                                ? 'bg-[var(--v-primary)]/10 text-[var(--v-primary)] border border-[var(--v-primary)]/30'
                                 : m.role === 'intervenant'
                                 ? 'bg-[#1565C0]/10 text-[#1565C0] border border-[#1565C0]/30'
-                                : 'bg-[#D4A017]/10 text-[#7A5C00] border border-[#D4A017]/40'
+                                : 'bg-[var(--v-gold)]/10 text-[#7A5C00] border border-[var(--v-gold)]/40'
                             }`}>
                               {m.role === 'executant' ? 'Exécutant' : m.role === 'intervenant' ? 'Intervenant' : 'Ninja'}
                             </span>
@@ -711,13 +711,13 @@ export default function Adherents() {
                                 href={m.mission_link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-[#8B0000] hover:text-[#C41E3A] underline"
+                                className="inline-flex items-center gap-1 text-[var(--v-primary)] hover:text-[var(--v-secondary)] underline"
                               >
                                 Voir
                                 <ExternalLink size={13} />
                               </a>
                             ) : (
-                              <span className="text-[#5D4037]">-</span>
+                              <span className="text-[var(--v-medium)]">-</span>
                             )}
                           </td>
                           <td className="px-3 py-2 text-right">
@@ -727,8 +727,8 @@ export default function Adherents() {
                               disabled={!canManage || markingPaidRowId === m.row_id}
                               className={`h-8 px-3 rounded border text-xs font-medium transition-colors ${
                                 canManage
-                                  ? 'bg-[#4A5D23] border-[#3E2723] text-white hover:bg-[#3F501D] cursor-pointer'
-                                  : 'bg-[#FAF3E3] border-[#5D4037]/40 text-[#5D4037]/40 cursor-not-allowed'
+                                  ? 'bg-[#4A5D23] border-[var(--v-dark)] text-white hover:bg-[#3F501D] cursor-pointer'
+                                  : 'bg-[var(--v-off-white)] border-[var(--v-medium)]/40 text-[var(--v-medium)]/40 cursor-not-allowed'
                               }`}
                               title={canManage ? 'Marquer la mission comme payée' : 'Action réservée aux gérants'}
                             >

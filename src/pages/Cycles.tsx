@@ -8,14 +8,14 @@ import type { Cycle, CycleStatus } from '../types';
 /* Status badge config                                                */
 /* ------------------------------------------------------------------ */
 const STATUS_CONFIG: Record<CycleStatus, { label: string; bg: string; border: string; text: string }> = {
-  active: { label: 'Actif', bg: 'bg-[#4A5D23]', border: 'border-[#3E2723]', text: 'text-white' },
-  completed: { label: 'Terminé', bg: 'bg-[#8B0000]', border: 'border-[#6B0000]', text: 'text-white' },
-  upcoming: { label: 'À venir', bg: 'bg-[#FAF3E3]', border: 'border-[#1565C0]', text: 'text-[#1565C0]' },
+  active: { label: 'Actif', bg: 'bg-[#4A5D23]', border: 'border-[var(--v-dark)]', text: 'text-white' },
+  completed: { label: 'Terminé', bg: 'bg-[var(--v-primary)]', border: 'border-[#6B0000]', text: 'text-white' },
+  upcoming: { label: 'À venir', bg: 'bg-[var(--v-off-white)]', border: 'border-[#1565C0]', text: 'text-[#1565C0]' },
 };
 
 const CARD_BORDER: Record<CycleStatus, string> = {
-  active: 'border-[#D4A017] shadow-[0_0_20px_rgba(212,160,23,0.3)]',
-  completed: 'border-[#8B0000]',
+  active: 'border-[var(--v-gold)] shadow-[0_0_20px_rgba(212,160,23,0.3)]',
+  completed: 'border-[var(--v-primary)]',
   upcoming: 'border-[#1565C0]',
 };
 
@@ -222,17 +222,17 @@ export default function Cycles() {
       <div className="flex items-center justify-between">
         <div>
           <h1
-            className="text-4xl font-medium text-[#8B0000]"
+            className="text-4xl font-medium text-[var(--v-primary)]"
             style={{ fontFamily: "'Noto Serif JP', serif" }}
           >
             Gestion des Cycles
           </h1>
-          <div className="mt-2 w-32 h-1 bg-gradient-to-r from-[#8B0000] via-[#C41E3A] to-transparent rounded-full" />
+          <div className="mt-2 w-32 h-1 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-secondary)] to-transparent rounded-full" />
         </div>
         {isGerant && (
           <button
             onClick={() => setShowModal(true)}
-            className="h-9 px-6 bg-[#5D4037] border-2 border-[#3E2723] rounded text-[#FAF3E3] text-sm font-medium shadow-lg hover:bg-[#4E342E] transition-colors cursor-pointer flex items-center gap-3"
+            className="h-9 px-6 bg-[var(--v-medium)] border-2 border-[var(--v-dark)] rounded text-[var(--v-off-white)] text-sm font-medium shadow-lg hover:bg-[var(--v-medium-dark)] transition-colors cursor-pointer flex items-center gap-3"
             style={{ fontFamily: "'Noto Serif JP', serif" }}
           >
             <Plus size={16} />
@@ -243,17 +243,17 @@ export default function Cycles() {
 
       {/* Gérant-only banner */}
       {!isGerant && (
-        <div className="bg-[#D4A017] border-2 border-[#8B0000] rounded-md px-4 py-3 flex items-center justify-center gap-3">
-          <Shield size={18} className="text-[#3E2723]" />
-          <span className="text-sm font-medium text-[#3E2723]">Accès Gérant BDM</span>
+        <div className="bg-[var(--v-gold)] border-2 border-[var(--v-primary)] rounded-md px-4 py-3 flex items-center justify-center gap-3">
+          <Shield size={18} className="text-[var(--v-dark)]" />
+          <span className="text-sm font-medium text-[var(--v-dark)]">Accès Gérant BDM</span>
         </div>
       )}
 
       {/* Cycle grid */}
       {loading ? (
-        <div className="text-center py-16 text-[#5D4037] text-sm">Chargement des cycles...</div>
+        <div className="text-center py-16 text-[var(--v-medium)] text-sm">Chargement des cycles...</div>
       ) : cycles.length === 0 ? (
-        <div className="text-center py-16 text-[#5D4037] text-sm">Aucun cycle créé.</div>
+        <div className="text-center py-16 text-[var(--v-medium)] text-sm">Aucun cycle créé.</div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cycles.map((c) => {
@@ -266,15 +266,15 @@ export default function Cycles() {
             return (
               <div
                 key={c.id}
-                className={`bg-[#F5E6CA] border-4 rounded-[10px] shadow-lg overflow-hidden flex flex-col ${CARD_BORDER[computedStatus]}`}
+                className={`bg-[var(--v-cream)] border-4 rounded-[10px] shadow-lg overflow-hidden flex flex-col ${CARD_BORDER[computedStatus]}`}
               >
                 {/* Top accent */}
-                <div className="h-1.5 bg-gradient-to-r from-[#8B0000] via-[#D4A017] to-[#8B0000]" />
+                <div className="h-1.5 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-gold)] to-[var(--v-primary)]" />
 
                 {/* Header: name + badge */}
                 <div className="px-5 pt-5 pb-3 flex items-center justify-between">
                   <h2
-                    className="text-2xl font-medium text-[#3E2723]"
+                    className="text-2xl font-medium text-[var(--v-dark)]"
                     style={{ fontFamily: "'Noto Serif JP', serif" }}
                   >
                     {c.name}
@@ -288,29 +288,29 @@ export default function Cycles() {
 
                 {/* Dates */}
                 <div className="px-5 pb-4 space-y-1">
-                  <div className="flex items-center gap-2 text-sm text-[#5D4037]">
-                    <Calendar size={14} className="text-[#5D4037]" />
+                  <div className="flex items-center gap-2 text-sm text-[var(--v-medium)]">
+                    <Calendar size={14} className="text-[var(--v-medium)]" />
                     <span>Début: {formatDate(c.start_date)}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-[#5D4037]">
-                    <Calendar size={14} className="text-[#5D4037]" />
+                  <div className="flex items-center gap-2 text-sm text-[var(--v-medium)]">
+                    <Calendar size={14} className="text-[var(--v-medium)]" />
                     <span>Fin: {formatDate(c.end_date)}</span>
                   </div>
                 </div>
 
                 {/* Stats boxes */}
                 <div className="px-5 pb-4 grid grid-cols-2 gap-3">
-                  <div className="bg-[#FAF3E3] border border-[#5D4037] rounded-md flex flex-col items-center py-3 gap-1">
-                    <Target size={18} className="text-[#C41E3A]" />
-                    <span className="text-xs text-[#5D4037]">Missions</span>
-                    <span className="text-lg font-bold text-[#3E2723]">
+                  <div className="bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded-md flex flex-col items-center py-3 gap-1">
+                    <Target size={18} className="text-[var(--v-secondary)]" />
+                    <span className="text-xs text-[var(--v-medium)]">Missions</span>
+                    <span className="text-lg font-bold text-[var(--v-dark)]">
                       {cs.missions.toLocaleString('fr-FR')}
                     </span>
                   </div>
-                  <div className="bg-[#FAF3E3] border border-[#5D4037] rounded-md flex flex-col items-center py-3 gap-1">
-                    <Award size={18} className="text-[#D4A017]" />
-                    <span className="text-xs text-[#5D4037]">Points</span>
-                    <span className="text-lg font-bold text-[#3E2723]">
+                  <div className="bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded-md flex flex-col items-center py-3 gap-1">
+                    <Award size={18} className="text-[var(--v-gold)]" />
+                    <span className="text-xs text-[var(--v-medium)]">Points</span>
+                    <span className="text-lg font-bold text-[var(--v-dark)]">
                       {cs.points.toLocaleString('fr-FR')}
                     </span>
                   </div>
@@ -318,10 +318,10 @@ export default function Cycles() {
 
                 {/* Active indicator */}
                 {isActive && (
-                  <div className="mx-5 mt-1 bg-[#D4A017] border border-[#8B0000] rounded-md py-2 flex items-center justify-center gap-2">
-                    <Flame size={16} className="text-[#8B0000]" />
+                  <div className="mx-5 mt-1 bg-[var(--v-gold)] border border-[var(--v-primary)] rounded-md py-2 flex items-center justify-center gap-2">
+                    <Flame size={16} className="text-[var(--v-primary)]" />
                     <span
-                      className="text-sm font-medium text-[#3E2723]"
+                      className="text-sm font-medium text-[var(--v-dark)]"
                       style={{ fontFamily: "'Noto Serif JP', serif" }}
                     >
                       Cycle en cours
@@ -333,7 +333,7 @@ export default function Cycles() {
                     {isGerant && (
                       <button
                         onClick={() => openEditModal(c)}
-                        className="flex-1 h-8 bg-[#FAF3E3] border border-[#5D4037] rounded flex items-center justify-center gap-2 text-sm text-[#5D4037] hover:bg-[#E8D5B7] transition-colors cursor-pointer"
+                        className="flex-1 h-8 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded flex items-center justify-center gap-2 text-sm text-[var(--v-medium)] hover:bg-[var(--v-light-beige)] transition-colors cursor-pointer"
                       >
                         <Pencil size={14} />
                         Modifier les dates
@@ -345,8 +345,8 @@ export default function Cycles() {
                         disabled={isActive}
                         className={`h-8 px-3 border rounded flex items-center justify-center gap-1.5 text-sm transition-colors ${
                           isActive
-                            ? 'bg-[#FAF3E3] border-[#5D4037]/40 text-[#5D4037]/40 cursor-not-allowed'
-                            : 'bg-[#FAF3E3] border-[#C62828] text-[#C62828] hover:bg-[#C62828] hover:text-white cursor-pointer'
+                            ? 'bg-[var(--v-off-white)] border-[var(--v-medium)]/40 text-[var(--v-medium)]/40 cursor-not-allowed'
+                            : 'bg-[var(--v-off-white)] border-[#C62828] text-[#C62828] hover:bg-[#C62828] hover:text-white cursor-pointer'
                         }`}
                         title={isActive ? 'Impossible de supprimer le cycle actif' : 'Supprimer le cycle'}
                       >
@@ -364,21 +364,21 @@ export default function Cycles() {
       {/* ---- Modale Nouveau Cycle ---- */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-2xl w-full max-w-md overflow-hidden">
-            <div className="h-2 bg-gradient-to-r from-[#D4A017] via-[#8B0000] to-[#D4A017]" />
+          <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="h-2 bg-gradient-to-r from-[var(--v-gold)] via-[var(--v-primary)] to-[var(--v-gold)]" />
 
             {/* Modal header */}
             <div className="px-6 pt-5 flex items-start justify-between">
               <h3
-                className="text-2xl font-medium text-[#8B0000] flex items-center gap-2"
+                className="text-2xl font-medium text-[var(--v-primary)] flex items-center gap-2"
                 style={{ fontFamily: "'Noto Serif JP', serif" }}
               >
-                <Plus size={22} className="text-[#8B0000]" />
+                <Plus size={22} className="text-[var(--v-primary)]" />
                 Nouveau Cycle
               </h3>
               <button
                 onClick={() => { setShowModal(false); setFormStart(''); setFormEnd(''); setOverlapError(''); }}
-                className="text-[#5D4037] hover:text-[#3E2723] cursor-pointer"
+                className="text-[var(--v-medium)] hover:text-[var(--v-dark)] cursor-pointer"
               >
                 <X size={20} />
               </button>
@@ -388,34 +388,34 @@ export default function Cycles() {
             <form onSubmit={handleCreate} className="px-6 pb-6 pt-4 space-y-5">
               {/* Start date */}
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-[#3E2723]">Date de début</label>
+                <label className="block text-sm font-medium text-[var(--v-dark)]">Date de début</label>
                 <input
                   type="date"
                   value={formStart}
                   onChange={(e) => handleStartChange(e.target.value)}
                   required
-                  className="w-full h-9 px-3 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] outline-none focus:border-[#D4A017] focus:ring-1 focus:ring-[#D4A017] transition-colors"
+                  className="w-full h-9 px-3 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-dark)] outline-none focus:border-[var(--v-gold)] focus:ring-1 focus:ring-[var(--v-gold)] transition-colors"
                 />
               </div>
 
               {/* End date */}
               <div className="space-y-2">
                 <div className="flex items-baseline gap-2">
-                  <label className="block text-sm font-medium text-[#3E2723]">Date de fin</label>
-                  <span className="text-xs text-[#5D4037]">(+21 jours suggérés)</span>
+                  <label className="block text-sm font-medium text-[var(--v-dark)]">Date de fin</label>
+                  <span className="text-xs text-[var(--v-medium)]">(+21 jours suggérés)</span>
                 </div>
                 <input
                   type="date"
                   value={formEnd}
                   onChange={(e) => { setFormEnd(e.target.value); setOverlapError(''); }}
                   required
-                  className="w-full h-9 px-3 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] outline-none focus:border-[#D4A017] focus:ring-1 focus:ring-[#D4A017] transition-colors"
+                  className="w-full h-9 px-3 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-dark)] outline-none focus:border-[var(--v-gold)] focus:ring-1 focus:ring-[var(--v-gold)] transition-colors"
                 />
               </div>
 
               {/* Auto name */}
-              <div className="bg-[#E8D5B7] border border-[#5D4037] rounded px-4 py-3">
-                <span className="text-sm text-[#5D4037]">
+              <div className="bg-[var(--v-light-beige)] border border-[var(--v-medium)] rounded px-4 py-3">
+                <span className="text-sm text-[var(--v-medium)]">
                   <span className="font-bold">Nom automatique:</span> {autoName}
                 </span>
               </div>
@@ -432,14 +432,14 @@ export default function Cycles() {
                 <button
                   type="button"
                   onClick={() => { setShowModal(false); setFormStart(''); setFormEnd(''); setOverlapError(''); }}
-                  className="flex-1 h-9 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] hover:bg-[#E8D5B7] transition-colors cursor-pointer"
+                  className="flex-1 h-9 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-dark)] hover:bg-[var(--v-light-beige)] transition-colors cursor-pointer"
                 >
                   Annuler
                 </button>
                 <button
                   type="submit"
                   disabled={creating}
-                  className="flex-1 h-9 bg-[#8B0000] border border-[#6B0000] rounded text-sm text-[#FAF3E3] font-medium hover:bg-[#7A0000] transition-colors cursor-pointer disabled:opacity-60"
+                  className="flex-1 h-9 bg-[var(--v-primary)] border border-[#6B0000] rounded text-sm text-[var(--v-off-white)] font-medium hover:bg-[#7A0000] transition-colors cursor-pointer disabled:opacity-60"
                 >
                   {creating ? 'Création...' : 'Créer le cycle'}
                 </button>
@@ -452,20 +452,20 @@ export default function Cycles() {
       {/* ---- Modale Modifier Dates ---- */}
       {editCycle && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-2xl w-full max-w-md overflow-hidden">
-            <div className="h-2 bg-gradient-to-r from-[#D4A017] via-[#8B0000] to-[#D4A017]" />
+          <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="h-2 bg-gradient-to-r from-[var(--v-gold)] via-[var(--v-primary)] to-[var(--v-gold)]" />
 
             <div className="px-6 pt-5 flex items-start justify-between">
               <h3
-                className="text-2xl font-medium text-[#8B0000] flex items-center gap-2"
+                className="text-2xl font-medium text-[var(--v-primary)] flex items-center gap-2"
                 style={{ fontFamily: "'Noto Serif JP', serif" }}
               >
-                <Pencil size={22} className="text-[#8B0000]" />
+                <Pencil size={22} className="text-[var(--v-primary)]" />
                 Modifier {editCycle.name}
               </h3>
               <button
                 onClick={() => setEditCycle(null)}
-                className="text-[#5D4037] hover:text-[#3E2723] cursor-pointer"
+                className="text-[var(--v-medium)] hover:text-[var(--v-dark)] cursor-pointer"
               >
                 <X size={20} />
               </button>
@@ -473,24 +473,24 @@ export default function Cycles() {
 
             <form onSubmit={handleEditDates} className="px-6 pb-6 pt-4 space-y-5">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-[#3E2723]">Date de début</label>
+                <label className="block text-sm font-medium text-[var(--v-dark)]">Date de début</label>
                 <input
                   type="date"
                   value={editStart}
                   onChange={(e) => setEditStart(e.target.value)}
                   required
-                  className="w-full h-9 px-3 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] outline-none focus:border-[#D4A017] focus:ring-1 focus:ring-[#D4A017] transition-colors"
+                  className="w-full h-9 px-3 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-dark)] outline-none focus:border-[var(--v-gold)] focus:ring-1 focus:ring-[var(--v-gold)] transition-colors"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-[#3E2723]">Date de fin</label>
+                <label className="block text-sm font-medium text-[var(--v-dark)]">Date de fin</label>
                 <input
                   type="date"
                   value={editEnd}
                   onChange={(e) => setEditEnd(e.target.value)}
                   required
-                  className="w-full h-9 px-3 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] outline-none focus:border-[#D4A017] focus:ring-1 focus:ring-[#D4A017] transition-colors"
+                  className="w-full h-9 px-3 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-dark)] outline-none focus:border-[var(--v-gold)] focus:ring-1 focus:ring-[var(--v-gold)] transition-colors"
                 />
               </div>
 
@@ -498,14 +498,14 @@ export default function Cycles() {
                 <button
                   type="button"
                   onClick={() => setEditCycle(null)}
-                  className="flex-1 h-9 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] hover:bg-[#E8D5B7] transition-colors cursor-pointer"
+                  className="flex-1 h-9 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-dark)] hover:bg-[var(--v-light-beige)] transition-colors cursor-pointer"
                 >
                   Annuler
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 h-9 bg-[#8B0000] border border-[#6B0000] rounded text-sm text-[#FAF3E3] font-medium hover:bg-[#7A0000] transition-colors cursor-pointer disabled:opacity-60"
+                  className="flex-1 h-9 bg-[var(--v-primary)] border border-[#6B0000] rounded text-sm text-[var(--v-off-white)] font-medium hover:bg-[#7A0000] transition-colors cursor-pointer disabled:opacity-60"
                 >
                   {saving ? 'Enregistrement...' : 'Enregistrer'}
                 </button>
@@ -518,12 +518,12 @@ export default function Cycles() {
       {/* ---- Modale Confirmation Suppression ---- */}
       {deleteTarget && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-[#F5E6CA] border-4 border-[#C62828] rounded-[10px] shadow-2xl w-full max-w-sm overflow-hidden">
-            <div className="h-2 bg-gradient-to-r from-[#C62828] via-[#8B0000] to-[#C62828]" />
+          <div className="bg-[var(--v-cream)] border-4 border-[#C62828] rounded-[10px] shadow-2xl w-full max-w-sm overflow-hidden">
+            <div className="h-2 bg-gradient-to-r from-[#C62828] via-[var(--v-primary)] to-[#C62828]" />
 
             <div className="px-6 pt-5 flex items-start justify-between">
               <h3
-                className="text-xl font-medium text-[#8B0000] flex items-center gap-2"
+                className="text-xl font-medium text-[var(--v-primary)] flex items-center gap-2"
                 style={{ fontFamily: "'Noto Serif JP', serif" }}
               >
                 <Trash2 size={20} className="text-[#C62828]" />
@@ -531,14 +531,14 @@ export default function Cycles() {
               </h3>
               <button
                 onClick={() => setDeleteTarget(null)}
-                className="text-[#5D4037] hover:text-[#3E2723] cursor-pointer"
+                className="text-[var(--v-medium)] hover:text-[var(--v-dark)] cursor-pointer"
               >
                 <X size={20} />
               </button>
             </div>
 
             <div className="px-6 pt-4 pb-6 space-y-5">
-              <p className="text-sm text-[#3E2723]">
+              <p className="text-sm text-[var(--v-dark)]">
                 Cette action est <span className="font-semibold">irréversible</span>. Toutes les missions liées à ce cycle seront également supprimées.
               </p>
               <div className="bg-[#C62828]/10 border border-[#C62828]/40 rounded px-3 py-2">
@@ -550,7 +550,7 @@ export default function Cycles() {
                 <button
                   type="button"
                   onClick={() => setDeleteTarget(null)}
-                  className="flex-1 h-9 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] hover:bg-[#E8D5B7] transition-colors cursor-pointer"
+                  className="flex-1 h-9 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-dark)] hover:bg-[var(--v-light-beige)] transition-colors cursor-pointer"
                 >
                   Annuler
                 </button>

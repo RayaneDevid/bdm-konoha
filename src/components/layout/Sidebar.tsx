@@ -34,23 +34,23 @@ export default function Sidebar() {
   });
 
   return (
-    <aside className="w-64 min-h-screen bg-[#3E2723] border-r-4 border-[#5D4037] flex flex-col">
+    <aside className="w-64 min-h-screen bg-[var(--v-dark)] border-r-4 border-[var(--v-medium)] flex flex-col">
       {/* Logo */}
-      <div className="px-6 pt-6 pb-4 border-b-2 border-[#5D4037]">
+      <div className="px-6 pt-6 pb-4 border-b-2 border-[var(--v-medium)]">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-[#8B0000] border-2 border-[#D4A017] flex items-center justify-center">
-            <span className="text-[#D4A017] text-xl" style={{ fontFamily: "'Noto Serif JP', serif" }}>
+          <div className="w-10 h-10 rounded-full bg-[var(--v-primary)] border-2 border-[var(--v-gold)] flex items-center justify-center">
+            <span className="text-[var(--v-gold)] text-xl" style={{ fontFamily: "'Noto Serif JP', serif" }}>
               忍
             </span>
           </div>
           <div>
             <h2
-              className="text-[#D4A017] text-lg font-medium leading-tight"
+              className="text-[var(--v-gold)] text-lg font-medium leading-tight"
               style={{ fontFamily: "'Noto Serif JP', serif" }}
             >
               Bureau
             </h2>
-            <p className="text-[#FAF3E3] text-xs opacity-75">des Missions</p>
+            <p className="text-[var(--v-off-white)] text-xs opacity-75">des Missions</p>
           </div>
         </div>
       </div>
@@ -65,8 +65,8 @@ export default function Sidebar() {
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 h-12 rounded transition-colors ${
                 isActive
-                  ? 'bg-[#8B0000] text-[#FAF3E3] shadow-lg'
-                  : 'text-[#FAF3E3] hover:bg-[#5D4037]/50'
+                  ? 'bg-[var(--v-primary)] text-[var(--v-off-white)] shadow-lg'
+                  : 'text-[var(--v-off-white)] hover:bg-[var(--v-medium)]/50'
               }`
             }
           >
@@ -77,7 +77,7 @@ export default function Sidebar() {
       </nav>
 
       {/* Separateur decoratif */}
-      <div className="mx-6 mb-4 h-px bg-gradient-to-r from-transparent via-[#D4A017] to-transparent" />
+      <div className="mx-6 mb-4 h-px bg-gradient-to-r from-transparent via-[var(--v-gold)] to-transparent" />
     </aside>
   );
 }

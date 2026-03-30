@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
-import { ROLE_COLORS, ROLE_LABELS } from '../utils/constants';
+import { ROLE_COLORS, ROLE_LABELS, VILLAGE_NAME } from '../utils/constants';
 import SearchableSelect from '../components/ui/SearchableSelect';
 import type { StaffUser, Role, Adherent } from '../types';
 
@@ -175,17 +175,17 @@ export default function Administration() {
       <div className="flex items-center justify-between">
         <div>
           <h1
-            className="text-4xl font-medium text-[#8B0000]"
+            className="text-4xl font-medium text-[var(--v-primary)]"
             style={{ fontFamily: "'Noto Serif JP', serif" }}
           >
             Administration
           </h1>
-          <div className="mt-2 w-32 h-1 bg-gradient-to-r from-[#8B0000] via-[#C41E3A] to-transparent rounded-full" />
+          <div className="mt-2 w-32 h-1 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-secondary)] to-transparent rounded-full" />
         </div>
         {canManageUsers && (
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 bg-[#3E2723] text-[#FAF3E3] px-5 h-10 rounded shadow-lg text-sm font-medium hover:bg-[#5D4037] transition-colors cursor-pointer"
+            className="flex items-center gap-2 bg-[var(--v-dark)] text-[var(--v-off-white)] px-5 h-10 rounded shadow-lg text-sm font-medium hover:bg-[var(--v-medium)] transition-colors cursor-pointer"
             style={{ fontFamily: "'Noto Serif JP', serif" }}
           >
             <UserPlus size={18} />
@@ -201,32 +201,32 @@ export default function Administration() {
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <CheckCircle size={18} className="text-[#4A5D23]" />
-                <span className="text-sm font-medium text-[#3E2723]">
+                <span className="text-sm font-medium text-[var(--v-dark)]">
                   Utilisateur créé avec succès !
                 </span>
               </div>
-              <div className="text-sm text-[#3E2723] space-y-1">
+              <div className="text-sm text-[var(--v-dark)] space-y-1">
                 <p>
                   Email : <span className="font-medium">{createdInfo.email}</span>
                 </p>
                 <p className="flex items-center gap-2">
                   Mot de passe temporaire :{' '}
-                  <code className="bg-[#FAF3E3] border border-[#5D4037] px-2 py-0.5 rounded font-mono text-sm">
+                  <code className="bg-[var(--v-off-white)] border border-[var(--v-medium)] px-2 py-0.5 rounded font-mono text-sm">
                     {createdInfo.password}
                   </code>
                   <button
                     onClick={() => copyPassword(createdInfo.password)}
-                    className="text-[#5D4037] hover:text-[#3E2723] cursor-pointer"
+                    className="text-[var(--v-medium)] hover:text-[var(--v-dark)] cursor-pointer"
                   >
                     {copied ? <Check size={16} className="text-[#4A5D23]" /> : <Copy size={16} />}
                   </button>
                 </p>
-                <p className="text-xs text-[#5D4037] italic">
+                <p className="text-xs text-[var(--v-medium)] italic">
                   Communiquez ce mot de passe à l'utilisateur. Il pourra le changer après connexion.
                 </p>
               </div>
             </div>
-            <button onClick={closeCreatedInfo} className="text-[#5D4037] hover:text-[#3E2723] cursor-pointer">
+            <button onClick={closeCreatedInfo} className="text-[var(--v-medium)] hover:text-[var(--v-dark)] cursor-pointer">
               <X size={18} />
             </button>
           </div>
@@ -234,14 +234,14 @@ export default function Administration() {
       )}
 
       {/* Table des utilisateurs */}
-      <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-xl overflow-hidden">
-        <div className="h-2 bg-gradient-to-r from-[#D4A017] via-[#8B0000] to-[#D4A017]" />
+      <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-xl overflow-hidden">
+        <div className="h-2 bg-gradient-to-r from-[var(--v-gold)] via-[var(--v-primary)] to-[var(--v-gold)]" />
 
-        <div className="bg-[#E8D5B7] border-b-2 border-[#5D4037] px-6 py-5">
+        <div className="bg-[var(--v-light-beige)] border-b-2 border-[var(--v-medium)] px-6 py-5">
           <div className="flex items-center gap-4">
-            <div className="w-1 h-6 bg-[#C41E3A] rounded-full" />
+            <div className="w-1 h-6 bg-[var(--v-secondary)] rounded-full" />
             <h2
-              className="text-2xl font-medium text-[#3E2723]"
+              className="text-2xl font-medium text-[var(--v-dark)]"
               style={{ fontFamily: "'Noto Serif JP', serif" }}
             >
               Utilisateurs du Bureau
@@ -251,32 +251,32 @@ export default function Administration() {
 
         <div className="p-6">
           {loading ? (
-            <p className="text-[#5D4037] text-sm text-center py-8">Chargement...</p>
+            <p className="text-[var(--v-medium)] text-sm text-center py-8">Chargement...</p>
           ) : users.length === 0 ? (
-            <p className="text-[#5D4037] text-sm text-center py-8">Aucun utilisateur trouvé.</p>
+            <p className="text-[var(--v-medium)] text-sm text-center py-8">Aucun utilisateur trouvé.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b-2 border-[#5D4037]">
-                    <th className="text-left text-sm font-medium text-[#3E2723] px-3 py-3">Nom</th>
-                    <th className="text-left text-sm font-medium text-[#3E2723] px-3 py-3">Email</th>
-                    <th className="text-left text-sm font-medium text-[#3E2723] px-3 py-3">Rôle</th>
-                    <th className="text-left text-sm font-medium text-[#3E2723] px-3 py-3">Statut</th>
-                    <th className="text-left text-sm font-medium text-[#3E2723] px-3 py-3">Date d'ajout</th>
-                    <th className="text-right text-sm font-medium text-[#3E2723] px-3 py-3">Actions</th>
+                  <tr className="border-b-2 border-[var(--v-medium)]">
+                    <th className="text-left text-sm font-medium text-[var(--v-dark)] px-3 py-3">Nom</th>
+                    <th className="text-left text-sm font-medium text-[var(--v-dark)] px-3 py-3">Email</th>
+                    <th className="text-left text-sm font-medium text-[var(--v-dark)] px-3 py-3">Rôle</th>
+                    <th className="text-left text-sm font-medium text-[var(--v-dark)] px-3 py-3">Statut</th>
+                    <th className="text-left text-sm font-medium text-[var(--v-dark)] px-3 py-3">Date d'ajout</th>
+                    <th className="text-right text-sm font-medium text-[var(--v-dark)] px-3 py-3">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users.map((user) => (
-                    <tr key={user.id} className="border-b border-[#E8D5B7]">
+                    <tr key={user.id} className="border-b border-[var(--v-light-beige)]">
                       {/* Nom */}
-                      <td className="px-3 py-3 text-sm text-[#3E2723]">
+                      <td className="px-3 py-3 text-sm text-[var(--v-dark)]">
                         {user.first_name} {user.last_name}
                       </td>
 
                       {/* Email */}
-                      <td className="px-3 py-3 text-sm text-[#5D4037]">{user.email}</td>
+                      <td className="px-3 py-3 text-sm text-[var(--v-medium)]">{user.email}</td>
 
                       {/* Rôle */}
                       <td className="px-3 py-3">
@@ -284,7 +284,7 @@ export default function Administration() {
                           <select
                             value={user.role}
                             onChange={(e) => handleChangeRole(user.id, e.target.value as Role)}
-                            className="text-xs font-medium text-white px-3 py-1 rounded appearance-none cursor-pointer pr-6 focus:outline-none focus:ring-2 focus:ring-[#D4A017]"
+                            className="text-xs font-medium text-white px-3 py-1 rounded appearance-none cursor-pointer pr-6 focus:outline-none focus:ring-2 focus:ring-[var(--v-gold)]"
                             style={{
                               backgroundColor: ROLE_COLORS[user.role],
                               backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
@@ -315,12 +315,12 @@ export default function Administration() {
                             className="w-2.5 h-2.5 rounded-full"
                             style={{ backgroundColor: user.is_active ? '#4A5D23' : '#C62828' }}
                           />
-                          <span className="text-[#3E2723]">{user.is_active ? 'Actif' : 'Désactivé'}</span>
+                          <span className="text-[var(--v-dark)]">{user.is_active ? 'Actif' : 'Désactivé'}</span>
                         </span>
                       </td>
 
                       {/* Date */}
-                      <td className="px-3 py-3 text-sm text-[#5D4037]">{formatDate(user.created_at)}</td>
+                      <td className="px-3 py-3 text-sm text-[var(--v-medium)]">{formatDate(user.created_at)}</td>
 
                       {/* Actions */}
                       <td className="px-3 py-3 text-right">
@@ -347,14 +347,14 @@ export default function Administration() {
       </div>
 
       {/* Matrice des Permissions */}
-      <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-xl overflow-hidden">
-        <div className="h-2 bg-gradient-to-r from-[#8B0000] via-[#D4A017] to-[#8B0000]" />
+      <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-xl overflow-hidden">
+        <div className="h-2 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-gold)] to-[var(--v-primary)]" />
 
-        <div className="bg-[#E8D5B7] border-b-2 border-[#5D4037] px-6 py-5">
+        <div className="bg-[var(--v-light-beige)] border-b-2 border-[var(--v-medium)] px-6 py-5">
           <div className="flex items-center gap-4">
-            <div className="w-1 h-6 bg-[#C41E3A] rounded-full" />
+            <div className="w-1 h-6 bg-[var(--v-secondary)] rounded-full" />
             <h2
-              className="text-2xl font-medium text-[#3E2723]"
+              className="text-2xl font-medium text-[var(--v-dark)]"
               style={{ fontFamily: "'Noto Serif JP', serif" }}
             >
               Matrice des Permissions
@@ -366,8 +366,8 @@ export default function Administration() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b-2 border-[#5D4037]">
-                  <th className="text-left text-sm font-medium text-[#3E2723] px-3 py-3 w-[40%]">
+                <tr className="border-b-2 border-[var(--v-medium)]">
+                  <th className="text-left text-sm font-medium text-[var(--v-dark)] px-3 py-3 w-[40%]">
                     Capacité
                   </th>
                   {ROLES.map((r) => (
@@ -386,9 +386,9 @@ export default function Administration() {
                 {PERMISSIONS.map((perm, idx) => (
                   <tr
                     key={idx}
-                    className={idx < PERMISSIONS.length - 1 ? 'border-b border-[#E8D5B7]' : ''}
+                    className={idx < PERMISSIONS.length - 1 ? 'border-b border-[var(--v-light-beige)]' : ''}
                   >
-                    <td className="px-3 py-3 text-sm text-[#3E2723]">{perm.label}</td>
+                    <td className="px-3 py-3 text-sm text-[var(--v-dark)]">{perm.label}</td>
                     {ROLES.map((r) => (
                       <td key={r} className="text-center px-3 py-3">
                         {perm[r] ? (
@@ -410,14 +410,14 @@ export default function Administration() {
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/40" onClick={() => setShowModal(false)} />
-          <div className="relative bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-2xl w-full max-w-lg overflow-hidden">
-            <div className="h-2 bg-gradient-to-r from-[#D4A017] via-[#8B0000] to-[#D4A017]" />
+          <div className="relative bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-2xl w-full max-w-lg overflow-hidden">
+            <div className="h-2 bg-gradient-to-r from-[var(--v-gold)] via-[var(--v-primary)] to-[var(--v-gold)]" />
 
             <div className="px-6 pt-5 pb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <UserPlus size={20} className="text-[#8B0000]" />
+                <UserPlus size={20} className="text-[var(--v-primary)]" />
                 <h3
-                  className="text-xl font-medium text-[#8B0000]"
+                  className="text-xl font-medium text-[var(--v-primary)]"
                   style={{ fontFamily: "'Noto Serif JP', serif" }}
                 >
                   Ajouter un utilisateur
@@ -425,7 +425,7 @@ export default function Administration() {
               </div>
               <button
                 onClick={() => { setShowModal(false); setFormError(''); setFormAdherentId(''); }}
-                className="text-[#5D4037] hover:text-[#3E2723] cursor-pointer"
+                className="text-[var(--v-medium)] hover:text-[var(--v-dark)] cursor-pointer"
               >
                 <X size={20} />
               </button>
@@ -435,24 +435,24 @@ export default function Administration() {
               {/* Prénom + Nom */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-[#3E2723]">Prénom</label>
+                  <label className="text-sm font-medium text-[var(--v-dark)]">Prénom</label>
                   <input
                     type="text"
                     value={formFirstName}
                     onChange={(e) => setFormFirstName(e.target.value)}
                     placeholder="Saki"
-                    className="w-full bg-[#FAF3E3] border border-[#5D4037] rounded px-3 py-2 text-sm text-[#3E2723] placeholder:text-[#5D4037]/50 focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
+                    className="w-full bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded px-3 py-2 text-sm text-[var(--v-dark)] placeholder:text-[var(--v-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--v-primary)]"
                     required
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-[#3E2723]">Nom</label>
+                  <label className="text-sm font-medium text-[var(--v-dark)]">Nom</label>
                   <input
                     type="text"
                     value={formLastName}
                     onChange={(e) => setFormLastName(e.target.value)}
                     placeholder="Sato"
-                    className="w-full bg-[#FAF3E3] border border-[#5D4037] rounded px-3 py-2 text-sm text-[#3E2723] placeholder:text-[#5D4037]/50 focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
+                    className="w-full bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded px-3 py-2 text-sm text-[var(--v-dark)] placeholder:text-[var(--v-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--v-primary)]"
                     required
                   />
                 </div>
@@ -460,24 +460,24 @@ export default function Administration() {
 
               {/* Email */}
               <div className="space-y-1">
-                <label className="text-sm font-medium text-[#3E2723]">Email</label>
+                <label className="text-sm font-medium text-[var(--v-dark)]">Email</label>
                 <input
                   type="email"
                   value={formEmail}
                   onChange={(e) => setFormEmail(e.target.value)}
-                  placeholder="prenom@konoha.bdm"
-                  className="w-full bg-[#FAF3E3] border border-[#5D4037] rounded px-3 py-2 text-sm text-[#3E2723] placeholder:text-[#5D4037]/50 focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
+                  placeholder={`prenom@${VILLAGE_NAME.toLowerCase()}.bdm`}
+                  className="w-full bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded px-3 py-2 text-sm text-[var(--v-dark)] placeholder:text-[var(--v-medium)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--v-primary)]"
                   required
                 />
               </div>
 
               {/* Rôle */}
               <div className="space-y-1">
-                <label className="text-sm font-medium text-[#3E2723]">Rôle</label>
+                <label className="text-sm font-medium text-[var(--v-dark)]">Rôle</label>
                 <select
                   value={formRole}
                   onChange={(e) => setFormRole(e.target.value as Role)}
-                  className="w-full bg-[#FAF3E3] border border-[#5D4037] rounded px-3 py-2 text-sm text-[#3E2723] focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
+                  className="w-full bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded px-3 py-2 text-sm text-[var(--v-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--v-primary)]"
                 >
                   {ROLES.map((r) => (
                     <option key={r} value={r}>
@@ -489,9 +489,9 @@ export default function Administration() {
 
               {/* Lier à un adhérent existant (optionnel) */}
               <div className="space-y-1">
-                <label className="text-sm font-medium text-[#3E2723]">
+                <label className="text-sm font-medium text-[var(--v-dark)]">
                   Lier à un profil adhérent existant{' '}
-                  <span className="text-[#5D4037] font-normal">(optionnel)</span>
+                  <span className="text-[var(--v-medium)] font-normal">(optionnel)</span>
                 </label>
                 <SearchableSelect
                   options={[
@@ -524,14 +524,14 @@ export default function Administration() {
                 <button
                   type="button"
                   onClick={() => { setShowModal(false); setFormError(''); setFormAdherentId(''); }}
-                  className="bg-[#FAF3E3] border-2 border-[#5D4037] text-[#3E2723] px-5 py-2 rounded text-sm font-medium hover:bg-[#E8D5B7] transition-colors cursor-pointer"
+                  className="bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] text-[var(--v-dark)] px-5 py-2 rounded text-sm font-medium hover:bg-[var(--v-light-beige)] transition-colors cursor-pointer"
                 >
                   Annuler
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="bg-[#8B0000] border-2 border-[#5D0000] text-[#FAF3E3] px-5 py-2 rounded text-sm font-medium hover:bg-[#C41E3A] transition-colors cursor-pointer disabled:opacity-50"
+                  className="bg-[var(--v-primary)] border-2 border-[var(--v-primary-dark)] text-[var(--v-off-white)] px-5 py-2 rounded text-sm font-medium hover:bg-[var(--v-secondary)] transition-colors cursor-pointer disabled:opacity-50"
                   style={{ fontFamily: "'Noto Serif JP', serif" }}
                 >
                   {submitting ? 'Création...' : 'Ajouter'}

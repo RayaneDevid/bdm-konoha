@@ -6,9 +6,12 @@ import { useAuth } from '../../hooks/useAuth';
 import { ROLE_LABELS } from '../../utils/constants';
 import type { Role } from '../../types';
 
+const isKiri = import.meta.env.VITE_VILLAGE === 'Kiri';
 const ROLE_BADGE_STYLES: Record<Role, string> = {
   superviseur: 'bg-[#6A0DAD] border-[#4B0082] text-white',
-  gerant: 'bg-[#C62828] border-[#8B0000] text-white',
+  gerant: isKiri
+    ? 'bg-[#1565C0] border-[#0D47A1] text-white'
+    : 'bg-[#C62828] border-[#8B0000] text-white',
   'co-gerant': 'bg-[#E67E22] border-[#C05600] text-white',
   membre_bdm: 'bg-[#1565C0] border-[#0D47A1] text-white',
 };
@@ -120,25 +123,25 @@ export default function TopBar() {
 
   return (
     <>
-      <header className="bg-[#F5E6CA] border-b-4 border-[#5D4037] shadow-md">
+      <header className="bg-[var(--v-cream)] border-b-4 border-[var(--v-medium)] shadow-md">
         <div className="flex items-center justify-between px-4 h-[89px]">
           {/* Cycle actif */}
           <div className="flex items-center gap-2">
-            <div className="w-1 h-8 bg-[#8B0000] rounded-full" />
+            <div className="w-1 h-8 bg-[var(--v-primary)] rounded-full" />
             <span
-              className="text-[#8B0000] text-xl"
+              className="text-[var(--v-primary)] text-xl"
               style={{ fontFamily: "'Noto Serif JP', serif" }}
             >
               {cycleName}
             </span>
-            <div className="w-1 h-8 bg-[#8B0000] rounded-full" />
+            <div className="w-1 h-8 bg-[var(--v-primary)] rounded-full" />
           </div>
 
           {/* User info + actions */}
           <div className="flex items-center gap-3">
             {/* Carte user */}
-            <div className="bg-[#FAF3E3] border-2 border-[#5D4037] rounded-md px-4 py-1.5 flex flex-row gap-2 items-end">
-              <span className="text-sm text-[#3E2723]">{userName}</span>
+            <div className="bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] rounded-md px-4 py-1.5 flex flex-row gap-2 items-end">
+              <span className="text-sm text-[var(--v-dark)]">{userName}</span>
               <span
                 className={`text-xs font-medium px-2 py-0.5 rounded border ${ROLE_BADGE_STYLES[role]}`}
               >
@@ -149,7 +152,7 @@ export default function TopBar() {
             {/* Bouton changer mot de passe */}
             <button
               onClick={openPwModal}
-              className="flex items-center gap-2 bg-[#5D4037] border border-[#3E2723] text-[#FAF3E3] px-3 h-9 rounded text-sm font-medium hover:bg-[#3E2723] transition-colors cursor-pointer"
+              className="flex items-center gap-2 bg-[var(--v-medium)] border border-[var(--v-dark)] text-[var(--v-off-white)] px-3 h-9 rounded text-sm font-medium hover:bg-[var(--v-dark)] transition-colors cursor-pointer"
               title="Changer le mot de passe"
             >
               <KeyRound size={16} />
@@ -158,7 +161,7 @@ export default function TopBar() {
             {/* Bouton deconnexion */}
             <button
               onClick={handleLogout}
-              className="flex items-center gap-4 bg-[#C41E3A] border border-[#8B0000] text-[#FAF3E3] px-4 h-9 rounded text-sm font-medium hover:bg-[#A01830] transition-colors cursor-pointer"
+              className="flex items-center gap-4 bg-[var(--v-secondary)] border border-[var(--v-primary)] text-[var(--v-off-white)] px-4 h-9 rounded text-sm font-medium hover:bg-[var(--v-secondary-dark)] transition-colors cursor-pointer"
             >
               <LogOut size={16} />
               <span>Déconnexion</span>
@@ -171,14 +174,14 @@ export default function TopBar() {
       {showPwModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/40" onClick={() => { setShowPwModal(false); resetPwModal(); }} />
-          <div className="relative bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-2xl w-full max-w-md overflow-hidden">
-            <div className="h-2 bg-gradient-to-r from-[#D4A017] via-[#8B0000] to-[#D4A017]" />
+          <div className="relative bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="h-2 bg-gradient-to-r from-[var(--v-gold)] via-[var(--v-primary)] to-[var(--v-gold)]" />
 
             <div className="px-6 pt-5 pb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <KeyRound size={20} className="text-[#8B0000]" />
+                <KeyRound size={20} className="text-[var(--v-primary)]" />
                 <h3
-                  className="text-xl font-medium text-[#8B0000]"
+                  className="text-xl font-medium text-[var(--v-primary)]"
                   style={{ fontFamily: "'Noto Serif JP', serif" }}
                 >
                   Changer le mot de passe
@@ -186,7 +189,7 @@ export default function TopBar() {
               </div>
               <button
                 onClick={() => { setShowPwModal(false); resetPwModal(); }}
-                className="text-[#5D4037] hover:text-[#3E2723] cursor-pointer"
+                className="text-[var(--v-medium)] hover:text-[var(--v-dark)] cursor-pointer"
               >
                 <X size={20} />
               </button>
@@ -205,19 +208,19 @@ export default function TopBar() {
               <form onSubmit={handleChangePassword} className="px-6 pb-6 space-y-4">
                 {/* Mot de passe actuel */}
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-[#3E2723]">Mot de passe actuel</label>
+                  <label className="text-sm font-medium text-[var(--v-dark)]">Mot de passe actuel</label>
                   <div className="relative">
                     <input
                       type={showCurrentPw ? 'text' : 'password'}
                       value={currentPw}
                       onChange={(e) => setCurrentPw(e.target.value)}
-                      className="w-full bg-[#FAF3E3] border border-[#5D4037] rounded px-3 py-2 pr-10 text-sm text-[#3E2723] focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
+                      className="w-full bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded px-3 py-2 pr-10 text-sm text-[var(--v-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--v-primary)]"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowCurrentPw(!showCurrentPw)}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-[#5D4037] hover:text-[#3E2723] cursor-pointer"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--v-medium)] hover:text-[var(--v-dark)] cursor-pointer"
                     >
                       {showCurrentPw ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
@@ -226,36 +229,36 @@ export default function TopBar() {
 
                 {/* Nouveau mot de passe */}
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-[#3E2723]">Nouveau mot de passe</label>
+                  <label className="text-sm font-medium text-[var(--v-dark)]">Nouveau mot de passe</label>
                   <div className="relative">
                     <input
                       type={showNewPw ? 'text' : 'password'}
                       value={newPw}
                       onChange={(e) => setNewPw(e.target.value)}
-                      className="w-full bg-[#FAF3E3] border border-[#5D4037] rounded px-3 py-2 pr-10 text-sm text-[#3E2723] focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
+                      className="w-full bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded px-3 py-2 pr-10 text-sm text-[var(--v-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--v-primary)]"
                       required
                       minLength={6}
                     />
                     <button
                       type="button"
                       onClick={() => setShowNewPw(!showNewPw)}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-[#5D4037] hover:text-[#3E2723] cursor-pointer"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--v-medium)] hover:text-[var(--v-dark)] cursor-pointer"
                     >
                       {showNewPw ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
                   </div>
-                  <p className="text-xs text-[#5D4037]">Minimum 6 caractères</p>
+                  <p className="text-xs text-[var(--v-medium)]">Minimum 6 caractères</p>
                 </div>
 
                 {/* Confirmer */}
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-[#3E2723]">Confirmer le nouveau mot de passe</label>
+                  <label className="text-sm font-medium text-[var(--v-dark)]">Confirmer le nouveau mot de passe</label>
                   <input
                     type="password"
                     value={confirmPw}
                     onChange={(e) => setConfirmPw(e.target.value)}
-                    className={`w-full bg-[#FAF3E3] border rounded px-3 py-2 text-sm text-[#3E2723] focus:outline-none focus:ring-2 focus:ring-[#8B0000] ${
-                      confirmPw && confirmPw !== newPw ? 'border-[#C62828]' : 'border-[#5D4037]'
+                    className={`w-full bg-[var(--v-off-white)] border rounded px-3 py-2 text-sm text-[var(--v-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--v-primary)] ${
+                      confirmPw && confirmPw !== newPw ? 'border-[#C62828]' : 'border-[var(--v-medium)]'
                     }`}
                     required
                   />
@@ -276,14 +279,14 @@ export default function TopBar() {
                   <button
                     type="button"
                     onClick={() => { setShowPwModal(false); resetPwModal(); }}
-                    className="bg-[#FAF3E3] border-2 border-[#5D4037] text-[#3E2723] px-5 py-2 rounded text-sm font-medium hover:bg-[#E8D5B7] transition-colors cursor-pointer"
+                    className="bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] text-[var(--v-dark)] px-5 py-2 rounded text-sm font-medium hover:bg-[var(--v-light-beige)] transition-colors cursor-pointer"
                   >
                     Annuler
                   </button>
                   <button
                     type="submit"
                     disabled={pwSubmitting}
-                    className="bg-[#8B0000] border-2 border-[#5D0000] text-[#FAF3E3] px-5 py-2 rounded text-sm font-medium hover:bg-[#C41E3A] transition-colors cursor-pointer disabled:opacity-50"
+                    className="bg-[var(--v-primary)] border-2 border-[var(--v-primary-dark)] text-[var(--v-off-white)] px-5 py-2 rounded text-sm font-medium hover:bg-[var(--v-secondary)] transition-colors cursor-pointer disabled:opacity-50"
                     style={{ fontFamily: "'Noto Serif JP', serif" }}
                   >
                     {pwSubmitting ? 'Modification...' : 'Modifier'}

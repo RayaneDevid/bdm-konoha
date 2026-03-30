@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Shield, Scroll, Users } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { TIER_COLORS, TIER_LABELS } from '../utils/constants';
+import { TIER_COLORS, TIER_LABELS, VILLAGE_NAME } from '../utils/constants';
 import type { CardTier } from '../types';
 
 interface AdherentPublic {
@@ -20,7 +20,7 @@ const TIER_BG: Record<CardTier, string> = {
   aucun: 'bg-[#9E9E9E]/10 border-[#9E9E9E]/40',
   bronze: 'bg-[#CD7F32]/10 border-[#CD7F32]/40',
   argent: 'bg-[#A8A9AD]/10 border-[#A8A9AD]/40',
-  or: 'bg-[#D4A017]/10 border-[#D4A017]/40',
+  or: 'bg-[var(--v-gold)]/10 border-[var(--v-gold)]/40',
   vip: 'bg-[#7B1FA2]/10 border-[#7B1FA2]/40',
 };
 
@@ -96,29 +96,29 @@ export default function Annuaire() {
   const tiers: (CardTier | 'all')[] = ['all', 'vip', 'or', 'argent', 'bronze', 'aucun'];
 
   return (
-    <div className="min-h-screen bg-[#FAF3E3]">
+    <div className="min-h-screen bg-[var(--v-off-white)]">
       {/* Header band */}
-      <div className="bg-[#3E2723] border-b-4 border-[#D4A017] shadow-xl">
+      <div className="bg-[var(--v-dark)] border-b-4 border-[var(--v-gold)] shadow-xl">
         <div className="max-w-6xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-[#D4A017] rounded-full border-2 border-[#FAF3E3] flex items-center justify-center shadow-lg">
-                <Scroll size={24} className="text-[#3E2723]" />
+              <div className="w-12 h-12 bg-[var(--v-gold)] rounded-full border-2 border-[var(--v-off-white)] flex items-center justify-center shadow-lg">
+                <Scroll size={24} className="text-[var(--v-dark)]" />
               </div>
               <div>
                 <h1
-                  className="text-3xl font-medium text-[#FAF3E3]"
+                  className="text-3xl font-medium text-[var(--v-off-white)]"
                   style={{ fontFamily: "'Noto Serif JP', serif" }}
                 >
                   Annuaire des Ninjas
                 </h1>
-                <p className="text-[#D4A017] text-sm mt-0.5">Bureau des Missions de Konoha</p>
+                <p className="text-[var(--v-gold)] text-sm mt-0.5">Bureau des Missions de {VILLAGE_NAME}</p>
               </div>
             </div>
             {/* Login link for staff */}
             <button
               onClick={() => navigate('/login')}
-              className="flex items-center gap-2 text-[#D4A017] text-sm hover:text-[#FAF3E3] transition-colors cursor-pointer"
+              className="flex items-center gap-2 text-[var(--v-gold)] text-sm hover:text-[var(--v-off-white)] transition-colors cursor-pointer"
             >
               <Shield size={16} />
               Accès Staff
@@ -128,24 +128,24 @@ export default function Annuaire() {
       </div>
 
       {/* Decorative top accent */}
-      <div className="h-1 bg-gradient-to-r from-[#8B0000] via-[#D4A017] to-[#8B0000]" />
+      <div className="h-1 bg-gradient-to-r from-[var(--v-primary)] via-[var(--v-gold)] to-[var(--v-primary)]" />
 
       <div className="max-w-6xl mx-auto px-6 py-8 space-y-6">
         {/* Search + filters */}
-        <div className="bg-[#F5E6CA] border-4 border-[#5D4037] rounded-[10px] shadow-md px-6 py-4">
+        <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-md px-6 py-4">
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Search */}
             <div className="relative flex-1">
               <Search
                 size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5D4037]"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--v-medium)]"
               />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Rechercher un ninja..."
-                className="w-full h-9 pl-9 pr-4 bg-[#FAF3E3] border border-[#5D4037] rounded text-sm text-[#3E2723] placeholder-[#5D4037]/60 outline-none focus:border-[#D4A017] focus:ring-1 focus:ring-[#D4A017] transition-colors"
+                className="w-full h-9 pl-9 pr-4 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-dark)] placeholder-[var(--v-medium)]/60 outline-none focus:border-[var(--v-gold)] focus:ring-1 focus:ring-[var(--v-gold)] transition-colors"
               />
             </div>
 
@@ -157,16 +157,16 @@ export default function Annuaire() {
                   onClick={() => setTierFilter(t)}
                   className={`h-9 px-4 rounded border-2 text-sm font-medium transition-all cursor-pointer ${
                     tierFilter === t
-                      ? 'border-[#3E2723] shadow-md text-white'
-                      : 'border-[#5D4037] bg-[#FAF3E3] text-[#3E2723] hover:bg-[#E8D5B7]'
+                      ? 'border-[var(--v-dark)] shadow-md text-white'
+                      : 'border-[var(--v-medium)] bg-[var(--v-off-white)] text-[var(--v-dark)] hover:bg-[var(--v-light-beige)]'
                   }`}
                   style={
                     tierFilter === t
                       ? {
                           backgroundColor:
-                            t === 'all' ? '#5D4037' : TIER_COLORS[t as CardTier],
+                            t === 'all' ? 'var(--v-medium)' : TIER_COLORS[t as CardTier],
                           color:
-                            t === 'argent' ? '#3E2723' : t === 'or' ? '#3E2723' : 'white',
+                            t === 'argent' ? 'var(--v-dark)' : t === 'or' ? 'var(--v-dark)' : 'white',
                         }
                       : {}
                   }
@@ -179,7 +179,7 @@ export default function Annuaire() {
         </div>
 
         {/* Results count */}
-        <div className="flex items-center gap-2 text-sm text-[#5D4037]">
+        <div className="flex items-center gap-2 text-sm text-[var(--v-medium)]">
           <Users size={16} />
           <span>
             {loading
@@ -190,11 +190,11 @@ export default function Annuaire() {
 
         {/* Grid */}
         {loading ? (
-          <div className="text-center py-16 text-[#5D4037] text-sm">
+          <div className="text-center py-16 text-[var(--v-medium)] text-sm">
             Chargement de l'annuaire...
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-16 text-[#5D4037] text-sm italic">
+          <div className="text-center py-16 text-[var(--v-medium)] text-sm italic">
             Aucun ninja trouvé.
           </div>
         ) : (
@@ -203,7 +203,7 @@ export default function Annuaire() {
               <button
                 key={a.id}
                 onClick={() => navigate(`/annuaire/${a.id}`)}
-                className={`bg-[#F5E6CA] border-2 rounded-[10px] shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer text-left ${TIER_BG[a.card_tier]}`}
+                className={`bg-[var(--v-cream)] border-2 rounded-[10px] shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer text-left ${TIER_BG[a.card_tier]}`}
               >
                 {/* Top accent bar with tier color */}
                 <div
@@ -216,12 +216,12 @@ export default function Annuaire() {
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p
-                        className="text-base font-medium text-[#3E2723] leading-tight"
+                        className="text-base font-medium text-[var(--v-dark)] leading-tight"
                         style={{ fontFamily: "'Noto Serif JP', serif" }}
                       >
                         {a.last_name}
                       </p>
-                      <p className="text-sm text-[#5D4037]">{a.first_name}</p>
+                      <p className="text-sm text-[var(--v-medium)]">{a.first_name}</p>
                     </div>
                     <span
                       className="shrink-0 text-xs font-medium px-2 py-0.5 rounded border mt-0.5"
@@ -236,20 +236,20 @@ export default function Annuaire() {
                   </div>
 
                   {/* Stats */}
-                  <div className="border-t border-[#5D4037]/20 pt-3 grid grid-cols-2 gap-2">
+                  <div className="border-t border-[var(--v-medium)]/20 pt-3 grid grid-cols-2 gap-2">
                     <div className="text-center">
-                      <p className="text-lg font-bold text-[#3E2723]">
+                      <p className="text-lg font-bold text-[var(--v-dark)]">
                         {a.total_missions.toLocaleString('fr-FR')}
                       </p>
-                      <p className="text-[10px] text-[#5D4037] uppercase tracking-wide">
+                      <p className="text-[10px] text-[var(--v-medium)] uppercase tracking-wide">
                         missions
                       </p>
                     </div>
                     <div className="text-center">
-                      <p className="text-lg font-bold text-[#D4A017]">
+                      <p className="text-lg font-bold text-[var(--v-gold)]">
                         {a.total_points.toLocaleString('fr-FR')}
                       </p>
-                      <p className="text-[10px] text-[#5D4037] uppercase tracking-wide">
+                      <p className="text-[10px] text-[var(--v-medium)] uppercase tracking-wide">
                         points
                       </p>
                     </div>
@@ -262,9 +262,9 @@ export default function Annuaire() {
       </div>
 
       {/* Footer */}
-      <footer className="mt-12 border-t-2 border-[#5D4037]/30 py-6 text-center">
-        <p className="text-xs text-[#5D4037]" style={{ fontFamily: "'Noto Serif JP', serif" }}>
-          Bureau des Missions de Konoha — Annuaire public
+      <footer className="mt-12 border-t-2 border-[var(--v-medium)]/30 py-6 text-center">
+        <p className="text-xs text-[var(--v-medium)]" style={{ fontFamily: "'Noto Serif JP', serif" }}>
+          Bureau des Missions de {VILLAGE_NAME} — Annuaire public
         </p>
       </footer>
     </div>

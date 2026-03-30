@@ -29,9 +29,9 @@ export default function App() {
           <Route
             path="*"
             element={
-              <div className="min-h-screen flex items-center justify-center bg-[#FAF3E3]">
+              <div className="min-h-screen flex items-center justify-center bg-[var(--v-off-white)]">
                 <p
-                  className="text-[#3E2723] text-lg"
+                  className="text-[var(--v-dark)] text-lg"
                   style={{ fontFamily: "'Noto Serif JP', serif" }}
                 >
                   Chargement...
