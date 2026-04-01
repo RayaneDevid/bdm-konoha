@@ -25,11 +25,15 @@ export default function TopBar() {
   const [cycleName, setCycleName] = useState('...');
 
   useEffect(() => {
+    const today = new Date().toISOString().split('T')[0];
     supabase
       .from('cycles')
       .select('name')
-      .eq('status', 'active')
-      .single()
+      .lte('start_date', today)
+      .gte('end_date', today)
+      .order('start_date', { ascending: false })
+      .limit(1)
+      .maybeSingle()
       .then(({ data }) => {
         if (data) setCycleName(data.name);
         else setCycleName('Aucun cycle');

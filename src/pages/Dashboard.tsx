@@ -47,8 +47,16 @@ export default function Dashboard() {
   }, []);
 
   async function fetchData() {
+    const today = new Date().toISOString().split('T')[0];
     const [cycleRes, adherentsRes, staffRes] = await Promise.all([
-      supabase.from('cycles').select('*').eq('status', 'active').single(),
+      supabase
+        .from('cycles')
+        .select('*')
+        .lte('start_date', today)
+        .gte('end_date', today)
+        .order('start_date', { ascending: false })
+        .limit(1)
+        .maybeSingle(),
       supabase.from('adherents').select('id', { count: 'exact', head: true }),
       supabase.from('staff_users').select('id', { count: 'exact', head: true }).eq('is_active', true),
     ]);

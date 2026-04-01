@@ -82,7 +82,15 @@ export default function Adherents() {
 
     if (data) {
       // Fetch cycle points for each adherent
-      const cycleRes = await supabase.from('cycles').select('id').eq('status', 'active').single();
+      const today = new Date().toISOString().split('T')[0];
+      const cycleRes = await supabase
+        .from('cycles')
+        .select('id')
+        .lte('start_date', today)
+        .gte('end_date', today)
+        .order('start_date', { ascending: false })
+        .limit(1)
+        .maybeSingle();
       let pointsMap: Record<string, number> = {};
 
       if (cycleRes.data) {
