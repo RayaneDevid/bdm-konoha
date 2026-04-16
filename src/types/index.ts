@@ -23,10 +23,17 @@ export interface Adherent {
   id: string;
   first_name: string;
   last_name: string;
-  card_tier: CardTier;
+  card_tier: CardTier; // champ DB conservé pour compatibilité ; la source de vérité est adherent_card_tiers
   distributed_by: string;
   is_active: boolean;
   created_at: string;
+}
+
+export interface AdherentCardTier {
+  adherent_id: string;
+  cycle_id: string;
+  card_tier: CardTier;
+  updated_at?: string;
 }
 
 export interface CardEvolution {

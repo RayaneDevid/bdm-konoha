@@ -146,10 +146,6 @@ export default function Cycles() {
     setOverlapError('');
     setCreating(true);
 
-    // Reset cards (Bronze for all except VIP)
-    const { error: resetErr } = await supabase.rpc('reset_cards_for_new_cycle');
-    if (resetErr) console.error('Erreur reset cartes:', resetErr);
-
     // Insert new cycle (le trigger sync_cycle_status calcule le status automatiquement)
     const { error: insertErr } = await supabase.from('cycles').insert({
       name: autoName,

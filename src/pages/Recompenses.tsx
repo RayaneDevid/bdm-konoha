@@ -95,34 +95,42 @@ export default function Recompenses() {
 
     const adherentIds = pointsData.map((p) => p.adherent_id);
 
-    // 2. Info des adhérents
-    const { data: adherentsData } = await supabase
-      .from('adherents')
-      .select('id, first_name, last_name, card_tier')
-      .in('id', adherentIds);
+    // 2. Info des adhérents + tier cycle-spécifique + milestones + claimed
+    const [adherentsRes, tiersRes, milestonesRes, claimedRes] = await Promise.all([
+      supabase
+        .from('adherents')
+        .select('id, first_name, last_name')
+        .in('id', adherentIds),
+      supabase
+        .from('adherent_card_tiers')
+        .select('adherent_id, card_tier')
+        .eq('cycle_id', selectedCycleId)
+        .in('adherent_id', adherentIds),
+      supabase
+        .from('card_milestones')
+        .select('*')
+        .order('pm_threshold', { ascending: true }),
+      supabase
+        .from('claimed_rewards')
+        .select('adherent_id, milestone_id')
+        .eq('cycle_id', selectedCycleId),
+    ]);
 
-    // 3. Milestones configurés
-    const { data: milestonesData } = await supabase
-      .from('card_milestones')
-      .select('*')
-      .order('pm_threshold', { ascending: true });
-
-    // 4. Claimed rewards pour ce cycle
-    const { data: claimedData } = await supabase
-      .from('claimed_rewards')
-      .select('adherent_id, milestone_id')
-      .eq('cycle_id', selectedCycleId);
-
+    const adherentsData = adherentsRes.data;
+    const tierMap = new Map<string, CardTier>(
+      (tiersRes.data ?? []).map((t) => [t.adherent_id, t.card_tier as CardTier])
+    );
     const claimedSet = new Set(
-      (claimedData ?? []).map((c) => `${c.adherent_id}::${c.milestone_id}`)
+      (claimedRes.data ?? []).map((c) => `${c.adherent_id}::${c.milestone_id}`)
     );
 
-    const allMilestones = (milestonesData ?? []) as CardMilestone[];
+    const allMilestones = (milestonesRes.data ?? []) as CardMilestone[];
 
     const rows: NinjaRow[] = (adherentsData ?? []).map((a) => {
       const pts = pointsData.find((p) => p.adherent_id === a.id)?.total_points ?? 0;
-      // Milestones de la carte de l'adhérent
-      const tierMilestones = allMilestones.filter((m) => m.card_tier === a.card_tier);
+      const cardTier = tierMap.get(a.id) ?? 'aucun' as CardTier;
+      // Milestones de la carte de l'adhérent pour ce cycle
+      const tierMilestones = allMilestones.filter((m) => m.card_tier === cardTier);
       // Milestones atteints (points >= seuil)
       const reachable = tierMilestones
         .filter((m) => pts >= m.pm_threshold)
@@ -135,7 +143,7 @@ export default function Recompenses() {
         adherent_id: a.id,
         first_name: a.first_name,
         last_name: a.last_name,
-        card_tier: a.card_tier as CardTier,
+        card_tier: cardTier,
         cycle_points: pts,
         milestones: reachable,
         all_claimed: reachable.length > 0 && reachable.every((m) => m.claimed),

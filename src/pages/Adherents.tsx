@@ -55,6 +55,8 @@ export default function Adherents() {
 
   const canManage = staffUser && (staffUser.role === 'superviseur' || staffUser.role === 'gerant' || staffUser.role === 'co-gerant');
 
+  const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
+
   // Form state
   const [formNom, setFormNom] = useState('');
   const [formPrenom, setFormPrenom] = useState('');
@@ -81,7 +83,7 @@ export default function Adherents() {
     }
 
     if (data) {
-      // Fetch cycle points for each adherent
+      // Fetch active cycle
       const today = new Date().toISOString().split('T')[0];
       const cycleRes = await supabase
         .from('cycles')
@@ -92,19 +94,36 @@ export default function Adherents() {
         .limit(1)
         .maybeSingle();
       let pointsMap: Record<string, number> = {};
+      let tierMap: Record<string, CardTier> = {};
 
       if (cycleRes.data) {
-        const { data: pointsData } = await supabase
-          .from('adherent_cycle_summary')
-          .select('adherent_id, total_points')
-          .eq('cycle_id', cycleRes.data.id);
+        setActiveCycleId(cycleRes.data.id);
+        const adherentIds = data.map((a) => a.id);
+        const [pointsRes, tiersRes] = await Promise.all([
+          supabase
+            .from('adherent_cycle_summary')
+            .select('adherent_id, total_points')
+            .eq('cycle_id', cycleRes.data.id),
+          supabase
+            .from('adherent_card_tiers')
+            .select('adherent_id, card_tier')
+            .eq('cycle_id', cycleRes.data.id)
+            .in('adherent_id', adherentIds.length > 0 ? adherentIds : ['_']),
+        ]);
 
-        if (pointsData) {
-          pointsMap = Object.fromEntries(pointsData.map((p) => [p.adherent_id, Number(p.total_points)]));
+        if (pointsRes.data) {
+          pointsMap = Object.fromEntries(pointsRes.data.map((p) => [p.adherent_id, Number(p.total_points)]));
+        }
+        if (tiersRes.data) {
+          tierMap = Object.fromEntries(tiersRes.data.map((t) => [t.adherent_id, t.card_tier as CardTier]));
         }
       }
 
-      const mappedAdherents = data.map((a) => ({ ...a, cycle_points: pointsMap[a.id] ?? 0 }));
+      const mappedAdherents = data.map((a) => ({
+        ...a,
+        cycle_points: pointsMap[a.id] ?? 0,
+        card_tier: tierMap[a.id] ?? 'aucun' as CardTier,
+      }));
       setAdherents(mappedAdherents);
 
       // Compte les missions non payées pour tous les rôles (ninja, exécutant, intervenant).
@@ -290,16 +309,29 @@ export default function Adherents() {
     if (!formNom.trim() || !formPrenom.trim() || !canManage) return;
     setSubmitting(true);
 
-    const { error } = await supabase.from('adherents').insert({
-      last_name: formNom.trim(),
-      first_name: formPrenom.trim(),
-      card_tier: formTier,
-      distributed_by: staffUser?.id ?? null,
-    });
+    const { data: newAdherent, error } = await supabase
+      .from('adherents')
+      .insert({
+        last_name: formNom.trim(),
+        first_name: formPrenom.trim(),
+        card_tier: formTier, // conservé dans adherents pour compatibilité DB
+        distributed_by: staffUser?.id ?? null,
+      })
+      .select('id')
+      .single();
 
     if (error) {
       console.error('Erreur ajout adherent:', error);
       alert(`Erreur: ${error.message}`);
+    }
+
+    // Créer l'entrée cycle-spécifique si on a un cycle actif et un tier non-aucun
+    if (newAdherent && activeCycleId && formTier !== 'aucun') {
+      await supabase.from('adherent_card_tiers').upsert({
+        adherent_id: newAdherent.id,
+        cycle_id: activeCycleId,
+        card_tier: formTier,
+      });
     }
 
     setFormNom('');
@@ -310,7 +342,7 @@ export default function Adherents() {
   }
 
   async function handleEvolution() {
-    if (!evolTarget || !canManage) return;
+    if (!evolTarget || !canManage || !activeCycleId) return;
 
     await supabase.from('card_evolutions').insert({
       adherent_id: evolTarget.id,
@@ -319,10 +351,12 @@ export default function Adherents() {
       evolved_by: staffUser?.id ?? null,
     });
 
-    await supabase
-      .from('adherents')
-      .update({ card_tier: evolNewTier })
-      .eq('id', evolTarget.id);
+    // Source de vérité : adherent_card_tiers (par cycle)
+    await supabase.from('adherent_card_tiers').upsert({
+      adherent_id: evolTarget.id,
+      cycle_id: activeCycleId,
+      card_tier: evolNewTier,
+    });
 
     setEvolTarget(null);
     fetchAdherents();

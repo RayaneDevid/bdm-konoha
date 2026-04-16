@@ -62,7 +62,7 @@ export default function Annuaire() {
 
       const { data: adherentsData } = await supabase
         .from('adherents')
-        .select('id, first_name, last_name, card_tier')
+        .select('id, first_name, last_name')
         .eq('is_active', true)
         .order('last_name');
 
@@ -75,10 +75,11 @@ export default function Annuaire() {
       const idParam = ids.length > 0 ? ids : ['_'];
 
       let statsMap = new Map<string, { total_missions: number; total_points: number }>();
+      let tierMap = new Map<string, CardTier>();
 
       if (selectedCycleId) {
-        // Cycle-specific: points from adherent_cycle_summary, missions from missions+ninjas
-        const [cycleStatsRes, missionsRes] = await Promise.all([
+        // Cycle-specific: points + tier depuis adherent_card_tiers, missions depuis missions+ninjas
+        const [cycleStatsRes, missionsRes, tiersRes] = await Promise.all([
           supabase
             .from('adherent_cycle_summary')
             .select('adherent_id, total_points')
@@ -88,9 +89,13 @@ export default function Annuaire() {
             .from('missions')
             .select('id, mission_ninjas(adherent_id)')
             .eq('cycle_id', selectedCycleId),
+          supabase
+            .from('adherent_card_tiers')
+            .select('adherent_id, card_tier')
+            .eq('cycle_id', selectedCycleId)
+            .in('adherent_id', idParam),
         ]);
 
-        // Build points map
         (cycleStatsRes.data ?? []).forEach((s) => {
           statsMap.set(s.adherent_id, {
             total_missions: 0,
@@ -98,7 +103,6 @@ export default function Annuaire() {
           });
         });
 
-        // Count missions per adherent from the missions+ninjas join
         (missionsRes.data ?? []).forEach((mission: any) => {
           (mission.mission_ninjas ?? []).forEach((n: { adherent_id: string }) => {
             const existing = statsMap.get(n.adherent_id);
@@ -109,8 +113,11 @@ export default function Annuaire() {
             }
           });
         });
+
+        (tiersRes.data ?? []).forEach((t) => {
+          tierMap.set(t.adherent_id, t.card_tier as CardTier);
+        });
       } else {
-        // All cycles: use the global view
         const { data: statsData } = await supabase
           .from('adherent_total_points')
           .select('adherent_id, total_missions, total_points')
@@ -128,7 +135,7 @@ export default function Annuaire() {
         id: a.id,
         first_name: a.first_name,
         last_name: a.last_name,
-        card_tier: a.card_tier as CardTier,
+        card_tier: tierMap.get(a.id) ?? 'aucun',
         total_missions: statsMap.get(a.id)?.total_missions ?? 0,
         total_points: statsMap.get(a.id)?.total_points ?? 0,
       }));

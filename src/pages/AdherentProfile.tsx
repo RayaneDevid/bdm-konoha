@@ -26,6 +26,7 @@ export default function AdherentProfile() {
   const [cycles, setCycles] = useState<Cycle[]>([]);
   const [activeCycle, setActiveCycle] = useState<Cycle | null>(null);
   const [selectedCycleId, setSelectedCycleId] = useState<string>('');
+  const [cycleCardTier, setCycleCardTier] = useState<CardTier>('aucun');
   const [totalMissions, setTotalMissions] = useState(0);
   const [totalPoints, setTotalPoints] = useState(0);
   const [cyclePoints, setCyclePoints] = useState(0);
@@ -43,6 +44,7 @@ export default function AdherentProfile() {
       fetchCycleMissions(selectedCycleId);
       fetchCyclePoints(selectedCycleId);
       fetchClaimedRewards(selectedCycleId);
+      fetchCycleCardTier(selectedCycleId);
     }
   }, [id, selectedCycleId]);
 
@@ -83,14 +85,24 @@ export default function AdherentProfile() {
       );
     }
 
-    if (adh) {
-      const milestonesRes = await supabase
-        .from('card_milestones')
-        .select('*')
-        .eq('card_tier', adh.card_tier)
-        .order('sort_order');
-      if (milestonesRes.data) setMilestones(milestonesRes.data);
-    }
+  }
+
+  async function fetchCycleCardTier(cycleId: string) {
+    const { data } = await supabase
+      .from('adherent_card_tiers')
+      .select('card_tier')
+      .eq('adherent_id', id!)
+      .eq('cycle_id', cycleId)
+      .maybeSingle();
+    const tier = (data?.card_tier ?? 'aucun') as CardTier;
+    setCycleCardTier(tier);
+
+    const milestonesRes = await supabase
+      .from('card_milestones')
+      .select('*')
+      .eq('card_tier', tier)
+      .order('sort_order');
+    if (milestonesRes.data) setMilestones(milestonesRes.data);
   }
 
   async function fetchCycleMissions(cycleId: string) {
@@ -242,7 +254,7 @@ export default function AdherentProfile() {
             >
               {adherent.last_name} {adherent.first_name}
             </h2>
-            <div className="mt-2">{tierBadge(adherent.card_tier)}</div>
+            <div className="mt-2">{tierBadge(cycleCardTier)}</div>
           </div>
 
           {/* 3 boites stats */}

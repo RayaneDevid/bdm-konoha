@@ -87,6 +87,7 @@ export default function AnnuaireAdherent() {
   const [adherent, setAdherent] = useState<AdherentPublic | null>(null);
   const [cycles, setCycles] = useState<Cycle[]>([]);
   const [selectedCycleId, setSelectedCycleId] = useState<string>('');
+  const [cycleCardTier, setCycleCardTier] = useState<CardTier>('aucun');
   const [missions, setMissions] = useState<MissionRow[]>([]);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [totalMissions, setTotalMissions] = useState(0);
@@ -145,7 +146,7 @@ export default function AnnuaireAdherent() {
       setMissionsLoading(true);
 
       // Adherent's missions this cycle (via mission_ninjas)
-      const [cyclePointsRes, missionsNinjasRes, milestonesRes] = await Promise.all([
+      const [cyclePointsRes, missionsNinjasRes, milestonesRes, tierRes] = await Promise.all([
         supabase
           .from('adherent_cycle_summary')
           .select('total_points')
@@ -161,7 +162,15 @@ export default function AnnuaireAdherent() {
           .select('id, card_tier, pm_threshold, reward_type, reward_description, sort_order')
           .eq('cycle_id', selectedCycleId)
           .order('sort_order', { ascending: true }),
+        supabase
+          .from('adherent_card_tiers')
+          .select('card_tier')
+          .eq('adherent_id', id)
+          .eq('cycle_id', selectedCycleId)
+          .maybeSingle(),
       ]);
+
+      setCycleCardTier((tierRes.data?.card_tier ?? 'aucun') as CardTier);
 
       setCyclePoints(Number(cyclePointsRes.data?.total_points) || 0);
 
@@ -208,7 +217,7 @@ export default function AnnuaireAdherent() {
 
   const cycleMilestonesForTier = adherent
     ? milestones
-        .filter((m: any) => m.card_tier === adherent.card_tier)
+        .filter((m: any) => m.card_tier === cycleCardTier)
         .sort((a, b) => a.sort_order - b.sort_order)
     : [];
 
@@ -275,7 +284,7 @@ export default function AnnuaireAdherent() {
               <div
                 className="h-2"
                 style={{
-                  background: `linear-gradient(to right, var(--v-primary), ${TIER_COLORS[adherent.card_tier]}, var(--v-primary))`,
+                  background: `linear-gradient(to right, var(--v-primary), ${TIER_COLORS[cycleCardTier]}, var(--v-primary))`,
                 }}
               />
               <div className="px-8 py-6">
@@ -283,7 +292,7 @@ export default function AnnuaireAdherent() {
                   {/* Avatar circle */}
                   <div
                     className="w-20 h-20 rounded-full border-4 border-[var(--v-medium)] flex items-center justify-center text-2xl font-bold text-white shadow-lg shrink-0"
-                    style={{ backgroundColor: TIER_COLORS[adherent.card_tier] }}
+                    style={{ backgroundColor: TIER_COLORS[cycleCardTier] }}
                   >
                     {adherent.last_name[0]?.toUpperCase()}
                   </div>
@@ -299,20 +308,20 @@ export default function AnnuaireAdherent() {
                       <span
                         className="text-sm font-medium px-3 py-1 rounded-full border-2"
                         style={{
-                          backgroundColor: TIER_COLORS[adherent.card_tier] + '22',
-                          borderColor: TIER_COLORS[adherent.card_tier],
-                          color: adherent.card_tier === 'vip'
+                          backgroundColor: TIER_COLORS[cycleCardTier] + '22',
+                          borderColor: TIER_COLORS[cycleCardTier],
+                          color: cycleCardTier === 'vip'
                             ? '#7B1FA2'
-                            : adherent.card_tier === 'or'
+                            : cycleCardTier === 'or'
                             ? '#8B6914'
-                            : adherent.card_tier === 'argent'
+                            : cycleCardTier === 'argent'
                             ? '#5A5A5A'
-                            : adherent.card_tier === 'aucun'
+                            : cycleCardTier === 'aucun'
                             ? '#616161'
                             : '#8B5E1D',
                         }}
                       >
-                        Carte {TIER_LABELS[adherent.card_tier]}
+                        Carte {TIER_LABELS[cycleCardTier]}
                       </span>
                     </div>
                   </div>
@@ -385,7 +394,7 @@ export default function AnnuaireAdherent() {
                     className="text-xl font-medium text-[var(--v-dark)]"
                     style={{ fontFamily: "'Noto Serif JP', serif" }}
                   >
-                    Progression — Carte {TIER_LABELS[adherent.card_tier]}
+                    Progression — Carte {TIER_LABELS[cycleCardTier]}
                   </h3>
                 </div>
                 <div className="p-6 overflow-x-auto">
