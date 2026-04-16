@@ -201,6 +201,41 @@ export default function AnnuaireAdherent() {
       const ninjasMissionIds =
         (missionsNinjasRes.data ?? []).map((n) => n.mission_id);
 
+      // Detect cross-cycle identity mismatch: this DB record has no data in the selected cycle.
+      // This happens when the old reset RPC created a new adherent record per cycle.
+      // In that case, look for another adherent with the same name who has data in this cycle.
+      const hasCycleData =
+        tierRes.data !== null ||
+        cyclePointsRes.data !== null ||
+        ninjasMissionIds.length > 0;
+
+      if (!hasCycleData && adherent) {
+        const { data: candidates } = await supabase
+          .from('adherents')
+          .select('id')
+          .eq('first_name', adherent.first_name)
+          .eq('last_name', adherent.last_name)
+          .neq('id', id!);
+
+        if (candidates && candidates.length > 0) {
+          for (const candidate of candidates) {
+            const { data: cycleEntry } = await supabase
+              .from('adherent_card_tiers')
+              .select('adherent_id')
+              .eq('adherent_id', candidate.id)
+              .eq('cycle_id', selectedCycleId)
+              .maybeSingle();
+
+            if (cycleEntry) {
+              // Found this person's record for the selected cycle — redirect seamlessly
+              navigate(`/annuaire/${candidate.id}?cycle=${selectedCycleId}`, { replace: true });
+              setMissionsLoading(false);
+              return;
+            }
+          }
+        }
+      }
+
       let missionRows: MissionRow[] = [];
       if (ninjasMissionIds.length > 0) {
         const { data: missionsData } = await supabase
@@ -218,7 +253,7 @@ export default function AnnuaireAdherent() {
       setMissionsLoading(false);
     }
     fetchCycleData();
-  }, [id, selectedCycleId]);
+  }, [id, selectedCycleId, adherent]);
 
   /* ---- Handle not found ----------------------------------------- */
   if (!loading && !adherent) {
