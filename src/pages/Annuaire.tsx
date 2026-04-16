@@ -60,10 +60,47 @@ export default function Annuaire() {
     async function fetchAdherents() {
       setLoading(true);
 
+      if (!selectedCycleId) {
+        setLoading(false);
+        return;
+      }
+
+      // 1. Trouver les adhérents qui ont participé à ce cycle
+      //    (ont un tier OU des points) — sans filtre is_active pour couvrir les cycles passés
+      const [tiersRes, summaryRes] = await Promise.all([
+        supabase
+          .from('adherent_card_tiers')
+          .select('adherent_id, card_tier')
+          .eq('cycle_id', selectedCycleId),
+        supabase
+          .from('adherent_cycle_summary')
+          .select('adherent_id, total_points')
+          .eq('cycle_id', selectedCycleId),
+      ]);
+
+      const tierMap = new Map<string, CardTier>(
+        (tiersRes.data ?? []).map((t) => [t.adherent_id, t.card_tier as CardTier])
+      );
+      const pointsMap = new Map<string, number>(
+        (summaryRes.data ?? []).map((s) => [s.adherent_id, Number(s.total_points) || 0])
+      );
+
+      // Union des IDs présents dans l'un ou l'autre
+      const cycleAdherentIds = Array.from(
+        new Set([...tierMap.keys(), ...pointsMap.keys()])
+      );
+
+      if (cycleAdherentIds.length === 0) {
+        setAdherents([]);
+        setLoading(false);
+        return;
+      }
+
+      // 2. Infos des adhérents (sans filtre is_active — les anciens cycles ont is_active=false)
       const { data: adherentsData } = await supabase
         .from('adherents')
         .select('id, first_name, last_name')
-        .eq('is_active', true)
+        .in('id', cycleAdherentIds)
         .order('last_name');
 
       if (!adherentsData) {
@@ -71,73 +108,26 @@ export default function Annuaire() {
         return;
       }
 
-      const ids = adherentsData.map((a) => a.id);
-      const idParam = ids.length > 0 ? ids : ['_'];
+      // 3. Compter les missions par adhérent pour ce cycle
+      const { data: missionsData } = await supabase
+        .from('missions')
+        .select('id, mission_ninjas(adherent_id)')
+        .eq('cycle_id', selectedCycleId);
 
-      let statsMap = new Map<string, { total_missions: number; total_points: number }>();
-      let tierMap = new Map<string, CardTier>();
-
-      if (selectedCycleId) {
-        // Cycle-specific: points + tier depuis adherent_card_tiers, missions depuis missions+ninjas
-        const [cycleStatsRes, missionsRes, tiersRes] = await Promise.all([
-          supabase
-            .from('adherent_cycle_summary')
-            .select('adherent_id, total_points')
-            .eq('cycle_id', selectedCycleId)
-            .in('adherent_id', idParam),
-          supabase
-            .from('missions')
-            .select('id, mission_ninjas(adherent_id)')
-            .eq('cycle_id', selectedCycleId),
-          supabase
-            .from('adherent_card_tiers')
-            .select('adherent_id, card_tier')
-            .eq('cycle_id', selectedCycleId)
-            .in('adherent_id', idParam),
-        ]);
-
-        (cycleStatsRes.data ?? []).forEach((s) => {
-          statsMap.set(s.adherent_id, {
-            total_missions: 0,
-            total_points: Number(s.total_points) || 0,
-          });
+      const missionsMap = new Map<string, number>();
+      (missionsData ?? []).forEach((mission: any) => {
+        (mission.mission_ninjas ?? []).forEach((n: { adherent_id: string }) => {
+          missionsMap.set(n.adherent_id, (missionsMap.get(n.adherent_id) ?? 0) + 1);
         });
-
-        (missionsRes.data ?? []).forEach((mission: any) => {
-          (mission.mission_ninjas ?? []).forEach((n: { adherent_id: string }) => {
-            const existing = statsMap.get(n.adherent_id);
-            if (existing) {
-              existing.total_missions += 1;
-            } else {
-              statsMap.set(n.adherent_id, { total_missions: 1, total_points: 0 });
-            }
-          });
-        });
-
-        (tiersRes.data ?? []).forEach((t) => {
-          tierMap.set(t.adherent_id, t.card_tier as CardTier);
-        });
-      } else {
-        const { data: statsData } = await supabase
-          .from('adherent_total_points')
-          .select('adherent_id, total_missions, total_points')
-          .in('adherent_id', idParam);
-
-        (statsData ?? []).forEach((s) => {
-          statsMap.set(s.adherent_id, {
-            total_missions: Number(s.total_missions) || 0,
-            total_points: Number(s.total_points) || 0,
-          });
-        });
-      }
+      });
 
       const result: AdherentPublic[] = adherentsData.map((a) => ({
         id: a.id,
         first_name: a.first_name,
         last_name: a.last_name,
         card_tier: tierMap.get(a.id) ?? 'aucun',
-        total_missions: statsMap.get(a.id)?.total_missions ?? 0,
-        total_points: statsMap.get(a.id)?.total_points ?? 0,
+        total_missions: missionsMap.get(a.id) ?? 0,
+        total_points: pointsMap.get(a.id) ?? 0,
       }));
 
       result.sort((a, b) => {
