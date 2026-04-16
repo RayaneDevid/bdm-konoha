@@ -6,6 +6,7 @@ import {
   XCircle,
   Copy,
   Check,
+  Link,
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
@@ -59,6 +60,11 @@ export default function Administration() {
   // Success state after creation
   const [createdInfo, setCreatedInfo] = useState<{ email: string; password: string } | null>(null);
   const [copied, setCopied] = useState(false);
+
+  // Edit adherent link modal
+  const [editAdherentUser, setEditAdherentUser] = useState<StaffUser | null>(null);
+  const [editAdherentId, setEditAdherentId] = useState('');
+  const [savingAdherent, setSavingAdherent] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -152,6 +158,18 @@ export default function Administration() {
       .from('staff_users')
       .update({ role: newRole })
       .eq('id', userId);
+    fetchUsers();
+  }
+
+  async function handleSaveAdherentLink() {
+    if (!editAdherentUser) return;
+    setSavingAdherent(true);
+    await supabase
+      .from('staff_users')
+      .update({ adherent_id: editAdherentId || null })
+      .eq('id', editAdherentUser.id);
+    setSavingAdherent(false);
+    setEditAdherentUser(null);
     fetchUsers();
   }
 
@@ -324,18 +342,32 @@ export default function Administration() {
 
                       {/* Actions */}
                       <td className="px-3 py-3 text-right">
-                        {canManageUsers && user.id !== staffUser?.id && (
-                          <button
-                            onClick={() => handleToggleActive(user)}
-                            className={`text-xs font-medium px-3 py-1.5 rounded border cursor-pointer transition-colors ${
-                              user.is_active
-                                ? 'bg-[#C62828]/10 border-[#C62828] text-[#C62828] hover:bg-[#C62828]/20'
-                                : 'bg-[#4A5D23]/10 border-[#4A5D23] text-[#4A5D23] hover:bg-[#4A5D23]/20'
-                            }`}
-                          >
-                            {user.is_active ? '✕ Désactiver' : '✓ Activer'}
-                          </button>
-                        )}
+                        <div className="flex items-center justify-end gap-2">
+                          {canManageUsers && (
+                            <button
+                              onClick={() => {
+                                setEditAdherentUser(user);
+                                setEditAdherentId(user.adherent_id ?? '');
+                              }}
+                              title="Modifier le profil adhérent lié"
+                              className="p-1.5 rounded border border-[var(--v-medium)] text-[var(--v-medium)] hover:text-[var(--v-dark)] hover:border-[var(--v-dark)] cursor-pointer transition-colors"
+                            >
+                              <Link size={14} />
+                            </button>
+                          )}
+                          {canManageUsers && user.id !== staffUser?.id && (
+                            <button
+                              onClick={() => handleToggleActive(user)}
+                              className={`text-xs font-medium px-3 py-1.5 rounded border cursor-pointer transition-colors ${
+                                user.is_active
+                                  ? 'bg-[#C62828]/10 border-[#C62828] text-[#C62828] hover:bg-[#C62828]/20'
+                                  : 'bg-[#4A5D23]/10 border-[#4A5D23] text-[#4A5D23] hover:bg-[#4A5D23]/20'
+                              }`}
+                            >
+                              {user.is_active ? '✕ Désactiver' : '✓ Activer'}
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -405,6 +437,75 @@ export default function Administration() {
           </div>
         </div>
       </div>
+
+      {/* Modal Modifier le profil adhérent lié */}
+      {editAdherentUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setEditAdherentUser(null)} />
+          <div className="relative bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="h-2 bg-gradient-to-r from-[var(--v-gold)] via-[var(--v-primary)] to-[var(--v-gold)]" />
+
+            <div className="px-6 pt-5 pb-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Link size={20} className="text-[var(--v-primary)]" />
+                <h3
+                  className="text-xl font-medium text-[var(--v-primary)]"
+                  style={{ fontFamily: "'Noto Serif JP', serif" }}
+                >
+                  Profil adhérent lié
+                </h3>
+              </div>
+              <button
+                onClick={() => setEditAdherentUser(null)}
+                className="text-[var(--v-medium)] hover:text-[var(--v-dark)] cursor-pointer"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="px-6 pb-6 space-y-4">
+              <p className="text-sm text-[var(--v-medium)]">
+                Utilisateur : <span className="font-medium text-[var(--v-dark)]">{editAdherentUser.first_name} {editAdherentUser.last_name}</span>
+              </p>
+
+              <div className="space-y-1">
+                <label className="text-sm font-medium text-[var(--v-dark)]">Profil adhérent</label>
+                <SearchableSelect
+                  options={[
+                    { value: '', label: 'Aucun profil lié' },
+                    ...adherentList.map((a) => ({
+                      value: a.id,
+                      label: `${a.first_name} ${a.last_name}`,
+                    })),
+                  ]}
+                  value={editAdherentId}
+                  onChange={setEditAdherentId}
+                  placeholder="Rechercher un adhérent..."
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setEditAdherentUser(null)}
+                  className="bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] text-[var(--v-dark)] px-5 py-2 rounded text-sm font-medium hover:bg-[var(--v-light-beige)] transition-colors cursor-pointer"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveAdherentLink}
+                  disabled={savingAdherent}
+                  className="bg-[var(--v-primary)] border-2 border-[var(--v-primary-dark)] text-[var(--v-off-white)] px-5 py-2 rounded text-sm font-medium hover:bg-[var(--v-secondary)] transition-colors cursor-pointer disabled:opacity-50"
+                  style={{ fontFamily: "'Noto Serif JP', serif" }}
+                >
+                  {savingAdherent ? 'Enregistrement...' : 'Enregistrer'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal Ajouter un utilisateur */}
       {showModal && (

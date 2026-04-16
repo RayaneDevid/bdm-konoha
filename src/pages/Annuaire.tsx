@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Shield, Scroll, Users } from 'lucide-react';
+import { Search, Shield, Scroll, Users, ChevronDown } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { TIER_COLORS, TIER_LABELS, VILLAGE_NAME } from '../utils/constants';
-import type { CardTier } from '../types';
+import type { CardTier, Cycle } from '../types';
 
 interface AdherentPublic {
   id: string;
@@ -31,7 +31,32 @@ export default function Annuaire() {
   const [search, setSearch] = useState('');
   const [tierFilter, setTierFilter] = useState<CardTier | 'all'>('all');
 
+  const [cycles, setCycles] = useState<Cycle[]>([]);
+  const [selectedCycleId, setSelectedCycleId] = useState<string>('');
+  const [cyclesLoaded, setCyclesLoaded] = useState(false);
+
+  // 1. Load cycles once
   useEffect(() => {
+    async function fetchCycles() {
+      const { data } = await supabase
+        .from('cycles')
+        .select('*')
+        .order('start_date', { ascending: false });
+      if (data && data.length > 0) {
+        setCycles(data as Cycle[]);
+        const today = new Date().toISOString().split('T')[0];
+        const active = data.find((c) => c.start_date <= today && today <= c.end_date);
+        setSelectedCycleId(active?.id ?? data[0].id);
+      }
+      setCyclesLoaded(true);
+    }
+    fetchCycles();
+  }, []);
+
+  // 2. Load adherents + stats whenever cycle changes (after cycles are loaded)
+  useEffect(() => {
+    if (!cyclesLoaded) return;
+
     async function fetchAdherents() {
       setLoading(true);
 
@@ -47,19 +72,57 @@ export default function Annuaire() {
       }
 
       const ids = adherentsData.map((a) => a.id);
+      const idParam = ids.length > 0 ? ids : ['_'];
 
-      const { data: statsData } = await supabase
-        .from('adherent_total_points')
-        .select('adherent_id, total_missions, total_points')
-        .in('adherent_id', ids.length > 0 ? ids : ['_']);
+      let statsMap = new Map<string, { total_missions: number; total_points: number }>();
 
-      const statsMap = new Map<string, { total_missions: number; total_points: number }>();
-      (statsData ?? []).forEach((s) => {
-        statsMap.set(s.adherent_id, {
-          total_missions: Number(s.total_missions) || 0,
-          total_points: Number(s.total_points) || 0,
+      if (selectedCycleId) {
+        // Cycle-specific: points from adherent_cycle_summary, missions from missions+ninjas
+        const [cycleStatsRes, missionsRes] = await Promise.all([
+          supabase
+            .from('adherent_cycle_summary')
+            .select('adherent_id, total_points')
+            .eq('cycle_id', selectedCycleId)
+            .in('adherent_id', idParam),
+          supabase
+            .from('missions')
+            .select('id, mission_ninjas(adherent_id)')
+            .eq('cycle_id', selectedCycleId),
+        ]);
+
+        // Build points map
+        (cycleStatsRes.data ?? []).forEach((s) => {
+          statsMap.set(s.adherent_id, {
+            total_missions: 0,
+            total_points: Number(s.total_points) || 0,
+          });
         });
-      });
+
+        // Count missions per adherent from the missions+ninjas join
+        (missionsRes.data ?? []).forEach((mission: any) => {
+          (mission.mission_ninjas ?? []).forEach((n: { adherent_id: string }) => {
+            const existing = statsMap.get(n.adherent_id);
+            if (existing) {
+              existing.total_missions += 1;
+            } else {
+              statsMap.set(n.adherent_id, { total_missions: 1, total_points: 0 });
+            }
+          });
+        });
+      } else {
+        // All cycles: use the global view
+        const { data: statsData } = await supabase
+          .from('adherent_total_points')
+          .select('adherent_id, total_missions, total_points')
+          .in('adherent_id', idParam);
+
+        (statsData ?? []).forEach((s) => {
+          statsMap.set(s.adherent_id, {
+            total_missions: Number(s.total_missions) || 0,
+            total_points: Number(s.total_points) || 0,
+          });
+        });
+      }
 
       const result: AdherentPublic[] = adherentsData.map((a) => ({
         id: a.id,
@@ -70,7 +133,6 @@ export default function Annuaire() {
         total_points: statsMap.get(a.id)?.total_points ?? 0,
       }));
 
-      // Sort by tier order then by name
       result.sort((a, b) => {
         const tierDiff = TIER_ORDER.indexOf(a.card_tier) - TIER_ORDER.indexOf(b.card_tier);
         if (tierDiff !== 0) return tierDiff;
@@ -82,7 +144,7 @@ export default function Annuaire() {
     }
 
     fetchAdherents();
-  }, []);
+  }, [selectedCycleId, cyclesLoaded]);
 
   const filtered = adherents.filter((a) => {
     const matchSearch =
@@ -94,6 +156,12 @@ export default function Annuaire() {
   });
 
   const tiers: (CardTier | 'all')[] = ['all', 'vip', 'or', 'argent', 'bronze', 'aucun'];
+
+  const formatCycleLabel = (c: Cycle) => {
+    const today = new Date().toISOString().split('T')[0];
+    const isActive = c.start_date <= today && today <= c.end_date;
+    return `${c.name}${isActive ? ' — En cours' : ''}`;
+  };
 
   return (
     <div className="min-h-screen bg-[var(--v-off-white)]">
@@ -115,7 +183,6 @@ export default function Annuaire() {
                 <p className="text-[var(--v-gold)] text-sm mt-0.5">Bureau des Missions de {VILLAGE_NAME}</p>
               </div>
             </div>
-            {/* Login link for staff */}
             <button
               onClick={() => navigate('/login')}
               className="flex items-center gap-2 text-[var(--v-gold)] text-sm hover:text-[var(--v-off-white)] transition-colors cursor-pointer"
@@ -132,7 +199,7 @@ export default function Annuaire() {
 
       <div className="max-w-6xl mx-auto px-6 py-8 space-y-6">
         {/* Search + filters */}
-        <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-md px-6 py-4">
+        <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-md px-6 py-4 space-y-4">
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Search */}
             <div className="relative flex-1">
@@ -150,7 +217,7 @@ export default function Annuaire() {
             </div>
 
             {/* Tier filter */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               {tiers.map((t) => (
                 <button
                   key={t}
@@ -176,6 +243,36 @@ export default function Annuaire() {
               ))}
             </div>
           </div>
+
+          {/* Cycle selector */}
+          {cycles.length > 0 && (
+            <div className="flex items-center gap-3 pt-1 border-t border-[var(--v-medium)]/20">
+              <span
+                className="text-sm font-medium text-[var(--v-medium)] whitespace-nowrap"
+                style={{ fontFamily: "'Noto Serif JP', serif" }}
+              >
+                Cycle :
+              </span>
+              <div className="relative max-w-xs flex-1">
+                <select
+                  value={selectedCycleId}
+                  onChange={(e) => setSelectedCycleId(e.target.value)}
+                  className="w-full h-9 px-3 pr-8 bg-[var(--v-off-white)] border-2 border-[var(--v-medium)] rounded text-sm font-medium text-[var(--v-dark)] outline-none focus:border-[var(--v-gold)] appearance-none cursor-pointer"
+                  style={{ fontFamily: "'Noto Serif JP', serif" }}
+                >
+                  {cycles.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {formatCycleLabel(c)}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  size={16}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--v-medium)] pointer-events-none"
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Results count */}
