@@ -122,7 +122,7 @@ export default function AnnuaireAdherent() {
           .from('adherent_total_points')
           .select('total_missions, total_points')
           .eq('adherent_id', id)
-          .single(),
+          .maybeSingle(),
         supabase
           .from('cycles')
           .select('*')
@@ -176,7 +176,7 @@ export default function AnnuaireAdherent() {
           .select('total_points')
           .eq('adherent_id', id)
           .eq('cycle_id', selectedCycleId)
-          .single(),
+          .maybeSingle(),
         supabase
           .from('mission_ninjas')
           .select('mission_id')
