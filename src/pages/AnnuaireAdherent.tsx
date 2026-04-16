@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ArrowLeft,
   Scroll,
@@ -83,6 +83,7 @@ function MissionTypeIcon({ type }: { type: MissionType }) {
 export default function AnnuaireAdherent() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [adherent, setAdherent] = useState<AdherentPublic | null>(null);
   const [cycles, setCycles] = useState<Cycle[]>([]);
@@ -95,6 +96,15 @@ export default function AnnuaireAdherent() {
   const [cyclePoints, setCyclePoints] = useState(0);
   const [loading, setLoading] = useState(true);
   const [missionsLoading, setMissionsLoading] = useState(false);
+
+  /* ---- Réinitialiser les states cycle-spécifiques quand l'adhérent change */
+  useEffect(() => {
+    setCycleCardTier('aucun');
+    setMissions([]);
+    setMilestones([]);
+    setCyclePoints(0);
+    setSelectedCycleId('');
+  }, [id]);
 
   /* ---- Load adherent + global stats + cycles -------------------- */
   useEffect(() => {
@@ -127,11 +137,16 @@ export default function AnnuaireAdherent() {
 
       if (cyclesRes.data && cyclesRes.data.length > 0) {
         setCycles(cyclesRes.data as Cycle[]);
+        const cycleParam = searchParams.get('cycle');
         const today = new Date().toISOString().split('T')[0];
         const active = cyclesRes.data.find(
           (c) => c.start_date <= today && today <= c.end_date,
         );
-        setSelectedCycleId(active?.id ?? cyclesRes.data[0].id);
+        // Respecter le cycle venant de l'annuaire, sinon fallback sur le cycle actif
+        const preferred = cycleParam && cyclesRes.data.find((c) => c.id === cycleParam)
+          ? cycleParam
+          : (active?.id ?? cyclesRes.data[0].id);
+        setSelectedCycleId(preferred);
       }
 
       setLoading(false);

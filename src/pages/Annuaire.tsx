@@ -296,7 +296,7 @@ export default function Annuaire() {
             {filtered.map((a) => (
               <button
                 key={a.id}
-                onClick={() => navigate(`/annuaire/${a.id}`)}
+                onClick={() => navigate(`/annuaire/${a.id}?cycle=${selectedCycleId}`)}
                 className={`bg-[var(--v-cream)] border-2 rounded-[10px] shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer text-left ${TIER_BG[a.card_tier]}`}
               >
                 {/* Top accent bar with tier color */}
