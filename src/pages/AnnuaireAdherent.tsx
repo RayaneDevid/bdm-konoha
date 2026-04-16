@@ -154,6 +154,15 @@ export default function AnnuaireAdherent() {
     fetchBase();
   }, [id]);
 
+  /* ---- Sync selectedCycleId → URL query param ------------------- */
+  useEffect(() => {
+    if (!selectedCycleId) return;
+    const current = searchParams.get('cycle');
+    if (current !== selectedCycleId) {
+      navigate(`/annuaire/${id}?cycle=${selectedCycleId}`, { replace: true });
+    }
+  }, [selectedCycleId]);
+
   /* ---- Load missions + cycle points + milestones when cycle changes */
   useEffect(() => {
     if (!id || !selectedCycleId) return;
