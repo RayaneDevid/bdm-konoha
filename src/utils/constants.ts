@@ -1,7 +1,7 @@
 import type { MissionRank, CardTier, Role, RewardType, MissionStatus } from '../types';
+import { VILLAGE } from './village';
 
-const isKiri = import.meta.env.VITE_VILLAGE === 'Kiri';
-export const VILLAGE_NAME = isKiri ? 'Kiri' : 'Konoha';
+export const VILLAGE_NAME = VILLAGE.name;
 
 export const MISSION_STATUS_LABELS: Record<MissionStatus, string> = {
   reussi: 'Réussi',
@@ -47,7 +47,7 @@ export const TIER_LABELS: Record<CardTier, string> = {
 
 export const ROLE_COLORS: Record<Role, string> = {
   superviseur: '#6A0DAD',
-  gerant: isKiri ? '#1565C0' : '#C41E3A',
+  gerant: VILLAGE.roleGerantColor,
   'co-gerant': '#E67E22',
   membre_bdm: '#1565C0',
 };

@@ -2,11 +2,9 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+import { VILLAGE } from './utils/village.ts'
 
-const village = import.meta.env.VITE_VILLAGE;
-if (village === 'Kiri') {
-  document.documentElement.setAttribute('data-village', 'kiri');
-}
+document.documentElement.setAttribute('data-village', VILLAGE.id);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

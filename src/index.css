@@ -32,3 +32,35 @@
   --v-gold: #D4A017;
   --v-gold-dark: #B8860B;
 }
+
+[data-village="suna"] {
+  /* Suna (sable) */
+  --v-dark: #3D2B18;
+  --v-medium: #80623A;
+  --v-medium-dark: #604623;
+  --v-light-beige: #E7D2A0;
+  --v-cream: #F4E5BE;
+  --v-off-white: #FFF7E1;
+  --v-primary: #8F5F17;
+  --v-primary-dark: #5E3B0B;
+  --v-secondary: #B88722;
+  --v-secondary-dark: #7A5418;
+  --v-gold: #D4A017;
+  --v-gold-dark: #B8860B;
+}
+
+[data-village="oto"] {
+  /* Oto (violet) */
+  --v-dark: #251433;
+  --v-medium: #51316F;
+  --v-medium-dark: #3A2154;
+  --v-light-beige: #D9C6EA;
+  --v-cream: #EEE2F7;
+  --v-off-white: #FAF5FF;
+  --v-primary: #5E2383;
+  --v-primary-dark: #35124D;
+  --v-secondary: #7B1FA2;
+  --v-secondary-dark: #4A1265;
+  --v-gold: #D4A017;
+  --v-gold-dark: #B8860B;
+}
