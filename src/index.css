@@ -64,3 +64,19 @@
   --v-gold: #D4A017;
   --v-gold-dark: #B8860B;
 }
+
+[data-village="samurai"] {
+  /* Samurai (blanc et rose) */
+  --v-dark: #421126;
+  --v-medium: #8A3A61;
+  --v-medium-dark: #64213F;
+  --v-light-beige: #F7CADC;
+  --v-cream: #FFF0F6;
+  --v-off-white: #FFFBFD;
+  --v-primary: #AD1457;
+  --v-primary-dark: #720B36;
+  --v-secondary: #C2185B;
+  --v-secondary-dark: #880E4F;
+  --v-gold: #E7B8C8;
+  --v-gold-dark: #C27A93;
+}

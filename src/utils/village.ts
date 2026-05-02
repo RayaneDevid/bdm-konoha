@@ -1,8 +1,8 @@
-export type VillageId = 'konoha' | 'kiri' | 'suna' | 'oto';
+export type VillageId = 'konoha' | 'kiri' | 'suna' | 'oto' | 'samurai';
 
 type VillageConfig = {
   id: VillageId;
-  name: 'Konoha' | 'Kiri' | 'Suna' | 'Oto';
+  name: 'Konoha' | 'Kiri' | 'Suna' | 'Oto' | 'Samurai';
   roleGerantColor: string;
 };
 
@@ -27,12 +27,17 @@ const VILLAGES: Record<VillageId, VillageConfig> = {
     name: 'Oto',
     roleGerantColor: '#7B1FA2',
   },
+  samurai: {
+    id: 'samurai',
+    name: 'Samurai',
+    roleGerantColor: '#C2185B',
+  },
 };
 
 function normalizeVillage(value: string | undefined): VillageId {
   const village = value?.trim().toLowerCase();
 
-  if (village === 'kiri' || village === 'suna' || village === 'oto') {
+  if (village === 'kiri' || village === 'suna' || village === 'oto' || village === 'samurai') {
     return village;
   }
 
