@@ -24,7 +24,7 @@ export interface Adherent {
   first_name: string;
   last_name: string;
   card_tier: CardTier; // champ DB conservé pour compatibilité ; la source de vérité est adherent_card_tiers
-  distributed_by: string;
+  distributed_by: string | null;
   is_active: boolean;
   created_at: string;
 }

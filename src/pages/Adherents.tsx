@@ -53,7 +53,9 @@ export default function Adherents() {
   const [loadingUnpaid, setLoadingUnpaid] = useState(false);
   const [markingPaidRowId, setMarkingPaidRowId] = useState<string | null>(null);
 
+  const canCreateAdherent = !!staffUser;
   const canManage = staffUser && (staffUser.role === 'superviseur' || staffUser.role === 'gerant' || staffUser.role === 'co-gerant');
+  const allowedCreateTiers: CardTier[] = canManage ? ['aucun', 'bronze', 'argent', 'or', 'vip'] : ['aucun', 'bronze'];
 
   const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
 
@@ -306,7 +308,8 @@ export default function Adherents() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!formNom.trim() || !formPrenom.trim() || !canManage) return;
+    if (!formNom.trim() || !formPrenom.trim() || !canCreateAdherent) return;
+    if (!allowedCreateTiers.includes(formTier)) return;
     setSubmitting(true);
 
     const { data: newAdherent, error } = await supabase
@@ -403,7 +406,7 @@ export default function Adherents() {
       </div>
 
       {/* Formulaire Nouvel Adherent */}
-      {canManage && (
+      {canCreateAdherent && (
       <div className="bg-[var(--v-cream)] border-4 border-[var(--v-medium)] rounded-[10px] shadow-xl overflow-hidden">
         <div className="h-2 bg-gradient-to-r from-[var(--v-gold)] via-[var(--v-primary)] to-[var(--v-gold)]" />
         <div className="bg-[var(--v-light-beige)] border-b-2 border-[var(--v-medium)] px-6 py-5">
@@ -446,11 +449,9 @@ export default function Adherents() {
                   onChange={(e) => setFormTier(e.target.value as CardTier)}
                   className="w-full h-9 px-3 pr-8 bg-[var(--v-off-white)] border border-[var(--v-medium)] rounded text-sm text-[var(--v-dark)] outline-none focus:border-[var(--v-gold)] appearance-none cursor-pointer"
                 >
-                  <option value="aucun">Aucun</option>
-                  <option value="bronze">Bronze</option>
-                  <option value="argent">Argent</option>
-                  <option value="or">Or</option>
-                  <option value="vip">VIP</option>
+                  {allowedCreateTiers.map((tier) => (
+                    <option key={tier} value={tier}>{TIER_LABELS[tier]}</option>
+                  ))}
                 </select>
                 <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--v-medium)] pointer-events-none" />
               </div>
