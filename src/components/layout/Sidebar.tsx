@@ -13,7 +13,7 @@ import {
 
 const navItems = [
   { to: '/', label: 'Tableau de bord', icon: LayoutDashboard },
-  { to: '/adherents', label: 'Adhérents', icon: Users, gerantOnly: true },
+  { to: '/adherents', label: 'Adhérents', icon: Users },
   { to: '/rapports', label: 'Rapports BDM', icon: FileText },
   { to: '/fiche-membre', label: 'Fiche Membre BDM', icon: UserSearch },
   { to: '/recompenses', label: 'Récompenses', icon: Gift },
